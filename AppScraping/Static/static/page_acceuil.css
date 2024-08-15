@@ -1,0 +1,142 @@
+/* Styles for body and topnav */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #e2f9f2;
+}
+
+.topnav {
+    color: #2b11bc22;
+    padding: 10px 0;
+    text-align: center;
+    background-color: #ecd3f1;
+}
+
+.topnav nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px;
+    height: 40px;
+}
+.topnav h1{
+    color:blue;
+}
+
+.topnav .logo {
+    max-height: 60px; /* Adjust as necessary */
+}
+
+.main-content {
+    display: flex;
+    max-width: 1200px;
+    margin: 0px auto;
+    padding: 0 20px;
+}
+
+.left-content {
+    flex: 1;
+    background-color: #fff;
+    padding: 20px;
+}
+
+.right-content {
+    flex: 1;
+    background-color: #fff;
+    padding: 20px;
+}
+
+.right-content form {
+    max-width: 400px; /* Adjust as necessary */
+    margin: 0 auto;
+    background-color: #f2f2f2;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.right-content h2 {
+    text-align: center;
+}
+.right-content form {
+    max-width: 400px; /* Ajustez selon vos besoins */
+    margin: 0 auto;
+    background-color: #f2f2f2;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.right-content form label {
+    display: block;
+    margin-bottom: 0px;
+    color: #333;
+}
+
+.right-content form input[type="text"],
+.right-content form input[type="password"] {
+    width: calc(100% - 40px);
+    padding: 0px;
+    margin-bottom: 15px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    font-size: 20px;
+}
+
+.right-content form input[type="submit"] {
+    width: 100%;
+    padding: 5px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.right-content form input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+
+/* Styles for .button */
+.button {
+    display: block;
+    width: 100%;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+/* Styles for footer */
+.footer {
+    background-color: #333;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+}
+
+.footer .footer-content {
+    display: flex;
+    justify-content: space-around;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer .footer-section {
+    flex: 1;
+    padding: 20px;
+}
+
+.footer img {
+    max-width: 50px; /* Adjust as necessary */
+    margin-bottom: 10px;
+}

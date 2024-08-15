@@ -1,0 +1,328 @@
+*{
+  margin: 0px;
+  padding: 0px;
+  text-decoration: none;
+  list-style: none;
+}
+
+body{
+  font-family:'Courier New', Courier, monospace;
+}
+
+.navbar{
+  position: absolute;
+  padding: 08px;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: rgba(222, 245, 255, .5);
+  
+}
+.navbar a {
+  color: rgb(40, 30, 31);
+}
+.navbar img{
+  padding: 0;
+  width: 185px;
+  height: 40px;
+
+}
+.navbar .nav-links ul{
+display: flex;
+}
+.navbar .nav-links ul li {
+  margin: 13px 25px 2px;
+  
+  }
+.navbar .nav-links ul li i{
+    margin: 0 8px 13px;
+    
+    }
+.navbar .nav-links ul li.active a{
+      color: blue;
+      font-size: 16.5px;
+      
+      }
+.content {
+        padding: 80px;
+        
+        width: 87%;
+        height: 100%;
+      }
+
+
+.content {
+        width: 1260px;
+        height: 400px;
+        padding-left: 0%;
+        padding-right: 0%;
+        margin-right: 0%;
+        background-color: rgb(236, 199, 199);
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      }
+      
+       Form styles 
+      form {
+        font-size: 20px;
+      }
+      
+      .form-container {
+        width: 95%;
+        margin: 0;
+        padding: 20px;
+        margin-left: 10px;
+        border: 1px solid #4c4a4a;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+      }
+      
+      .form-container .form-group {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+      
+      .form-container .form-group label {
+        margin-right: 10px;
+        font-weight: bold;
+      }
+      
+      .form-container .form-group select,
+      .form-container .form-group input {
+        padding: 5px 20px;
+        margin: 0 20px 0;
+        border: 1px solid #191919;
+        border-radius: 3px;
+        width: 100px;
+      }
+      
+      .form-container .form-group .btn {
+        margin-left: 20px;
+      }
+      
+      
+      
+      /* Terminal container styles /*/
+      #terminal-container {
+        max-height: 200px;
+        overflow-y: auto;
+        font-family: monospace;
+      }
+      
+  
+      
+      /* Button styles /*/
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+      }
+     
+        /* Styles de base pour les éléments input */
+        .form-container .form-group input,
+        .form-container .form-group select {
+          padding: 10px;                      /* Ajoute de l'espace intérieur pour rendre l'élément plus confortable à utiliser */
+          border: 1px solid #ccc;             /* Bordure gris clair pour une apparence propre */
+          border-radius: 5px;                 /* Coins arrondis pour une apparence plus moderne */
+          font-size: 16px;                    /* Augmente la taille de la police pour une meilleure lisibilité */
+          box-sizing: border-box;             /* Inclut padding et bordure dans la largeur totale */
+          transition: border-color 0.3s ease; /* Ajoute une transition douce pour les changements de couleur de bordure */
+          width: 200px;                        /* Assure que les éléments occupent toute la largeur disponible */
+        }
+        .form-container .form-group select {
+          appearance: none;                   /* Supprime l'apparence par défaut du navigateur pour les menus déroulants */
+          background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="M2 7l10 10L22 7"/></svg>'); /* Ajoute une flèche personnalisée */
+          background-repeat: no-repeat;       /* Empêche la répétition de l'image de fond */
+          background-position: right 10px center; /* Positionne l'image de fond à droite */
+          padding-right: 10px;                /* Ajoute un padding à droite pour éviter le chevauchement avec l'image de fond */
+        }
+        
+        /* Styles pour les options du combo box */
+        .form-container .form-group select option {
+          padding: 10px;                      /* Ajoute du padding aux options pour les rendre plus confortables à cliquer */
+        }
+        
+        /* Styles pour les éléments en focus */
+        .form-container .form-group input:focus,
+        .form-container .form-group select:focus {
+          border-color: #007bff;              /* Change la couleur de la bordure en bleu pour indiquer le focus */
+          box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Ajoute une légère ombre bleue pour indiquer le focus */
+        }
+        
+        /* Styles pour les éléments désactivés */
+        .form-container .form-group input:disabled,
+        .form-container .form-group select:disabled {
+          background-color: #e9ecef;          /* Change la couleur de fond pour indiquer que l'élément est désactivé */
+          cursor: not-allowed;                /* Change le curseur pour indiquer que l'élément ne peut pas être utilisé */
+        }
+
+
+
+        /*  Style Tableau */
+      
+ /* Styles pour le formulaire */
+form {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Styles pour le titre du tableau */
+form h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #070707;
+}
+
+/* Styles pour le tableau */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  background-color: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  font-family: 'Courier New', Courier, monospace;
+  
+}
+.table thead th {
+  background-color: #dfd7d7;
+  color: #333;
+  font-weight: bold;
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.table tbody td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+.table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* Styles pour la pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination a {
+  color: #007bff;
+  padding: 8px 16px;
+  text-decoration: none;
+  border: 1px solid #ddd;
+  margin: 0 4px;
+  border-radius: 4px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination a.active {
+  background-color: #007bff;
+  color: white;
+  border: 1px solid #007bff;
+}
+
+.pagination a:hover:not(.active) {
+  background-color: #ddd;
+}
+
+/* Responsivité */
+@media screen and (max-width: 768px) {
+  .table thead, .table tbody, .table th, .table td, .table tr {
+    display: block;
+  }
+
+  .table thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+
+  .table tr {
+    margin-bottom: 10px;
+  }
+
+  .table td {
+    border: none;
+    position: relative;
+    padding-left: 50%;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .table td:before {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    content: attr(data-label);
+    transform: translateY(-50%);
+    font-weight: bold;
+  }
+}
+ .multiselect-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .multiselect-dropdown {
+            display: none;
+            position: absolute;
+            background-color: white;
+            border: 1px solid #ccc;
+            z-index: 1000;
+            width: 200px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .multiselect-dropdown label {
+            display: block;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .multiselect-dropdown label:hover {
+            background-color: #f1f1f1;
+        }
+
+        .multiselect-dropdown input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+        .hidden-option {
+            display: none;
+        }
+
+        .multiselect-button {
+            width: 200px;
+            height: 30px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 5px;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .multiselect-button:after {
+            content: '\25BC';
+            float: right;
+            margin-top: 7px;
+            margin-right: 5px;
+        }
+
+        .multiselect-button.active:after {
+            content: '\25B2';
+        }

@@ -17,6 +17,34 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+
+from django.contrib import admin
+from django.urls import path
+from AppScraping import views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('page_Acceuil',views.page_Acceuil),
+    path('user_connect/', views.user_connect, name='user_connect'),
+    path('', views.home, name='home_page'), 
+    path('home/', views.page_Acceuil, name='page_Acceuil'),
+    path('scraping/', views.scraping_page, name='scraping_page'),
+    path('gestion-donnee/', views.gestion_donnee_page, name='gestion_donnee_page'),
+    path('statistiques/', views.statistiques_page, name='statistiques_page'),
+    path('find_articles/',views.find_articles, name='find_articles'),
+    #path('find_article_from_Data/', views.find_article_from_Data, name='find_article_from_Data'),
+    path('articles/', views.article_list, name='article_list'),
+    path('remove-duplicates/', views.remove_duplicate_articles, name='remove_duplicate_articles'),
+    path('statistiques_page/',views.statistiques_page,name="statistiques_page"),
+    path('article-statistics/',views.article_statistics, name='article_statistics'),
+    path('arreter_scraping/', views.arreter_scraping_view, name='arreter_scraping_view'),
+    path('statistics_site_categorie/', views.statistics_site_categorie, name='statistics_site_categorie'),
+    path('Statistiques_Recherche/',views.Statistiques_Recherche, name='Statistiques_Recherche'),
+    path('Statistiques_mot_cle/', views.Statistiques_mot_cle,name='Statistiques_mot_cle'),
+    path('statistics_site/',views.statistics_site,name='statistics_site'),
+    #path('global_statistics/',views.global_statistics,name='global_statistics')
+    path('article_lifecycle/<str:article_title>/', views.article_lifecycle_plot, name='article_lifecycle_plot'),
+    
+    
 ]
+

@@ -1,0 +1,75 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'donne.css' %}">
+    <link rel="stylesheet" href="https://cdn.plot.ly/plotly-latest.min.css">
+    <title>Statistiques des articles</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    
+    
+   
+    
+    
+</head>
+<body>
+<header>
+    <nav class="navbar">
+        <div class="logo">
+            <img id="logoImage" src="{% static 'logoT.png' %}" alt="Logo">
+        </div>
+        <div class="nav-links">
+            <ul>
+                <li class="desactive"><a href="{% url 'scraping_page' %}"><h3><i class="fas fa-tasks"></i><span class="nav-item">Scraping</span></h3></a></li>
+                <li class="desactive"><a href="{% url 'gestion_donnee_page' %}"><h3><i class="fab fa-dochub"></i><span class="nav-item">Gestion Donnee</span></h3></a></li>
+                <li class="active"><a href="{% url 'statistiques_page' %}"><h3><i class="fas fa-chart-bar"></i><span class="nav-item">Statistiques</span></h3></a></li>
+                <li class="desactive"><a href="{% url 'Statistiques_Recherche' %}"><h3><i class="fas fa-user"></i><span class="nav-item">Statistiques Recherche</span></h3></a></li>
+                <li class="desactive"><a href="#" class="logout"><h3><i class="fas fa-sign-out-alt"></i><span class="nav-item">Logout</span></h3></a></li>
+            </ul>
+        </div>
+    </nav>
+</header>
+<main>
+    <div class="content">
+        <div class="container-fluid">
+            <div class="main-body">
+                <div class="container mt-5 mb-4">
+                    <form method="GET" action="{% url 'statistics_site' %}">
+                        <label for="site">Site :</label>
+                        <select id="site" name="site">
+                            <option value="all">Tous les Sites </option>
+                            <option value="lefigaro">LeFigaro</option>
+                            <option value="lemonde">LeMonde</option>
+                            <option value="libération">Libération</option>
+                            
+                        </select>
+                        
+                        <label for="start_date">Apartite du Date:</label>
+                        <input type="date" id="start_date" name="start_date" value="{{ request.GET.start_date }}">
+                        <br/>
+                        <button type="submit"> Statistiques</button>
+                    </form>
+                    
+                    <div>
+                        {% for site, plot in bar_plots.items %}
+                            <h3>Statistiques en Barres pour {{ site }}</h3>
+                            {{ plot|safe }}
+                        {% endfor %}
+                    
+                        {% for site, plot in pie_plots.items %}
+                            <h3>Statistiques Circulaires pour {{ site }}</h3>
+                            {{ plot|safe }}
+                        {% endfor %}
+                    </div>
+                    
+                    
+                    
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

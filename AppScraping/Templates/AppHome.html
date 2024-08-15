@@ -1,0 +1,102 @@
+
+{% load static %}
+
+
+<!DOCTYPE html>
+<!-- Created By CodingLab - www.codinglabweb.com -->
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+   <title>Animated Sidebar Menu | CodingLab</title> 
+    <link rel="stylesheet" href="{% static 'AppHome.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
+  </head>
+  <body>
+    <div class="wrapper">
+    
+     <header>
+    
+      <input type="checkbox" id="btn" hidden>
+      <label for="btn" class="menu-btn">
+        <i class="fas fa-bars"></i>
+        <i class="fas fa-times"></i>
+      </label>
+      <nav id="sidebar">
+            <div class="logo">
+                <img src="{% static 'logo.jpg' %}" alt="Logo">
+            </div>
+            <ul class="list-items">
+                <li>
+                    <a href="{% url 'scraping_page' %}">
+                        <h4>
+                        <i class="fas fa-tasks"></i>
+                        <span class="nav-item">Scraping</span>
+                    </h4>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <h4>
+                        <i class="fab fa-dochub"></i>
+                        <span class="nav-item">Gestion Donnee</span>
+                        </h4>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <h4>
+                        <i class="fas fa-chart-bar"></i>
+                        <span class="nav-item">Statistiques</span>
+                        </h4>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <h4>
+                        <i class="fas fa-user"></i>
+                        <span class="nav-item">Gestion Compte</span>
+                        </h4>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <h4>
+                        <i class="fas fa-cog"></i>
+                        <span class="nav-item">Setting</span>
+                        </h4>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                      <h4>
+                            <i class="fas fa-question-circle"></i>
+                            <span class="nav-item">Help</span>
+                      </h4>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="logout">
+                        <h4>
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span class="nav-item">Logout</span>
+                       </h4>
+                    </a>
+                </li>
+            </ul>
+        
+      </nav>
+    </div>
+</header>
+<body>
+    <div class="content">
+        <div class="header">
+          <nav class="title"> 
+              <h1> Bbbbbbb</h1>
+          </nav>
+          Animated Side Navigation Menu</div>
+        <p>using only HTML and CSS</p>
+      </div>
+</body>
+    
+  </body>
+</html>
