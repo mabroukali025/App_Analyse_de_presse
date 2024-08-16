@@ -77,16 +77,11 @@
                         <i class="fa fa-spinner fa-spin" style="font-size:80px"></i>
                     </div>
                 </form>
-                {% if selected_value %}
-                        <h2>Valeur du combobox : {{ selected_value }}</h2>
-                    {% else %}
-                        <h2 class="text-primary">Aucune valeur de combobox fournie</h2>
-                    {% endif %}
-
+                
                 <!-- Formulaire pour arrêter le scraping -->
                 <form action="{% url 'arreter_scraping_view' %}" method="post">
                     {% csrf_token %}
-                    <input type="hidden" name="combobox" value="{{ selected_value }}">
+                    
                     <button type="submit">Arrêter le Script</button>
                 </form>
                 
