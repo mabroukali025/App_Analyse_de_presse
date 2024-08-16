@@ -57,7 +57,7 @@ ROOT_URLCONF = 'Analyse_de_presse.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'pfe_scrap', 'Template')],
+        'DIRS': [os.path.join(BASE_DIR, 'App_Analyse_presse', 'Template')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'Analyse_de_presse.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'scrapin_pfe',
+        'NAME': 'App_Analyse_presse',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',

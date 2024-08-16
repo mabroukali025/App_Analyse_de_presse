@@ -212,7 +212,8 @@ def remove_duplicate_articles(request):
     from django.shortcuts import render
     from django.core.paginator import Paginator
     from django.db import transaction
-    from .models import Article 
+    from .models import Article
+
     try:
         with transaction.atomic():
             # Étape 1: Récupérer tous les articles et les trier par date d'exportation ASC
@@ -224,33 +225,51 @@ def remove_duplicate_articles(request):
 
             # Étape 3: Itérer sur les articles, marquer les doublons et les ajouter à la liste de suppression
             for article in articles:
-                key = (article.lien, article.ordre_actualite)
-                if key in seen_articles:
-                    # Comparer les dates d'exportation
-                    if seen_articles[key].date_exportation > article.date_exportation:
-                        # Ajouter l'article actuel à la liste de suppression
-                        to_delete.append(seen_articles[key])
-                        # Mettre à jour l'article enregistré avec le plus ancien
-                        seen_articles[key] = article
+                unique_key = (
+                    article.titre,
+                    article.lien,
+                    article.nom_auteur,
+                    article.date_publication,
+                    article.description_article,
+                    article.categorie,
+                )
+
+                if unique_key in seen_articles:
+                    # Comparer les ordres d'actualité
+                    if seen_articles[unique_key].ordre_actualite == article.ordre_actualite:
+                        # Si `ordre_actualite` est le même, supprimer l'article avec la date d'exportation la plus récente
+                        if seen_articles[unique_key].date_exportation > article.date_exportation:
+                            to_delete.append(seen_articles[unique_key])
+                            seen_articles[unique_key] = article
+                        else:
+                            to_delete.append(article)
                     else:
-                        # Ajouter l'article actuel à la liste de suppression
-                        to_delete.append(article)
+                        # Si `ordre_actualite` est différent, garder les deux articles
+                        # Garder l'article avec `ordre_actualite` le plus ancien
+                        if seen_articles[unique_key].ordre_actualite < article.ordre_actualite:
+                            continue
+                        else:
+                            seen_articles[unique_key] = article
                 else:
-                    seen_articles[key] = article
+                    seen_articles[unique_key] = article
 
             # Supprimer les articles marqués
             Article.objects.filter(id__in=[article.id for article in to_delete]).delete()
 
-            # Étape 4: Paginer les articles uniques restants pour l'affichage
-            articles_remaining = Article.objects.order_by('date_exportation')
-            paginator = Paginator(articles_remaining, 200)  # Afficher 200 articles par page
-            page_number = request.GET.get('page')
-            page_obj = paginator.get_page(page_number)
+            # Nombre d'articles supprimés
+            message = f"Suppression réussie : {len(to_delete)} articles en double supprimés."
 
-            context = {
-                'articles': page_obj,
-            }
-            return render(request, 'Donee.html', context)
+        # Étape 4: Paginer les articles uniques restants pour l'affichage
+        articles_remaining = Article.objects.order_by('date_exportation')
+        paginator = Paginator(articles_remaining, 200)  # Afficher 200 articles par page
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        context = {
+            'message': message,
+            'articles': page_obj,
+        }
+        return render(request, 'donee.html', context)
 
     except Exception as e:
         # Gérer les exceptions ici
