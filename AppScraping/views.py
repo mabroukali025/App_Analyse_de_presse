@@ -269,7 +269,7 @@ def remove_duplicate_articles(request):
             'message': message,
             'articles': page_obj,
         }
-        return render(request, 'donee.html', context)
+        return render(request, 'Statistiques_Recherche.html', context)
 
     except Exception as e:
         # Gérer les exceptions ici

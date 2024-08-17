@@ -7,7 +7,7 @@
     <title>Scraping</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'ho.css' %}">
+    <link rel="stylesheet" href="{% static 'Scraping.css' %}">
     <style>
         #spinner-container {
             display: none;
@@ -24,35 +24,10 @@
         }
     </style>
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">
-                    <img id="logoImage" src="{% static 'logoT.png' %}" alt="Logo" width="185" height="40">
-                </a>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item active">
-                            <a class="nav-link" href="{% url 'scraping_page' %}"><i class="fas fa-tasks"></i> Scraping</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'gestion_donnee_page' %}"><i class="fab fa-dochub"></i> Gestion Donnée</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'statistiques_page' %}"><i class="fas fa-chart-bar"></i> Statistiques</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'Statistiques_Recherche' %}"><i class="fas fa-user"></i> Statistiques Recherche</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link logout" href="#"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
+<header>
+        {% include 'navbar.html' %}
+</header>
+    <body>
     <main class="content container mt-5">
         <div class="row">
             <div class="col-12">

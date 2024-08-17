@@ -1,71 +1,33 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tableau de bord</title>
-    <link rel="stylesheet" href="{% static 'test.css' %}">
-    <style>
-        .navbar {
-            position: absolute;
-            padding: 8px;
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            box-sizing: border-box;
-            background-color: rgba(222, 245, 255, 0.5);
-        }
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Scraping</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="{% static 'ho.css' %}">
+        <style>
+            #spinner-container {
+                display: none;
+                text-align: center;
+                margin-top: 20px;
+            }
+            #stop-btn {
+                display: inline-block;
+                margin-top: 20px;
+            }
+            .inactive {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+        </style>
 
-        .navbar a {
-            color: rgb(40, 30, 31);
-        }
-
-        .navbar img {
-            padding: 0;
-            width: 185px;
-            height: 40px;
-        }
-
-        .navbar .nav-item {
-            margin: 13px 25px 2px;
-        }
-
-        .navbar .nav-item i {
-            margin: 0 8px 13px;
-        }
-
-        .navbar .nav-item.active a {
-            color: blue;
-            font-size: 16.5px;
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-</head>
-<body>
 <header>
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <a class="navbar-brand" href="#"><img id="logoImage" src="{% static 'logoT.png' %}" alt="Logo" class="logo"></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto nav-links">
-                <li class="nav-item desactive"><a class="nav-link" href="{% url 'scraping_page' %}"><i class="fas fa-tasks"></i> Scraping</a></li>
-                <li class="nav-item active" ><a class="nav-link" href="{% url 'gestion_donnee_page' %}"><i class="fab fa-dochub"></i> Gestion Donnee</a></li>
-                <li class="nav-item desactive"><a class="nav-link" href="{% url 'statistiques_page' %}"><i class="fas fa-chart-bar"></i> Statistiques</a></li>
-                <li class="nav-item desactive"><a class="nav-link" href="{% url 'Statistiques_Recherche' %}"><i class="fas fa-user"></i>Statistiques Recherche</a></li>
-                <li class="nav-item desactive"><a class="nav-link logout" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-            </ul>
-        </div>
-    </nav>
+        {% include 'navbar.html' %}
 </header>
-
+<body></body>
 <main class="content mt-8">
     <div class="container">
         <fieldset class="border p-8">

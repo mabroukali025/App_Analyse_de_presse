@@ -9,41 +9,8 @@ body{
   font-family:'Courier New', Courier, monospace;
 }
 
-.navbar{
-  position: absolute;
-  padding: 08px;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  box-sizing: border-box;
-  background-color: rgba(222, 245, 255, .5);
-  
-}
-.navbar a {
-  color: rgb(40, 30, 31);
-}
-.navbar img{
-  padding: 0;
-  width: 185px;
-  height: 40px;
 
-}
-.navbar .nav-links ul{
-display: flex;
-}
-.navbar .nav-links ul li {
-  margin: 13px 25px 2px;
-  
-  }
-.navbar .nav-links ul li i{
-    margin: 0 8px 13px;
-    
-    }
-.navbar .nav-links ul li.active a{
-      color: blue;
-      font-size: 16.5px;
-      
-      }
+
 .content {
         padding: 80px;
         

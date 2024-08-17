@@ -1,0 +1,74 @@
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de bord</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'navbar.css' %}">
+    
+</head>
+<header>
+    <nav class="navbar">
+        <a class="navbar-brand" href="#">
+            <img src="{% static 'logoT.png' %}" alt="Logo">
+        </a>
+        <div class="nav-links">
+            <ul id="navbar-items">
+                <li id="scraping" class="{% if request.resolver_match.url_name == 'scraping_page' %}active{% endif %}">
+                    <a href="{% url 'scraping_page' %}">
+                        <h5><i class="fas fa-tasks"></i> Scraping</h5>
+                    </a>
+                </li>
+                <li id="gestion_donnee" class="{% if request.resolver_match.url_name == 'gestion_donnee_page' %}active{% endif %}">
+                    <a href="{% url 'gestion_donnee_page' %}">
+                        <h5><i class="fab fa-dochub"></i> Gestion Donnée</h5>
+                    </a>
+                </li>
+                <li id="statistiques" class="{% if request.resolver_match.url_name == 'statistiques_page' %}active{% endif %}">
+                    <a href="{% url 'statistiques_page' %}">
+                        <h5><i class="fas fa-chart-bar"></i> Statistiques</h5>
+                    </a>
+                </li>
+                <li id="statistiques_recherche" class="{% if request.resolver_match.url_name == 'Statistiques_Recherche' %}active{% endif %}">
+                    <a href="{% url 'Statistiques_Recherche' %}">
+                        <h5><i class="fas fa-user"></i> Statistiques Recherche</h5>
+                    </a>
+                </li>
+                <li id="deconnexion">
+                    <a href="#">
+                        <h5><i class="fas fa-sign-out-alt"></i> Déconnexion</h5>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const navItems = document.querySelectorAll('#navbar-items li');
+
+    // Récupère l'élément actif du stockage local
+    const activeNav = localStorage.getItem('activeNav');
+
+    if (activeNav) {
+        document.getElementById(activeNav).classList.add('active');
+    }
+
+    navItems.forEach(item => {
+        item.addEventListener('click', function() {
+            navItems.forEach(nav => nav.classList.remove('active'));
+            this.classList.add('active');
+
+            // Enregistre l'ID de l'élément actif dans le stockage local
+            localStorage.setItem('activeNav', this.id);
+        });
+    });
+});
+
+</script>
+
+
+

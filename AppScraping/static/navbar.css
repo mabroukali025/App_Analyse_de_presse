@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
+* {
+    margin: 0px;
+    padding: 0px;
+    text-decoration: none;
+    list-style: none;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: italic;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between; /* Distribue l'espace entre le logo et les éléments de navigation */
+    align-items: center;            /* Aligne les éléments verticalement au centre */
+    width: 100%;
+    box-sizing: border-box;
+    background-color: rgba(222, 245, 255, .5);
+    padding: 8px;                   /* Ajoute du padding autour de la navbar */
+}
+
+.navbar a {
+    color: rgb(40, 30, 31);
+}
+
+.navbar img {
+    width: 130px;
+    height: 40px;
+}
+
+.navbar .nav-links {
+    display: flex;                  /* Active le modèle flexbox pour les éléments de navigation */
+    align-items: center;            /* Aligne les éléments verticalement au centre */
+    margin-left: auto;              /* Pousse les éléments de navigation vers la gauche */
+}
+
+.navbar .nav-links ul {
+    display: flex;
+    gap: 20px;                       /* Ajoute un espace entre chaque élément */
+    list-style-type: none;           /* Supprime les puces des éléments de la liste */
+    padding: 0;                      /* Supprime le padding par défaut */
+    margin: 0;                       /* Supprime la marge par défaut */
+}
+
+.navbar .nav-links ul li {
+    margin: 39px 0px 2px;
+}
+
+.navbar .nav-links ul li.active a {
+    color: var(--primary-color);    /* Utilise la couleur principale définie */
+    font-size: 16.5px;              /* Ajuste la taille de la police pour l'élément actif */
+}
+.navbar .nav-links ul li.active a {
+    color: var(--primary-color);  /* Utilise la couleur primaire définie, ou utilisez 'text-primary' */
+    font-size: 16.5px;
+}
+:root {
+    --primary-color: #3d0ef5; /* Exemple de couleur primaire */
+}
+
+.navbar .nav-links ul li.active a {
+    color: var(--primary-color) !important;  /* Ajoute !important pour forcer l'application de la couleur */
+    font-size: 16.5px;
+}
+
