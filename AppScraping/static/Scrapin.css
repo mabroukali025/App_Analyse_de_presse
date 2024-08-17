@@ -1,15 +1,30 @@
+/*@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+/*
 *{
-  margin: 0px;
-  padding: 0px;
-  text-decoration: none;
-  list-style: none;
-}
-
+    margin: 0px;
+    padding: 0px;
+    text-decoration: none;
+    list-style: none;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: italic;
+  }
 body{
   font-family:'Courier New', Courier, monospace;
+  
+}
+.content {
+  width: 1260px;
+  height: 400px;
+  padding-left: 0%;
+  padding-right: 0%;
+  margin-right: 0%;
+  background-color: rgb(236, 199, 199);
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
-
+/*
 
 .content {
         padding: 80px;
@@ -71,7 +86,7 @@ body{
       
       
       
-      /* Terminal container styles /*/
+    
       #terminal-container {
         max-height: 200px;
         overflow-y: auto;
@@ -79,8 +94,7 @@ body{
       }
       
   
-      
-      /* Button styles /*/
+    
       button {
         padding: 10px 20px;
         border: none;
@@ -90,49 +104,49 @@ body{
         cursor: pointer;
       }
      
-        /* Styles de base pour les éléments input */
+       
         .form-container .form-group input,
         .form-container .form-group select {
-          padding: 10px;                      /* Ajoute de l'espace intérieur pour rendre l'élément plus confortable à utiliser */
-          border: 1px solid #ccc;             /* Bordure gris clair pour une apparence propre */
-          border-radius: 5px;                 /* Coins arrondis pour une apparence plus moderne */
-          font-size: 16px;                    /* Augmente la taille de la police pour une meilleure lisibilité */
-          box-sizing: border-box;             /* Inclut padding et bordure dans la largeur totale */
-          transition: border-color 0.3s ease; /* Ajoute une transition douce pour les changements de couleur de bordure */
-          width: 200px;                        /* Assure que les éléments occupent toute la largeur disponible */
+          padding: 10px;                      
+          border: 1px solid #ccc;             
+          border-radius: 5px;                 
+          font-size: 16px;                   
+          box-sizing: border-box;             
+          transition: border-color 0.3s ease; 
+          width: 200px;                        
         }
         .form-container .form-group select {
-          appearance: none;                   /* Supprime l'apparence par défaut du navigateur pour les menus déroulants */
-          background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="M2 7l10 10L22 7"/></svg>'); /* Ajoute une flèche personnalisée */
-          background-repeat: no-repeat;       /* Empêche la répétition de l'image de fond */
-          background-position: right 10px center; /* Positionne l'image de fond à droite */
-          padding-right: 10px;                /* Ajoute un padding à droite pour éviter le chevauchement avec l'image de fond */
+          appearance: none;                   
+          background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="M2 7l10 10L22 7"/></svg>'); /* Ajoute une flèche personnalisée 
+          background-repeat: no-repeat;       
+          background-position: right 10px center;
+          padding-right: 10px;                
         }
         
-        /* Styles pour les options du combo box */
+        /* Styles pour les options du combo box 
         .form-container .form-group select option {
-          padding: 10px;                      /* Ajoute du padding aux options pour les rendre plus confortables à cliquer */
+          padding: 10px;                     
         }
         
-        /* Styles pour les éléments en focus */
+     
         .form-container .form-group input:focus,
         .form-container .form-group select:focus {
-          border-color: #007bff;              /* Change la couleur de la bordure en bleu pour indiquer le focus */
-          box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Ajoute une légère ombre bleue pour indiquer le focus */
+          border-color: #007bff;              
+          box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
         }
         
-        /* Styles pour les éléments désactivés */
+      
         .form-container .form-group input:disabled,
         .form-container .form-group select:disabled {
-          background-color: #e9ecef;          /* Change la couleur de fond pour indiquer que l'élément est désactivé */
-          cursor: not-allowed;                /* Change le curseur pour indiquer que l'élément ne peut pas être utilisé */
+          background-color: #e9ecef;         
+          cursor: not-allowed;                
         }
 
 
 
-        /*  Style Tableau */
+     
       
- /* Styles pour le formulaire */
+
 form {
   padding: 20px;
   background-color: #f9f9f9;
@@ -140,14 +154,13 @@ form {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Styles pour le titre du tableau */
 form h1 {
   font-size: 24px;
   margin-bottom: 20px;
   color: #070707;
 }
 
-/* Styles pour le tableau */
+
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -176,7 +189,7 @@ form h1 {
   background-color: #f9f9f9;
 }
 
-/* Styles pour la pagination */
+
 .pagination {
   display: flex;
   justify-content: center;
@@ -203,7 +216,7 @@ form h1 {
   background-color: #ddd;
 }
 
-/* Responsivité */
+
 @media screen and (max-width: 768px) {
   .table thead, .table tbody, .table th, .table td, .table tr {
     display: block;
