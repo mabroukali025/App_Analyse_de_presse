@@ -1,64 +1,32 @@
-
-from django.shortcuts import render
-from django.http import HttpResponse
-# Create your views here.
-from django.template import loader
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login as auth_login
-from django.contrib import messages
-
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login as auth_login
-from django.contrib import messages
-from django.template import loader
-from django.http import HttpResponse
-from django.http import JsonResponse
-from django.shortcuts import render
-from django.db.models import F, Min, OuterRef, Subquery
-from AppScraping.models import Article  # Assurez-vous que le modèle Article est bien importé
-from django.db import transaction
-from django.db.models import Q
-from django.shortcuts import render
-from django.http import HttpResponseRedirect
-import pytz
-#from .Form1 import FormScripte
-from django.views.decorators.csrf import csrf_exempt
+# Imports standard Python
 from datetime import datetime
-import matplotlib.pyplot as plt
-import seaborn as sns
-from io import BytesIO
-import base64
-from django.db import models
-import plotly.express as px
-import plotly.io as pio
-import pandas as pd
 import locale
-from django.http import JsonResponse
-from django.shortcuts import render
-from django.core.paginator import Paginator
-
-from django.shortcuts import render
-from django.core.paginator import Paginator
-from django.db import transaction
-from .models import Article
-from datetime import datetime
-import logging
-from django.shortcuts import render
-from .models import Article
-from django.db.models import Q
-from datetime import datetime
-from django.shortcuts import render
-from django.db import models
-import pandas as pd
-import plotly.express as px
-import plotly.io as pio
-from .models import Article
 import re
 
-from django.contrib.auth import authenticate, login as auth_login
+# Imports de bibliothèques tierces
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.express as px
+import plotly.io as pio
+import pandas as pd
+from io import BytesIO
+import base64
+
+# Imports Django
 from django.shortcuts import render, redirect
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
+from django.template import loader
+from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
+from django.core.paginator import Paginator
+from django.db import transaction
+from django.db.models import F, Min, OuterRef, Subquery, Q
 from django.contrib.auth.models import User
+
+# Imports de votre application
+#from .models import Article
+
 
 
 
@@ -208,12 +176,11 @@ def article_list(request):
 
  # Assurez-vous que le modèle Article est correctement importé
 
-def remove_duplicate_articles(request):
-    from django.shortcuts import render
-    from django.core.paginator import Paginator
-    from django.db import transaction
-    from .models import Article
+from django.shortcuts import render
+from django.db import transaction
+from .models import Article
 
+def remove_duplicate_articles(request):
     try:
         with transaction.atomic():
             # Étape 1: Récupérer tous les articles et les trier par date d'exportation ASC
@@ -221,53 +188,43 @@ def remove_duplicate_articles(request):
 
             # Étape 2: Initialiser les variables pour la logique de suppression
             seen_articles = {}
-            to_delete = []
+            to_delete = set()  # Utiliser un set pour éviter les doublons dans la liste de suppression
 
             # Étape 3: Itérer sur les articles, marquer les doublons et les ajouter à la liste de suppression
             for article in articles:
                 unique_key = (
                     article.titre,
                     article.lien,
-                    article.nom_auteur,
-                    article.date_publication,
                     article.description_article,
-                    article.categorie,
+                    article.ordre_actualite
                 )
 
                 if unique_key in seen_articles:
-                    # Comparer les ordres d'actualité
-                    if seen_articles[unique_key].ordre_actualite == article.ordre_actualite:
-                        # Si `ordre_actualite` est le même, supprimer l'article avec la date d'exportation la plus récente
-                        if seen_articles[unique_key].date_exportation > article.date_exportation:
-                            to_delete.append(seen_articles[unique_key])
-                            seen_articles[unique_key] = article
-                        else:
-                            to_delete.append(article)
+                    # Comparer les dates d'exportation pour garder l'article avec la date la plus ancienne
+                    if seen_articles[unique_key].date_exportation > article.date_exportation:
+                        # L'article actuel a une date d'exportation plus ancienne, supprimer l'ancien
+                        to_delete.add(seen_articles[unique_key])
+                        seen_articles[unique_key] = article
                     else:
-                        # Si `ordre_actualite` est différent, garder les deux articles
-                        # Garder l'article avec `ordre_actualite` le plus ancien
-                        if seen_articles[unique_key].ordre_actualite < article.ordre_actualite:
-                            continue
-                        else:
-                            seen_articles[unique_key] = article
+                        # L'article actuel a une date d'exportation plus récente, supprimer l'actuel
+                        to_delete.add(article)
                 else:
+                    # Conserver le premier article unique avec ce `unique_key`
                     seen_articles[unique_key] = article
 
             # Supprimer les articles marqués
-            Article.objects.filter(id__in=[article.id for article in to_delete]).delete()
+            if to_delete:
+                Article.objects.filter(id__in=[article.id for article in to_delete]).delete()
 
             # Nombre d'articles supprimés
             message = f"Suppression réussie : {len(to_delete)} articles en double supprimés."
 
-        # Étape 4: Paginer les articles uniques restants pour l'affichage
+        # Afficher tous les articles restants après la suppression
         articles_remaining = Article.objects.order_by('date_exportation')
-        paginator = Paginator(articles_remaining, 200)  # Afficher 200 articles par page
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
 
         context = {
             'message': message,
-            'articles': page_obj,
+            'articles': articles_remaining,
         }
         return render(request, 'Statistiques_Recherche.html', context)
 
@@ -506,7 +463,8 @@ def highlight_keywords(text, keyword):
 
     # Utiliser une expression régulière pour trouver les occurrences du mot clé en ignorant la casse
     def highlight_match(match):
-        return f'<mark>{match.group(0)}</mark>'
+        #return f'<mark>{match.group(0)}</mark>'
+        return f'<mark style="background-color: gree; color: black; font-size: 18px;">{match.group(0)}</mark>'
 
     # Remplacer toutes les occurrences du mot-clé par la version surlignée
     highlighted_text = re.sub(
@@ -865,3 +823,64 @@ def article_lifecycle_plot(request, article_title):
     scatter_plot_html = pio.to_html(scatter_fig, full_html=False)
     
     return render(request, 'article_lifecycle_plot.html', {'scatter_plot_html': scatter_plot_html})
+import matplotlib.pyplot as plt
+import io
+import base64
+from django.shortcuts import render
+from .models import Article
+
+def cycle_vie_article(request):
+    # Étape 1 : Récupérer tous les articles
+    articles = Article.objects.all()
+
+    # Étape 2 : Groupement des articles par lien, titre, et date_publication
+    grouped_articles = {}
+    for article in articles:
+        key = (article.lien, article.titre, article.date_publication)
+        if key not in grouped_articles:
+            grouped_articles[key] = []
+        grouped_articles[key].append(article)
+
+    # Étape 3 : Générer les données pour le graphe
+    for key, articles in grouped_articles.items():
+        dates = []
+        ordres = []
+        
+        # Ajouter le premier point (date_publication)
+        article = articles[0]
+        dates.append(article.date_publication)
+        ordres.append(article.ordre_actualite)
+        
+        # Ajouter les autres points (date_exportation)
+        for article in articles:
+            dates.append(article.date_exportation)
+            ordres.append(article.ordre_actualite)
+        
+        # Tracer le graphe
+        plt.figure(figsize=(10, 6))
+        plt.plot(dates, ordres, marker='o', linestyle='-', color='b')
+        plt.title(f"Cycle de vie de l'article: {key[1]}")
+        plt.xlabel('Date')
+        plt.ylabel("Ordre d'Actualité")
+        plt.grid(True)
+        
+        # Sauvegarder le graphe dans un buffer
+        buffer = io.BytesIO()
+        plt.savefig(buffer, format='png')
+        buffer.seek(0)
+        image_png = buffer.getvalue()
+        buffer.close()
+
+        # Encoder l'image en base64 pour l'afficher dans un template
+        graphic = base64.b64encode(image_png).decode('utf-8')
+
+        # Ajouter le graphique au contexte pour l'affichage
+        context = {
+            'graphic': graphic,
+            'titre': key[1],
+            'lien': key[0],
+            'date_publication': key[2],
+        }
+
+        # Rendre le template avec le graphique
+        return render(request, 'cycle_vie_article.html', context)

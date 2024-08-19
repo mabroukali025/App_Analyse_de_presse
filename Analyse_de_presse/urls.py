@@ -43,7 +43,7 @@ urlpatterns = [
     path('Statistiques_mot_cle/', views.Statistiques_mot_cle,name='Statistiques_mot_cle'),
     path('statistics_site/',views.statistics_site,name='statistics_site'),
     #path('global_statistics/',views.global_statistics,name='global_statistics')
-    path('article_lifecycle/<str:article_title>/', views.article_lifecycle_plot, name='article_lifecycle_plot'),
+    path('cycle_vie_article/', views.cycle_vie_article, name='cycle_vie_article'),
     
     
 ]
