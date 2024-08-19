@@ -1,0 +1,49 @@
+/* Ensure the table takes up the full width of the page */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+/* Style the table */
+.table {
+    width: 100%;
+    font-size: 12px; /* Smaller font size */
+    background-color: aquamarine;
+}
+
+/* Ensure all columns have the same height and text is vertically centered */
+.table th, .table td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+/* Adjust column widths */
+.table th {
+    white-space: nowrap;
+}
+
+/* Ensure that long URLs and text wrap within the cells */
+.table td, .table td a {
+    word-wrap: break-word;
+    white-space: normal;
+    display: inline-block;
+    max-width: 100%;
+    text-decoration: none;
+}
+
+/* Add specific max-width to force wrapping after 25 characters */
+.text-wrap {
+    max-width: 250px;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+/* Optional: Add some padding for better readability */
+.table th, .table td {
+    padding: 8px;
+}
+
+/* Optional: Set a minimum width for the entire table */
+.table {
+    min-width: 1200px;
+}

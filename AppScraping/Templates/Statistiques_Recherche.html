@@ -5,227 +5,266 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Scraping</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Tableau d'Articles</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+        
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" />
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <link rel="stylesheet" href="{% static 'Static_Recherche.css' %}">
-        <style>
-            #spinner-container {
-                display: none;
-                text-align: center;
-                margin-top: 20px;
-            }
-            #stop-btn {
-                display: inline-block;
-                margin-top: 20px;
-            }
-            .inactive {
-                opacity: 0.5;
-                cursor: not-allowed;
-            }
-        </style>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+         <style>
+            /* Custom styling for the second table */
+.custom-table-striped {
+    /* Specific styles for the custom table */
+    font-size: 12px;
+}
 
+.custom-table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f2f2f2; /* Custom striping color for odd rows */
+}
+
+.custom-table-striped tbody tr:nth-of-type(even) {
+    background-color: #e9e9e9; /* Custom striping color for even rows */
+}
+
+.custom-table-striped th, .custom-table-striped td {
+    vertical-align: middle;
+    text-align: center;
+    padding: 8px;
+}
+/*
+.custom-table-striped td, .custom-table-striped td a {
+    word-wrap: break-word;
+    white-space: normal;
+    display: inline-block;
+    max-width: 100%;
+    text-decoration: none;
+}
+*/
+.custom-table-striped .text-wrap {
+    max-width: 100px;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+.custom-table-striped {
+    min-width: 1200px;
+}
+
+         </style>
 <header>
         {% include 'navbar.html' %}
 </header>
 <body>
-<main class="content mt-13">
-    <div class="container">
-        <br/>
-        <form method="get" class="form-container" action="{% url 'remove_duplicate_articles' %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-primary">Actualise les Donnees </button>
-
-        </form>
-        <br/>
-        <fieldset class="border p-8">
-         
-            <legend class="w-auto px-3"><h3>Recherche :</h3></legend>
-            <form method="get" action="{% url 'Statistiques_mot_cle' %}">
-                <div class="form-row col-md-10">
-                    <div class="form-group col-md-3">
-                        <label for="combobox_select_site">Select Site :</label>
-                        <select id="combobox_select_site" name="combobox_select_site" class="form-control" value="{{ request.GET.combobox_select_site }}">
-                            <option value=" ">Tous Sites</option>
-                            <option value="www.Lemonde.fr">www.Lemonde.fr</option>
-                            <option value="www.Liberation.fr">www.Liberation.fr</option>
-                            <option value="www.Lefigaro.fr">www.Lefigaro.fr</option>
-                        </select>
+    <main class="content mt-20">
+        <div class="container">
+            <br/>
+            <form method="get" class="form-container" action="{% url 'remove_duplicate_articles' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-info">Actualise les Donnees </button>
+    
+            </form>
+            <br/>
+            <fieldset class="row g-9 border p-20 ">
+                <legend class="w-auto px-3"><h3>Recherche :</h3></legend>
+                <form method="get" action="{% url 'Statistiques_mot_cle' %}">
+                    <div class="form-row col-md-12">
+                        <div class="form-group col-md-2">
+                            <label for="combobox_select_site">Select Site :</label>
+                            <div class="input-group input-group-sm mb-3">
+                                <select id="combobox_select_site" name="combobox_select_site" class="form-control" value="{{ request.GET.combobox_select_site }}">
+                                    <option value=" ">Tous Sites</option>
+                                    <option value="www.Lemonde.fr">www.Lemonde.fr</option>
+                                    <option value="www.Liberation.fr">www.Liberation.fr</option>
+                                    <option value="www.Lefigaro.fr">www.Lefigaro.fr</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="search_order">Ordre d'Actualité :</label>
+                            <div class="input-group input-group-sm mb-3">
+                                <select id="search_order" name="search_order" class="form-control" value="{{ request.GET.search_order }}">
+                                    <option value=""> </option>
+                                    <option value="1">Order 1</option>
+                                    <option value="2">Order 2</option>
+                                    <option value="3">Order 3</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="search_categories">Catégorie :</label>
+                            <div class="input-group input-group-sm mb-3">
+                                <input list="search_categorie" name="search_categorie" class="form-control">
+                                <datalist id="search_categorie" name="search_categorie" value="{{ request.GET.search_categorie }}">
+                                    <option value="">Aucun categorie</option>
+                                    {% for cat in categories %}
+                                    <option>{{ cat }}</option>
+                                    {% endfor %}
+                                </datalist>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="search_mot_cle">Mot Cle :</label>
+                            <div class="input-group input-group-sm mb-3">
+                                <input type="text" id="search_mot_cle" name="search_mot_cle" class="form-control" value="{{ request.GET.search_mot_cle }}">
+                            </div>
+                        </div>
+                        <div class="form-group col-md-2" id="simple_date_search">
+                            <label for="search_date">Date :</label>
+                            <div class="input-group input-group-sm mb-3">
+                                <input type="datetime-local" id="search_date" name="search_date" class="form-control" value="{{ request.GET.search_date }}">
+                            </div>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="search_between_dates">Entre deux dates</label>
+                            <div class="input-group input-group-sm mb-3">
+                                <input type="checkbox" id="search_between_dates" name="search_between_dates" class="form-control" {{ request.GET.search_between_dates|yesno:"checked," }}>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group col-md-3">
-                        <label for="search_order">Ordre d'Actualité :</label>
-                        <select id="search_order" name="search_order" class="form-control" value="{{ request.GET.search_order }}">
-                            <option value=""> </option>
-                            <option value="1">Order 1</option>
-                            <option value="2">Order 2</option>
-                            <option value="3">Order 3</option>
-                        </select>
-                    </div>
-                    <div class="form-group col-md-3" id="simple_date_search">
-                        <label for="search_date">Date :</label>
-                        <input type="datetime-local" id="search_date" name="search_date" class="form-control" value="{{ request.GET.search_date }}">
-                    </div>
-                    <div class="form-group col-md-6" id="date_range_search" style="display: none;">
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label for="search_date_debut">Date Début :</label>
+                    <div class="form-row col-md-12" id="date_range_search" style="display: none;">
+                        <div class="form-group col-md-3">
+                            <label for="search_date_debut">Date Début :</label>
+                            <div class="input-group input-group-sm mb-3">
                                 <input type="datetime-local" id="search_date_debut" name="search_date_debut" class="form-control" value="{{ request.GET.search_date_debut }}">
                             </div>
-                            <div class="form-group col-md-6">
-                                <label for="search_date_fin">Date Fin :</label>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="search_date_fin">Date Fin :</label>
+                            <div class="input-group input-group-sm mb-3">
                                 <input type="datetime-local" id="search_date_fin" name="search_date_fin" class="form-control" value="{{ request.GET.search_date_fin }}">
                             </div>
                         </div>
                     </div>
-                    
-                    
-                    <div class="form-group col-md-3">
-                        <label for="search_mot_cle">Mot Cle :</label>
-                        <input type="text" id="search_mot_cle" name="search_mot_cle" class="form-control" value="{{ request.GET.search_mot_cle}}">
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label for="search_categories">Catégorie :</label>
-                        <input list="search_categorie" name="search_categorie" class="form-control">
-                        <datalist id="search_categorie" name="search_categorie" value="{{ request.GET.search_categorie}}">
-                            <option value="">Aucun categorie</option>
-                            {% for cat in categories %}
-                            <option>{{ cat }}</option>
-                            {% endfor %}
-                        </datalist>
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label for="search_between_dates">Entre deux dates</label>
-                        <input type="checkbox" id="search_between_dates" name="search_between_dates" class="form-control" {{ request.GET.search_between_dates|yesno:"checked," }}>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary">Rechercher</button>
-            </form>
-            
-        </fieldset>
-        <br/>
-        <div class="mt-8">
-         
-            <h3>Tableau Statistiques Recherche :</h3>
-            <table class="table table-striped">
-            
-                    <thead>
-                        <tr>
-                            <th>Mot-clé</th>
-                            <th>Nombre total d'articles</th>
-                            <th>Nombre dans titre de page d'accueil</th>
-                            <th>Nombre dans titre</th>
-                            <th>Nombre dans auteur</th>
-                            <th>Nombre dans description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% if index_mot == -1 %}
-                            <!-- Affichage lorsque le mot-clé ne contient pas le séparateur | -->
-                            <tr>
-                                <td>{{ search_mot_cle }}</td>
-                                <td>{{ total_articles_count}}</td>
-                                <td>{{ mot_cle_count_titre_page_accueil }}</td>
-                                <td>{{ mot_cle_count_titre }}</td>
-                                <td>{{ mot_cle_count_auteur }}</td>
-                                <td>{{ mot_cle_count_description }}</td>
-                            </tr>
-                        {% else %}
-                            <!-- Affichage lorsque le mot-clé contient le séparateur | -->
-                            <tr>
-                                <td>{{ partie1_mot }}</td>
-                                <td>{{ total_articles_count_1 }}</td>
-                                <td>{{ mot_cle_1_count_titre_page_accueil }}</td>
-                                <td>{{ mot_cle_1_count_titre }}</td>
-                                <td>{{ mot_cle_1_count_auteur }}</td>
-                                <td>{{ mot_cle_1_count_description }}</td>
-                            </tr>
-                            <tr>
-                                <td>{{ partie2_mot }}</td>
-                                <td>{{ total_articles_count_2 }}</td>
-                                <td>{{ mot_cle_2_count_titre_page_accueil }}</td>
-                                <td>{{ mot_cle_2_count_titre }}</td>
-                                <td>{{ mot_cle_2_count_auteur }}</td>
-                                <td>{{ mot_cle_2_count_description }}</td>
-                            </tr>
-                        {% endif %}
-                    </tbody>
-                
-            </table>
-            
-        </div>
-
-
-
-        <!-- Table to Display Search Results -->
-
-        {% if articles_Statistiques_mot_cle %}
-        <div class="mt-8">
+                    <button type="submit" class="btn btn-primary">Rechercher</button>
+                </form>  
+            </fieldset>
             <br/>
-            
-            <h3>Tableau d'Articles  :</h3>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Titre page d'accueil</th>
-                        <th>Titre</th>
-                        <th>Lien</th>
-                        <th>Date Publication</th>
-                        <th>Nom Auteur</th>
-                        <th>Description Article</th>
-                        <th>Statut Image</th>
-                        <th>Actualité</th>
-                        <th>Date Exportation</th>
-                        <th>Catégorie</th>
-                        <th>Ordre d'Actualité</th>
-                        <th>Cycle de Vie</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for article in articles_Statistiques_mot_cle %}
-                    <tr>
-                        <td>{{ article.id }}</td>
-                        <td>{{ article.titre_page_accueil|safe }}</td>
-                        <td>{{ article.titre|safe }}</td>
-                        <td><a href="{{ article.lien }}">{{ article.lien }}</a></td>
-                        <td>{{ article.date_publication }}</td>
-                        <td>{{ article.nom_auteur|safe }}</td>
-                        <td>{{ article.description_article|safe }}</td>
-                        <td>{{ article.statut_image }}</td>
-                        <td>{{ article.actualite }}</td>
-                        <td>{{ article.date_exportation }}</td>
-                        <td>{{ article.categorie }}</td>
-                        <td>{{ article.ordre_actualite }}</td>
-                        
+<div class="mt-8">
+    <h3>Tableau Statistiques Recherche :</h3>
+    <table class="table custom-table-statistics"> <!-- No changes here, keeping default Bootstrap style -->
+        <thead>
+            <tr>
+                <th>Mot-clé</th>
+                <th>Nbr Total Articles</th>
+                <th>Nbr Titre de page d'accueil</th>
+                <th>Nbr Titre</th>
+                <th>Nbr Auteur</th>
+                <th>Nbr Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if index_mot == -1 %}
+                <tr>
+                    <td>{{ search_mot_cle }}</td>
+                    <td>{{ total_articles_count}}</td>
+                    <td>{{ mot_cle_count_titre_page_accueil }}</td>
+                    <td>{{ mot_cle_count_titre }}</td>
+                    <td>{{ mot_cle_count_auteur }}</td>
+                    <td>{{ mot_cle_count_description }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td>{{ partie1_mot }}</td>
+                    <td>{{ total_articles_count_1 }}</td>
+                    <td>{{ mot_cle_1_count_titre_page_accueil }}</td>
+                    <td>{{ mot_cle_1_count_titre }}</td>
+                    <td>{{ mot_cle_1_count_auteur }}</td>
+                    <td>{{ mot_cle_1_count_description }}</td>
+                </tr>
+                <tr>
+                    <td>{{ partie2_mot }}</td>
+                    <td>{{ total_articles_count_2 }}</td>
+                    <td>{{ mot_cle_2_count_titre_page_accueil }}</td>
+                    <td>{{ mot_cle_2_count_titre }}</td>
+                    <td>{{ mot_cle_2_count_auteur }}</td>
+                    <td>{{ mot_cle_2_count_description }}</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
 
-
-
-
-
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="12">Aucun article trouvé.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% else %}
-        <br/>
-        <br/>
-        <p colspan="12">Aucun article trouvé.</p>
-        {% endif %}
+<!-- Table to Display Search Results -->
+{% if articles_Statistiques_mot_cle %}
+<div class="container mt-5">
+    <h3>Tableau d'Articles :</h3>
+    <div class="table-container mt-4">
+        <table class="table custom-table-striped"> <!-- Apply a unique class here -->
+            <thead class="thead-primary">
+                <tr>
+                    <th class="font-weight-bold" style="width: 3%;">Id</th>
+                    <th class="font-weight-bold" style="width: 15%;">Titre Page Accueil</th>
+                    <th class="font-weight-bold" style="width: 15%;">Titre</th>
+                    <th class="font-weight-bold" style="width: 20%;">Lien</th>
+                    <th class="font-weight-bold" style="width: 15%;">Date Publication</th>
+                    <th class="font-weight-bold" style="width: 10%;">Auteur</th>
+                    <th class="font-weight-bold" style="width: 26%;">Description</th>
+                    <th class="font-weight-bold" style="width: 3%;">Statut Image</th>
+                    <th class="font-weight-bold" style="width: 3%;">Actualité</th>
+                    <th class="font-weight-bold" style="width: 8%;">Date Exportation</th>
+                    <th class="font-weight-bold" style="width: 8%;">Catégorie</th>
+                    <th class="font-weight-bold" style="width: 7%;">Ordre d'Actualité</th>
+                    <th class="font-weight-bold" style="width: 10%;">Cycle de Vie</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for article in articles_Statistiques_mot_cle %}
+                <tr>
+                    <td>{{ article.id }}</td>
+                    <td class="text-wrap">{{ article.titre_page_accueil|safe }}</td>
+                    <td class="text-wrap">{{ article.titre|safe }}</td>
+                    <td class="text-wrap">
+                        <a href="{{ article.lien }}">{{ article.lien }}</a>
+                    </td>
+                    <td class="text-wrap">{{ article.date_publication }}</td>
+                    <td class="text-wrap">{{ article.nom_auteur|safe }}</td>
+                    <td class="text-wrap">{{ article.description_article|safe }}</td>
+                    <td>{{ article.statut_image }}</td>
+                    <td>{{ article.actualite }}</td>
+                    <td>{{ article.date_exportation }}</td>
+                    <td>{{ article.categorie }}</td>
+                    <td>{{ article.ordre_actualite }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="12">Aucun article trouvé.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-</main>
+</div>
+{% endif %}
 
-<script>
-    $(document).ready(function() {
-        $('#combobox_select_site').select2();
-        $('#search_order').select2();
-
-        // Gérer l'affichage des champs de date en fonction de la case à cocher
-        $('#search_between_dates').change(function() {
-            if ($(this).is(':checked')) {
+            
+        </div>
+    </main>
+    
+    <script>
+        $(document).ready(function() {
+            $('#combobox_select_site').select2();
+            $('#search_order').select2();
+    
+            // Gérer l'affichage des champs de date en fonction de la case à cocher
+            $('#search_between_dates').change(function() {
+                if ($(this).is(':checked')) {
+                    $('#simple_date_search').hide();
+                    $('#date_range_search').show();
+                } else {
+                    $('#simple_date_search').show();
+                    $('#date_range_search').hide();
+                }
+            });
+    
+            // Assurer l'état initial de l'affichage des champs de date
+            if ($('#search_between_dates').is(':checked')) {
                 $('#simple_date_search').hide();
                 $('#date_range_search').show();
             } else {
@@ -233,16 +272,7 @@
                 $('#date_range_search').hide();
             }
         });
-
-        // Assurer l'état initial de l'affichage des champs de date
-        if ($('#search_between_dates').is(':checked')) {
-            $('#simple_date_search').hide();
-            $('#date_range_search').show();
-        } else {
-            $('#simple_date_search').show();
-            $('#date_range_search').hide();
-        }
-    });
-</script>
-</body>
-</html>
+    </script>
+    </body>
+    </html>
+    
