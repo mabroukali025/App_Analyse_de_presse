@@ -1,71 +1,131 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Scraping</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" />
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-        <link rel="stylesheet" href="{% static 'donne.css' %}">
-        <style>
-            #spinner-container {
-                display: none;
-                text-align: center;
-                margin-top: 20px;
-            }
-            #stop-btn {
-                display: inline-block;
-                margin-top: 20px;
-            }
-            .inactive {
-                opacity: 0.5;
-                cursor: not-allowed;
-            }
-        </style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistiques du Site</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'donne.css' %}">
+    <style>
+        .main-body {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
 
-<header>
-        {% include 'navbar.html' %}
-</header>
+        .fieldset-custom {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .form-row .form-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .form-row .form-group label {
+            margin-right: 10px; /* Space between label and input */
+            white-space: nowrap; /* Prevents label from wrapping to the next line */
+        }
+
+        .form-row .form-group .form-control {
+            flex: 1; /* Makes input fields take remaining space */
+        }
+
+        .btn-custom {
+            margin-top: 20px; /* Adjust the top margin to create space below inputs */
+            width: 100%; /* Full width button */
+        }
+
+        .graph-container {
+            margin-top: 20px;
+        }
+
+        #spinner-container {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #stop-btn {
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        .inactive {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
 <body>
-<main>
-    <div class="content">
+    <header>
+        {% include 'navbar.html' %}
+    </header>
+    <main>
         <div class="container-fluid">
             <div class="main-body">
-                <div class="container mt-5 mb-4">
-                    <form method="GET" action="{% url 'statistics_site' %}">
-                        <label for="site">Site :</label>
-                        <select id="site" name="site">
-                            <option value="all">Tous les Sites </option>
-                            <option value="lefigaro">LeFigaro</option>
-                            <option value="lemonde">LeMonde</option>
-                            <option value="libération">Libération</option>
-                            
-                        </select>
-                        
-                        <label for="start_date">Apartite du Date:</label>
-                        <input type="date" id="start_date" name="start_date" value="{{ request.GET.start_date }}">
-                        <br/>
-                        <button type="submit"> Statistiques</button>
-                    </form>
-                    
-                    <div>
+                <div class="container">
+                    <fieldset class="fieldset-custom">
+                        <legend class="w-auto px-3"><h3>Recherche :</h3></legend>
+                        <form method="GET" action="{% url 'statistics_site' %}">
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label for="site">Site :</label>
+                                    <select id="site" name="site" class="form-control">
+                                        <option class="text-info" value="all" {% if request.GET.site == 'all' %}selected{% endif %}>Tous les Sites</option>
+                                        <option class="text-danger" value="lefigaro" {% if request.GET.site == 'lefigaro' %}selected{% endif %}>LeFigaro</option>
+                                        <option class="text-primary" value="lemonde" {% if request.GET.site == 'lemonde' %}selected{% endif %}>LeMonde</option>
+                                        <option class="text-wrap" value="libération" {% if request.GET.site == 'libération' %}selected{% endif %}>Libération</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-4">
+
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="start_date">À Partir Date :</label>
+                                    <input type="date" id="start_date" name="start_date" class="form-control" value="{{ request.GET.start_date }}">
+                                </div>
+                                <!-- Empty column to push the button to the bottom -->
+                                <div class="form-group col-md-4">
+                                    <!-- Empty for layout purpose -->
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-custom">Afficher les Statistiques</button>
+                        </form>
+                    </fieldset>
+                    <div class="graph-container">
                         {% for site, plot in bar_plots.items %}
-                            <h3>Statistiques en Barres pour {{ site }}</h3>
-                            {{ plot|safe }}
+                            <div class="mb-4">
+                                <h3>Statistiques en Barres pour {{ site }}</h3>
+                                <div class="card">
+                                    <div class="card-body">
+                                        {{ plot|safe }}
+                                    </div>
+                                </div>
+                            </div>
                         {% endfor %}
-                    
+                        
                         {% for site, plot in pie_plots.items %}
-                            <h3>Statistiques Circulaires pour {{ site }}</h3>
-                            {{ plot|safe }}
+                            <div class="mb-4">
+                                <h3>Statistiques Circulaires pour {{ site }}</h3>
+                                <div class="card">
+                                    <div class="card-body">
+                                        {{ plot|safe }}
+                                    </div>
+                                </div>
+                            </div>
                         {% endfor %}
                     </div>
-                    
-                    
-                    
+                </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

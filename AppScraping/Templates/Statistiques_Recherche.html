@@ -19,6 +19,35 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
          <style>
+
+
+body {
+    height: 100%; /* Ensure the body and html elements take up the full height of the viewport */
+    margin: 0; /* Remove default margins */
+}
+
+.page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensure the container takes at least the full viewport height */
+}
+/*
+header, footer {
+    /* Styling for header and footer if needed 
+    background-color: #f8f9fa; /* Example background color 
+    padding: 1rem; /* Example padding 
+}
+    */
+
+main.content {
+    flex: 1; /* Allows the main content to expand and take up remaining space */
+    padding: 1rem; /* Example padding */
+    /* Add any additional styling here */
+}
+
+
+
+
             /* Custom styling for the second table */
 .custom-table-striped {
     /* Specific styles for the custom table */
@@ -38,15 +67,7 @@
     text-align: center;
     padding: 8px;
 }
-/*
-.custom-table-striped td, .custom-table-striped td a {
-    word-wrap: break-word;
-    white-space: normal;
-    display: inline-block;
-    max-width: 100%;
-    text-decoration: none;
-}
-*/
+
 .custom-table-striped .text-wrap {
     max-width: 100px;
     word-wrap: break-word;
@@ -54,8 +75,9 @@
 }
 
 .custom-table-striped {
-    min-width: 1200px;
+    min-width: 100px;
 }
+
 
          </style>
 <header>
@@ -72,7 +94,7 @@
             </form>
             <br/>
             <fieldset class="row g-9 border p-20 ">
-                <legend class="w-auto px-3"><h3>Recherche :</h3></legend>
+                <legend class="w-auto px-10"><h3>Recherche :</h3></legend>
                 <form method="get" action="{% url 'Statistiques_mot_cle' %}">
                     <div class="form-row col-md-12">
                         <div class="form-group col-md-2">
@@ -231,6 +253,7 @@
                     <td>{{ article.date_exportation }}</td>
                     <td>{{ article.categorie }}</td>
                     <td>{{ article.ordre_actualite }}</td>
+                    <td><button type="submit" class="btn btn-primary">Cycle Vie</button></td>
                 </tr>
                 {% empty %}
                 <tr>
