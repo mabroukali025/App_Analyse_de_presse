@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compter les Doublons d'Articles</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Cycle de Vie des Articles</h1>
+
+    <div id="charts-container"></div>
+
+    <script>
+        // Débogage pour vérifier les données dans la console
+        console.log("Données reçues pour les graphiques :", '{{ graphs_data|escapejs }}');
+
+        const graphsData = JSON.parse('{{ graphs_data|escapejs }}');
+        
+        // Vérifier que des données sont bien présentes
+        if (graphsData.length === 0) {
+            console.log("Aucune donnée à afficher.");
+        } else {
+            graphsData.forEach((graph, index) => {
+                const chartContainer = document.createElement('div');
+                chartContainer.style.marginBottom = '40px';
+
+                const chartTitle = document.createElement('h3');
+                chartTitle.textContent = graph.titre;
+                chartContainer.appendChild(chartTitle);
+
+                const canvas = document.createElement('canvas');
+                canvas.id = `chart-${index}`;
+                chartContainer.appendChild(canvas);
+                
+                document.getElementById('charts-container').appendChild(chartContainer);
+
+                const ctx = canvas.getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: graph.dates,
+                        datasets: [{
+                            label: "Ordre d'Actualité",
+                            data: graph.ordres,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            fill: true,
+                            tension: 0.4,
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Date et Heure'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: "Ordre d'Actualité"
+                                },
+                                ticks: {
+                                    beginAtZero: true,
+                                    stepSize: 1,
+                                    max: 3,
+                                    min: 1,
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(tooltipItem) {
+                                        return `Ordre: ${tooltipItem.raw}`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>

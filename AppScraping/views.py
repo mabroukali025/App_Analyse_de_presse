@@ -823,38 +823,49 @@ def article_lifecycle_plot(request, article_title):
     scatter_plot_html = pio.to_html(scatter_fig, full_html=False)
     
     return render(request, 'article_lifecycle_plot.html', {'scatter_plot_html': scatter_plot_html})
+
+
+
+
+from django.shortcuts import render
 import matplotlib.pyplot as plt
 import io
 import base64
-from django.shortcuts import render
 from .models import Article
 
 def cycle_vie_article(request):
     # Étape 1 : Récupérer tous les articles
     articles = Article.objects.all()
 
-    # Étape 2 : Groupement des articles par lien, titre, et date_publication
+    if not articles.exists():
+        return render(request, 'cycle_vie_article.html', {'graphs': []})
+
+    # Étape 2 : Groupement des articles par lien, titre, description, categories, auteur
     grouped_articles = {}
     for article in articles:
-        key = (article.lien, article.titre, article.date_publication)
+        key = (article.lien, article.titre, article.description_article, article.categorie, article.nom_auteur)
         if key not in grouped_articles:
             grouped_articles[key] = []
         grouped_articles[key].append(article)
 
-    # Étape 3 : Générer les données pour le graphe
+    # Étape 3 : Générer les données pour le graphe pour chaque groupe d'articles
+    graphs = []
     for key, articles in grouped_articles.items():
+        # Trier les articles par date de publication puis par date d'exportation
+        articles.sort(key=lambda x: (x.date_publication, x.date_exportation))
+        
         dates = []
         ordres = []
         
-        # Ajouter le premier point (date_publication)
-        article = articles[0]
-        dates.append(article.date_publication)
-        ordres.append(article.ordre_actualite)
+        # Point A : date_publication de l'article le plus ancien
+        dates.append(articles[0].date_publication)
+        ordres.append(articles[0].ordre_actualite)
         
-        # Ajouter les autres points (date_exportation)
-        for article in articles:
-            dates.append(article.date_exportation)
-            ordres.append(article.ordre_actualite)
+        # Points B : chaque date_exportation avec son ordre_actualite correspondant
+        for article in articles[1:]:  # Ignorer le premier article déjà utilisé pour Point A
+            if article.ordre_actualite in [1, 2, 3]:  # Filtrer pour n'avoir que les valeurs 1, 2, ou 3
+                dates.append(article.date_exportation)
+                ordres.append(article.ordre_actualite)
         
         # Tracer le graphe
         plt.figure(figsize=(10, 6))
@@ -862,6 +873,7 @@ def cycle_vie_article(request):
         plt.title(f"Cycle de vie de l'article: {key[1]}")
         plt.xlabel('Date')
         plt.ylabel("Ordre d'Actualité")
+        plt.yticks([1, 2, 3])  # Limiter les ticks de l'axe Y à 1, 2, 3
         plt.grid(True)
         
         # Sauvegarder le graphe dans un buffer
@@ -875,12 +887,84 @@ def cycle_vie_article(request):
         graphic = base64.b64encode(image_png).decode('utf-8')
 
         # Ajouter le graphique au contexte pour l'affichage
-        context = {
+        graphs.append({
             'graphic': graphic,
             'titre': key[1],
             'lien': key[0],
-            'date_publication': key[2],
-        }
+            'description': key[2],
+            'categories': key[3],
+            'auteur': key[4],
+        })
 
-        # Rendre le template avec le graphique
-        return render(request, 'cycle_vie_article.html', context)
+    # Rendre le template avec les graphiques
+    context = {
+        'graphs': graphs,
+    }
+    return render(request, 'cycle_vie_article.html', context)
+
+from django.shortcuts import render
+from django.db.models import Count
+from .models import Article
+import json
+
+def compter_doublons_articles(request):
+    # Étape 1 : Grouper les articles par les champs spécifiés et compter les occurrences
+    articles_grouped = Article.objects.values(
+        'lien',
+        'titre',
+        'description_article',
+        'categorie',
+        'nom_auteur'
+    ).annotate(nombre_doublons=Count('id')).order_by('-nombre_doublons')
+
+    # Vérifiez combien de groupes ont été trouvés
+    print(f"Nombre de groupes d'articles trouvés : {len(articles_grouped)}")
+
+    # Étape 2 : Préparer les données pour les graphes
+    graphs_data = []
+    for group in articles_grouped:
+        # Récupérer les articles du groupe
+        articles = Article.objects.filter(
+            lien=group['lien'],
+            titre=group['titre'],
+            description_article=group['description_article'],
+            categorie=group['categorie'],
+            nom_auteur=group['nom_auteur']
+        ).order_by('date_exportation')
+
+        if articles.exists():
+            print(f"Préparation des données pour l'article : {group['titre']}")
+            dates = []
+            ordres = []
+
+            # Ajouter le premier point A (x = date_publication, y = ordre_actualite)
+            dates.append(articles[0].date_publication.strftime('%d-%m-%Y %H:%M:%S'))
+            ordres.append(articles[0].ordre_actualite)
+
+            # Ajouter les autres points B, C, etc. pour les autres articles du groupe
+            for article in articles:
+                if article.ordre_actualite in [1, 2, 3]:  # Filtrer pour n'avoir que les valeurs 1, 2, ou 3
+                    dates.append(article.date_exportation.strftime('%d-%m-%Y %H:%M:%S'))
+                    ordres.append(article.ordre_actualite)
+
+            # Ajouter les données au contexte pour l'affichage
+            if dates and ordres:  # Vérifiez si les listes ne sont pas vides
+                graphs_data.append({
+                    'dates': dates,
+                    'ordres': ordres,
+                    'titre': group['titre'],
+                })
+                print(f"Graphe ajouté pour l'article : {group['titre']}")
+
+    # Vérifiez si des graphes ont été créés
+    if not graphs_data:
+        print("Aucun graphe n'a été généré.")
+
+    # Étape 3 : Passer les données JSON au template
+    context = {
+        'graphs_data': json.dumps(graphs_data),
+    }
+    
+    print(f"Données JSON pour le template: {context['graphs_data']}")
+
+    return render(request, 'compter_doublons_articles.html', context)

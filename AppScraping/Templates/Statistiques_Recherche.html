@@ -250,7 +250,11 @@ main.content {
                     <td>{{ article.date_exportation }}</td>
                     <td>{{ article.categorie }}</td>
                     <td>{{ article.ordre_actualite }}</td>
-                    <td><button type="submit" class="btn btn-primary">Cycle Vie</button></td>
+                    <td>
+                        <form action="{% url 'compter_doublons_articles'%}" method="get">
+                            <button type="submit" class="btn btn-primary">Cycle Vie</button>
+                        </form>
+                    </td>
                 </tr>
                 {% empty %}
                 <tr>
