@@ -901,11 +901,11 @@ def cycle_vie_article(request):
         'graphs': graphs,
     }
     return render(request, 'cycle_vie_article.html', context)
-
 from django.shortcuts import render
 from django.db.models import Count
 from .models import Article
 import json
+from django.utils.timezone import make_naive
 
 def compter_doublons_articles(request):
     # Étape 1 : Grouper les articles par les champs spécifiés et compter les occurrences
@@ -922,6 +922,7 @@ def compter_doublons_articles(request):
 
     # Étape 2 : Préparer les données pour les graphes
     graphs_data = []
+
     for group in articles_grouped:
         # Récupérer les articles du groupe
         articles = Article.objects.filter(
@@ -938,13 +939,15 @@ def compter_doublons_articles(request):
             ordres = []
 
             # Ajouter le premier point A (x = date_publication, y = ordre_actualite)
-            dates.append(articles[0].date_publication.strftime('%d-%m-%Y %H:%M:%S'))
+            date_publication = make_naive(articles[0].date_publication)
+            dates.append(date_publication.strftime('%d-%m-%Y %H:%M:%S'))
             ordres.append(articles[0].ordre_actualite)
 
             # Ajouter les autres points B, C, etc. pour les autres articles du groupe
             for article in articles:
                 if article.ordre_actualite in [1, 2, 3]:  # Filtrer pour n'avoir que les valeurs 1, 2, ou 3
-                    dates.append(article.date_exportation.strftime('%d-%m-%Y %H:%M:%S'))
+                    date_exportation = make_naive(article.date_exportation)
+                    dates.append(date_exportation.strftime('%d-%m-%Y %H:%M:%S'))
                     ordres.append(article.ordre_actualite)
 
             # Ajouter les données au contexte pour l'affichage

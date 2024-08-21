@@ -3,8 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compter les Doublons d'Articles</title>
+    <title>Cycle de Vie des Articles</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Ajuster la taille du canvas pour un affichage plus grand */
+        canvas {
+            max-width: 1300px;
+            max-height: 400px;
+        }
+        .primary-text {
+            color: #007bff; /* Couleur primaire (bleu) */
+            font-weight: bold; /* Texte en gras */
+        }
+        .h3-size {
+            font-size: 1.75rem; /* Correspond à la taille par défaut d'un h3 */
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+    </style>
 </head>
 <body>
     <h1>Cycle de Vie des Articles</h1>
@@ -12,21 +28,20 @@
     <div id="charts-container"></div>
 
     <script>
-        // Débogage pour vérifier les données dans la console
         console.log("Données reçues pour les graphiques :", '{{ graphs_data|escapejs }}');
 
         const graphsData = JSON.parse('{{ graphs_data|escapejs }}');
         
-        // Vérifier que des données sont bien présentes
         if (graphsData.length === 0) {
             console.log("Aucune donnée à afficher.");
         } else {
             graphsData.forEach((graph, index) => {
                 const chartContainer = document.createElement('div');
-                chartContainer.style.marginBottom = '40px';
+                chartContainer.style.marginBottom = '80px';
 
-                const chartTitle = document.createElement('h3');
-                chartTitle.textContent = graph.titre;
+                const chartTitle = document.createElement('h5');
+                chartTitle.className = 'h3-size';
+                chartTitle.innerHTML = "<span class='primary-text'>Titre:</span> " + graph.titre;
                 chartContainer.appendChild(chartTitle);
 
                 const canvas = document.createElement('canvas');
@@ -43,10 +58,12 @@
                         datasets: [{
                             label: "Ordre d'Actualité",
                             data: graph.ordres,
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            fill: true,
-                            tension: 0.4,
+                            borderColor: 'rgba(0, 128, 0, 1)', // Couleur de la ligne en vert
+                            borderWidth: 2,  // Épaisseur de la ligne
+                            fill: false, // Ne pas colorer sous la ligne
+                            pointBackgroundColor: 'rgba(255, 0, 0, 1)', // Couleur des points en rouge
+                            pointRadius: 4, // Taille des points
+                            tension: 0.4, // Lissage de la ligne
                         }]
                     },
                     options: {
@@ -54,23 +71,46 @@
                             x: {
                                 title: {
                                     display: true,
-                                    text: 'Date et Heure'
+                                    text: 'Date et Heure',
+                                    font: {
+                                        size: 18, // Taille de la police du titre des axes
+                                        weight: 'bold',
+                                    },
+                                    color: '#007bff' // Couleur primaire
+                                },
+                                ticks: {
+                                    autoSkip: false, // Ne pas sauter d'étiquette
+                                    maxRotation: 45, // Rotation maximale de 45 degrés pour les étiquettes
+                                    padding: 10, // Ajoute un espace supplémentaire autour des étiquettes
+                                    font: {
+                                        size: 12 // Taille de la police des labels
+                                    }
                                 }
                             },
                             y: {
                                 title: {
                                     display: true,
-                                    text: "Ordre d'Actualité"
+                                    text: "Ordre d'Actualité",
+                                    font: {
+                                        size: 18, // Taille de la police du titre des axes
+                                        weight: 'bold',
+                                    },
+                                    color: '#007bff' // Couleur primaire
                                 },
+                                min: 0, // Commence à 1
+                                max: 4, // Limite à 4
                                 ticks: {
-                                    beginAtZero: true,
-                                    stepSize: 1,
-                                    max: 3,
-                                    min: 1,
+                                    stepSize: 1, // Incrémentation par 1
+                                    font: {
+                                        size: 12 // Taille de la police des labels
+                                    }
                                 }
                             }
                         },
                         plugins: {
+                            legend: {
+                                display: false, // Masque la légende
+                            },
                             tooltip: {
                                 callbacks: {
                                     label: function(tooltipItem) {
@@ -78,7 +118,9 @@
                                     }
                                 }
                             }
-                        }
+                        },
+                        responsive: true,
+                        maintainAspectRatio: false, // Permet l'ajustement de la taille
                     }
                 });
             });

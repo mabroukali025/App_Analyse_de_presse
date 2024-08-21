@@ -1,49 +1,56 @@
-/* Ensure the table takes up the full width of the page */
-.table-container {
-    width: 100%;
-    overflow-x: auto;
+
+body {
+    margin: -4; /* Supprimer les marges par défaut */
+    padding: -5; /* Supprimer le padding par défaut */
 }
 
-/* Style the table */
-.table {
-    width: 100%;
-    font-size: 12px; /* Smaller font size */
-    background-color: aquamarine;
+.page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Assurer que le conteneur prend au moins toute la hauteur du viewport */
 }
 
-/* Ensure all columns have the same height and text is vertically centered */
-.table th, .table td {
+main.content {
+    flex: 1; /* Permet au contenu principal de s'étendre et de prendre l'espace restant */
+    padding: 0; /* Padding pour le contenu */
+    position: relative;
+}
+
+/* Ajuster les marges internes et les marges des boutons */
+.form-container {
+    margin: 0;
+    padding: 0;
+}
+
+.btn-info {
+    margin: 0;
+}
+
+/* Custom styling for the second table */
+.custom-table-striped {
+    font-size: 12px;
+}
+
+.custom-table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f2f2f2;
+}
+
+.custom-table-striped tbody tr:nth-of-type(even) {
+    background-color: #e9e9e9;
+}
+
+.custom-table-striped th, .custom-table-striped td {
     vertical-align: middle;
     text-align: center;
-}
-
-/* Adjust column widths */
-.table th {
-    white-space: nowrap;
-}
-
-/* Ensure that long URLs and text wrap within the cells */
-.table td, .table td a {
-    word-wrap: break-word;
-    white-space: normal;
-    display: inline-block;
-    max-width: 100%;
-    text-decoration: none;
-}
-
-/* Add specific max-width to force wrapping after 25 characters */
-.text-wrap {
-    max-width: 250px;
-    word-wrap: break-word;
-    white-space: normal;
-}
-
-/* Optional: Add some padding for better readability */
-.table th, .table td {
     padding: 8px;
 }
 
-/* Optional: Set a minimum width for the entire table */
-.table {
-    min-width: 1200px;
+.custom-table-striped .text-wrap {
+    max-width: 100px;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+.custom-table-striped {
+    min-width: 100px;
 }
