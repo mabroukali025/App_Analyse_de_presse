@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cycle de Vie des Articles</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Ajuster la taille du canvas pour un affichage plus grand */
         canvas {
-            max-width: 1300px;
+            max-width: 1000px; /* Ajusté pour s'adapter à la modale */
             max-height: 400px;
         }
         .primary-text {
@@ -20,111 +23,146 @@
             margin-top: 1.5rem;
             margin-bottom: 1rem;
         }
+        .modal-dialog {
+            max-width: 70%; /* Ajuste la taille de la modale */
+        }
     </style>
 </head>
 <body>
-    <h1>Cycle de Vie des Articles</h1>
+    <div class="container mt-5">
+        <!-- Button (optional) removed, directly handle modal visibility in Statistiques_Recherche page -->
+    </div>
 
-    <div id="charts-container"></div>
+    <!-- Fenêtre modale -->
+    <div class="modal fade" id="cycleVieModal" tabindex="-1" role="dialog" aria-labelledby="cycleVieModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cycleVieModalLabel">Cycle de Vie Article</h5>
+                </div>
+                <div class="modal-body">
+                    <div id="charts-container"></div>
+                </div>
+                <div class="modal-footer">
+                    <a href="{% url 'Statistiques_Recherche' %}" class="btn btn-primary">Retour</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        console.log("Données reçues pour les graphiques :", '{{ graphs_data|escapejs }}');
+        document.addEventListener('DOMContentLoaded', function () {
+            const cycleVieModal = new bootstrap.Modal(document.getElementById('cycleVieModal'));
 
-        const graphsData = JSON.parse('{{ graphs_data|escapejs }}');
-        
-        if (graphsData.length === 0) {
-            console.log("Aucune donnée à afficher.");
-        } else {
-            graphsData.forEach((graph, index) => {
-                const chartContainer = document.createElement('div');
-                chartContainer.style.marginBottom = '80px';
+            // Fonction pour afficher le cycle de vie en fonction des données
+            function afficherCycleDeVie(data) {
+                const chartsContainer = document.getElementById('charts-container');
+                chartsContainer.innerHTML = ''; // Réinitialiser le conteneur
 
-                const chartTitle = document.createElement('h5');
-                chartTitle.className = 'h3-size';
-                chartTitle.innerHTML = "<span class='primary-text'>Titre:</span> " + graph.titre;
-                chartContainer.appendChild(chartTitle);
+                if (data.length === 0) {
+                    console.log("Aucune donnée à afficher.");
+                } else {
+                    data.forEach((graph, index) => {
+                        const chartContainer = document.createElement('div');
+                        chartContainer.style.marginBottom = '80px';
 
-                const canvas = document.createElement('canvas');
-                canvas.id = `chart-${index}`;
-                chartContainer.appendChild(canvas);
-                
-                document.getElementById('charts-container').appendChild(chartContainer);
+                        const chartTitle = document.createElement('h5');
+                        chartTitle.className = 'h5-size';
+                        chartTitle.innerHTML = "<span class='primary-text'>Titre:</span> " + graph.titre;
+                        chartContainer.appendChild(chartTitle);
 
-                const ctx = canvas.getContext('2d');
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: graph.dates,
-                        datasets: [{
-                            label: "Ordre d'Actualité",
-                            data: graph.ordres,
-                            borderColor: 'rgba(0, 128, 0, 1)', // Couleur de la ligne en vert
-                            borderWidth: 2,  // Épaisseur de la ligne
-                            fill: false, // Ne pas colorer sous la ligne
-                            pointBackgroundColor: 'rgba(255, 0, 0, 1)', // Couleur des points en rouge
-                            pointRadius: 4, // Taille des points
-                            tension: 0.4, // Lissage de la ligne
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: 'Date et Heure',
-                                    font: {
-                                        size: 18, // Taille de la police du titre des axes
-                                        weight: 'bold',
-                                    },
-                                    color: '#007bff' // Couleur primaire
-                                },
-                                ticks: {
-                                    autoSkip: false, // Ne pas sauter d'étiquette
-                                    maxRotation: 45, // Rotation maximale de 45 degrés pour les étiquettes
-                                    padding: 10, // Ajoute un espace supplémentaire autour des étiquettes
-                                    font: {
-                                        size: 12 // Taille de la police des labels
-                                    }
-                                }
+                        const canvas = document.createElement('canvas');
+                        canvas.id = `chart-${index}`;
+                        chartContainer.appendChild(canvas);
+
+                        chartsContainer.appendChild(chartContainer);
+
+                        const ctx = canvas.getContext('2d');
+                        new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: graph.dates,
+                                datasets: [{
+                                    label: "Ordre d'Actualité",
+                                    data: graph.ordres,
+                                    borderColor: 'rgba(0, 128, 0, 1)', // Couleur de la ligne en vert
+                                    borderWidth: 2,  // Épaisseur de la ligne
+                                    fill: false, // Ne pas colorer sous la ligne
+                                    pointBackgroundColor: 'rgba(255, 0, 0, 1)', // Couleur des points en rouge
+                                    pointRadius: 4, // Taille des points
+                                    tension: 0.4, // Lissage de la ligne
+                                }]
                             },
-                            y: {
-                                title: {
-                                    display: true,
-                                    text: "Ordre d'Actualité",
-                                    font: {
-                                        size: 18, // Taille de la police du titre des axes
-                                        weight: 'bold',
+                            options: {
+                                scales: {
+                                    x: {
+                                        title: {
+                                            display: true,
+                                            text: 'Date et Heure',
+                                            font: {
+                                                size: 18, // Taille de la police du titre des axes
+                                                weight: 'bold',
+                                            },
+                                            color: '#007bff' // Couleur primaire
+                                        },
+                                        ticks: {
+                                            autoSkip: false, // Ne pas sauter d'étiquette
+                                            maxRotation: 45, // Rotation maximale de 45 degrés pour les étiquettes
+                                            padding: 10, // Ajoute un espace supplémentaire autour des étiquettes
+                                            font: {
+                                                size: 12 // Taille de la police des labels
+                                            }
+                                        }
                                     },
-                                    color: '#007bff' // Couleur primaire
+                                    y: {
+                                        title: {
+                                            display: true,
+                                            text: "Ordre d'Actualité",
+                                            font: {
+                                                size: 18, // Taille de la police du titre des axes
+                                                weight: 'bold',
+                                            },
+                                            color: '#007bff' // Couleur primaire
+                                        },
+                                        min: 0, // Commence à 1
+                                        max: 4, // Limite à 4
+                                        ticks: {
+                                            stepSize: 1, // Incrémentation par 1
+                                            font: {
+                                                size: 12 // Taille de la police des labels
+                                            }
+                                        }
+                                    }
                                 },
-                                min: 0, // Commence à 1
-                                max: 4, // Limite à 4
-                                ticks: {
-                                    stepSize: 1, // Incrémentation par 1
-                                    font: {
-                                        size: 12 // Taille de la police des labels
+                                plugins: {
+                                    legend: {
+                                        display: false, // Masque la légende
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(tooltipItem) {
+                                                return `Ordre: ${tooltipItem.raw}`;
+                                            }
+                                        }
                                     }
-                                }
+                                },
+                                responsive: true,
+                                maintainAspectRatio: false, // Permet l'ajustement de la taille
                             }
-                        },
-                        plugins: {
-                            legend: {
-                                display: false, // Masque la légende
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(tooltipItem) {
-                                        return `Ordre: ${tooltipItem.raw}`;
-                                    }
-                                }
-                            }
-                        },
-                        responsive: true,
-                        maintainAspectRatio: false, // Permet l'ajustement de la taille
-                    }
-                });
-            });
-        }
+                        });
+                    });
+                }
+
+                cycleVieModal.show();
+            }
+
+            // Vérifiez si des données sont passées à partir de la page de statistiques
+            const dataString = '{{ graphs_data|escapejs }}';
+            if (dataString) {
+                const graphsData = JSON.parse(dataString);
+                afficherCycleDeVie(graphsData);
+            }
+        });
     </script>
 </body>
 </html>
