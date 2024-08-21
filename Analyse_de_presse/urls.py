@@ -44,7 +44,7 @@ urlpatterns = [
     path('statistics_site/',views.statistics_site,name='statistics_site'),
     #path('global_statistics/',views.global_statistics,name='global_statistics')
     path('cycle_vie_article/', views.cycle_vie_article, name='cycle_vie_article'),
-    path('compter-doublons/', views.compter_doublons_articles, name='compter_doublons_articles'),
+    path('compter_doublons_articles/<int:article_id>/', views.compter_doublons_articles, name='compter_doublons_articles'),
 
     
     

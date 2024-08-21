@@ -901,15 +901,24 @@ def cycle_vie_article(request):
         'graphs': graphs,
     }
     return render(request, 'cycle_vie_article.html', context)
-from django.shortcuts import render
-from django.db.models import Count
-from .models import Article
-import json
-from django.utils.timezone import make_naive
 
-def compter_doublons_articles(request):
-    # Étape 1 : Grouper les articles par les champs spécifiés et compter les occurrences
-    articles_grouped = Article.objects.values(
+# compte les articles doublons(qu'elles ont le meme titre ect mais differentes valeures de order actualite apres il trace le graphe pour le cycle de vie d'article)
+
+
+def compter_doublons_articles(request, article_id):
+    from django.shortcuts import render, get_object_or_404
+    from django.db.models import Count
+    from .models import Article
+    import json
+    from django.utils.timezone import make_naive
+    article = get_object_or_404(Article, pk=article_id)
+    articles_grouped = Article.objects.filter(
+        lien=article.lien,
+        titre=article.titre,
+        description_article=article.description_article,
+        categorie=article.categorie,
+        nom_auteur=article.nom_auteur
+    ).values(
         'lien',
         'titre',
         'description_article',
@@ -917,14 +926,9 @@ def compter_doublons_articles(request):
         'nom_auteur'
     ).annotate(nombre_doublons=Count('id')).order_by('-nombre_doublons')
 
-    # Vérifiez combien de groupes ont été trouvés
-    print(f"Nombre de groupes d'articles trouvés : {len(articles_grouped)}")
-
-    # Étape 2 : Préparer les données pour les graphes
     graphs_data = []
 
     for group in articles_grouped:
-        # Récupérer les articles du groupe
         articles = Article.objects.filter(
             lien=group['lien'],
             titre=group['titre'],
@@ -934,40 +938,28 @@ def compter_doublons_articles(request):
         ).order_by('date_exportation')
 
         if articles.exists():
-            print(f"Préparation des données pour l'article : {group['titre']}")
             dates = []
             ordres = []
 
-            # Ajouter le premier point A (x = date_publication, y = ordre_actualite)
             date_publication = make_naive(articles[0].date_publication)
             dates.append(date_publication.strftime('%d-%m-%Y %H:%M:%S'))
             ordres.append(articles[0].ordre_actualite)
 
-            # Ajouter les autres points B, C, etc. pour les autres articles du groupe
             for article in articles:
-                if article.ordre_actualite in [1, 2, 3]:  # Filtrer pour n'avoir que les valeurs 1, 2, ou 3
+                if article.ordre_actualite in [1, 2, 3]:
                     date_exportation = make_naive(article.date_exportation)
                     dates.append(date_exportation.strftime('%d-%m-%Y %H:%M:%S'))
                     ordres.append(article.ordre_actualite)
 
-            # Ajouter les données au contexte pour l'affichage
-            if dates and ordres:  # Vérifiez si les listes ne sont pas vides
+            if dates and ordres:
                 graphs_data.append({
                     'dates': dates,
                     'ordres': ordres,
                     'titre': group['titre'],
                 })
-                print(f"Graphe ajouté pour l'article : {group['titre']}")
 
-    # Vérifiez si des graphes ont été créés
-    if not graphs_data:
-        print("Aucun graphe n'a été généré.")
-
-    # Étape 3 : Passer les données JSON au template
     context = {
         'graphs_data': json.dumps(graphs_data),
     }
-    
-    print(f"Données JSON pour le template: {context['graphs_data']}")
 
     return render(request, 'compter_doublons_articles.html', context)
