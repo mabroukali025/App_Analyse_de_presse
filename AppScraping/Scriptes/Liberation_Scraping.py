@@ -463,18 +463,18 @@ def fonction_liberation(d):
     i = 0
     while scraping_active:
      try:
-        print('***'*23)
+        print('***'*30)
         print('')
         print(' le scrping de Liberation a commance ')
         print('')
-        print('***'*23)
+        print('***'*30)
         findAllArticles(url) 
         i=i+1
-        print('***'*23)
+        print('***'*30)
         print('')
         print(' le scrping de Liberation a Termine en Iteration numero : ',i)
         print('')
-        print('***'*23)
+        print('***'*30)
          # Appeler la fonction pour trouver tous les articles
         time.sleep(d)  # Attendre 60 secondes avant de recommencer (ou ajuster selon vos besoins)
      except Exception as e:
@@ -485,11 +485,11 @@ def fonction_Arrete_Script():
     global scraping_active
     scraping_active = False
     WebDriverSingleton.quit_instance()
-    print("****"*24)
+    print("****"*30)
     print("")
-    print("Le scraping arrêté avec succès.")
+    print("Le scraping Sur Liberation est  arrêté avec succès.")
     print('')
-    print('****'*24)
+    print('****'*30)
 
 
 

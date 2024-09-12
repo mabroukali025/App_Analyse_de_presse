@@ -683,19 +683,19 @@ def fonction_Lefigaro(d):
     i = 0
     while scraping_active:
      try:
-        print('***'*23)
+        print('***'*30)
         print('')
         print("Le scraping de Lefigaro a commencé à l'itération numéro :",i)
         print('')
-        print('***'*23)
+        print('***'*30)
         findAllArticles(url) 
         i=i+1
         
-        print('***'*23)
+        print('***'*30)
         print('')
         print(' le scrping de Lefigaro a Termine en Iteration numero : ',i)
         print('')
-        print('***'*23)
+        print('***'*30)
         
          # Appeler la fonction pour trouver tous les articles
         time.sleep(d)  # Attendre 60 secondes avant de recommencer (ou ajuster selon vos besoins)
@@ -707,11 +707,11 @@ def fonction_Arrete_Script():
     global scraping_active
     scraping_active = False
     WebDriverSingleton.quit_instance()
-    """print("***"*24)
+    print("***"*30)
     print("")
     print("Le scraping sur Lefigaro s'est arrêté avec succès.")
     print('')
-    print('***'*24)"""
+    print('***'*30)
 
 
 

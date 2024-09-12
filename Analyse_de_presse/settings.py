@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'Analyse_de_presse.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'App_Analyse_presse',
+        'NAME': 'Analyse_presse',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',
@@ -129,6 +129,9 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),  # Chemin vers vos fichiers statiques (CSS, JS, etc.)
 ]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -137,3 +140,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # settings.py
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
+#setti,g authentification 
+LOGIN_URL='/login/'
+LOGIN_REDIRECT_URL=''
+
+LOGOUT_URL='/logout/'
+LOGOUT_REDIRECT_URL='/login/'

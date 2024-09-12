@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-
+from django.contrib.auth.views import LoginView,LogoutView
 from django.contrib import admin
 from django.urls import path
 from AppScraping import views
@@ -25,7 +25,8 @@ from AppScraping import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('page_Acceuil',views.page_Acceuil),
-    path('user_connect/', views.user_connect, name='user_connect'),
+    path('login/', LoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
     path('', views.home, name='home_page'), 
     path('home/', views.page_Acceuil, name='page_Acceuil'),
     path('scraping/', views.scraping_page, name='scraping_page'),
@@ -45,6 +46,9 @@ urlpatterns = [
     #path('global_statistics/',views.global_statistics,name='global_statistics')
     path('cycle_vie_article/', views.cycle_vie_article, name='cycle_vie_article'),
     path('compter_doublons_articles/<int:article_id>/', views.compter_doublons_articles, name='compter_doublons_articles'),
+    path('get_scraping_status/', views.get_scraping_status, name='get_scraping_status'),
+
+
 
     
     

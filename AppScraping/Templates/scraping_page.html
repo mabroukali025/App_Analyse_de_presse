@@ -8,10 +8,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'scraping.css' %}">
-    
 </head>
 <header>
-        {% include 'navbar.html' %}
+    {% include 'navbar.html' %}
 </header>
 <body>
     <main class="content container mt-5">
@@ -22,7 +21,8 @@
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="combobox" class="col-form-label">Choisissez un site :</label>
-                        <select id="combobox" name="combobox" class="form-control">
+                        <select id="combobox" name="combobox" class="form-control" required>
+                            <option value="" disabled selected>Sélectionner un site</option>
                             <option value="option1" class="text-primary">www.Lemonde.fr</option>
                             <option value="option2" class="text-info">www.Liberation.fr</option>
                             <option value="option3" class="text-danger">www.Lefigaro.fr</option>
@@ -30,19 +30,22 @@
                     </div>
                     <div class="form-group">
                         <label for="textfield1" class="col-form-label">Durée :</label>
-                        <input type="number" id="textfield1" name="textfield1" class="form-control" placeholder="Entrez la durée en second">
+                        <input type="number" id="textfield1" name="textfield1" class="form-control" placeholder="Entrez la durée en secondes" required>
                     </div>
                     <button id="start-btn" type="submit" class="btn btn-primary"><h5>Démarrer Script</h5></button>
-                    
-                    <div id="spinner-container" class="mt-3">
+                    <!-- Section pour afficher la valeur sélectionnée -->
+                    {% if selected_value %}
+                    <p> la valeur selectionner est :  {{ selected_value }}</p>
+                    {% endif %}
+                    <div id="spinner-container" class="mt-3" style="display: none;">
                         <i class="fa fa-spinner fa-spin" style="font-size:80px"></i>
                     </div>
                 </form>
                 
                 <!-- Formulaire pour arrêter le scraping -->
-                <form action="{% url 'arreter_scraping_view' %}" method="post" class="mt-3">
+                <form id="stop-scraping-form" action="{% url 'arreter_scraping_view' %}" method="post" class="mt-3">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger w-100"><h5>Arrêter Script</h5> </button>
+                    <button type="submit" class="btn btn-danger w-100" id="stop-btn" disabled><h5>Arrêter Script</h5></button>
                 </form>
             </div>
         </div>
@@ -50,30 +53,90 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const startForm = document.getElementById('start-scraping-form');
+            const stopBtn = document.getElementById('stop-btn');
             const spinnerContainer = document.getElementById('spinner-container');
+            const startBtn = document.getElementById('start-btn');
+    
+            // Fonction pour récupérer l'état du scraping
+            function checkScrapingStatus() {
+    fetch("{% url 'get_scraping_status' %}")
+        .then(response => response.json())
+        .then(data => {
+            console.log("Data received:", data);  // Ajouté pour déboguer
+            if (data.is_scraping) {
+                spinnerContainer.style.display = 'block';  // Afficher l'icône de chargement
+                stopBtn.disabled = false;  // Activer le bouton "Arrêter Script"
+                startBtn.disabled = true;  // Désactiver le bouton "Démarrer Script"
+            } else {
+                spinnerContainer.style.display = 'none';  // Cacher l'icône de chargement
+                stopBtn.disabled = true;  // Désactiver le bouton "Arrêter Script"
+                startBtn.disabled = false;  // Activer le bouton "Démarrer Script"
+            }
+        })
+        .catch(error => console.error('Error fetching scraping status:', error));
+}
 
+    
+            // Vérifier l'état du scraping au chargement de la page
+            checkScrapingStatus();
+    
+            const startForm = document.getElementById('start-scraping-form');
             startForm.addEventListener('submit', function() {
-                spinnerContainer.style.display = 'block';
+                spinnerContainer.style.display = 'block';  // Afficher l'icône de chargement
+                stopBtn.disabled = false;  // Activer le bouton "Arrêter Script"
+                startBtn.disabled = true;  // Désactiver le bouton "Démarrer Script"
+            });
+    
+            const stopForm = document.getElementById('stop-scraping-form');
+            stopForm.addEventListener('submit', function(event) {
+                const confirmStop = confirm("Êtes-vous sûr de vouloir arrêter le scraping ?");
+                if (!confirmStop) {
+                    event.preventDefault();
+                } else {
+                    stopBtn.disabled = true;  // Désactiver le bouton "Arrêter Script"
+                    startBtn.disabled = false;  // Activer le bouton "Démarrer Script"
+                    spinnerContainer.style.display = 'none';  // Cacher l'icône de chargement
+                }
             });
         });
     </script>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const startForm = document.getElementById('start-scraping-form');
-            const spinnerContainer = document.getElementById('spinner-container');
-
-            startForm.addEventListener('submit', function() {
-                spinnerContainer.style.display = 'block';
+        $(document).ready(function() {
+            $('#arreter-scraping').on('click', function() {
+                var selectedValue = $('#combobox').val();  // Récupère la valeur sélectionnée
+                if (selectedValue) {
+                    $.ajax({
+                        url: "{% url 'arreter_scraping_view' %}",  // URL de ta vue Django
+                        type: "POST",
+                        data: {
+                            'selected_value': selectedValue,
+                            'csrfmiddlewaretoken': '{{ csrf_token }}'  // Ajoute le token CSRF ici
+                        },
+                        success: function(response) {
+                            alert("Scraping arrêté avec succès.");
+                            location.reload();  // Recharge la page pour afficher la valeur sélectionnée
+                        },
+                        error: function(xhr, status, error) {
+                            alert("Erreur lors de l'arrêt du scraping.");
+                        }
+                    });
+                } else {
+                    alert("Veuillez sélectionner un site pour arrêter le scraping.");
+                }
             });
         });
     </script>
+    
+        
+    
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <div>
+    
+    </div>
 </body>
+
+{% include 'footer.html' %}
 </html>

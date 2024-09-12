@@ -3,6 +3,9 @@ from datetime import datetime
 import locale
 import re
 
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from .models import ScrapingStatus
 # Imports de bibliothèques tierces
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -30,35 +33,45 @@ from django.contrib.auth.models import User
 
 
 
-def user_connect(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+from django.contrib import messages
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth.models import User
+from django.shortcuts import render, redirect
 
-        if not username or not password:
-            messages.error(request, 'Veuillez remplir tous les champs.')
-            return render(request, 'home.html')  # Utilisez 'home.html' ici si c'est le bon template
-
-        # Cherchons l'utilisateur dans la base de données
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            user = None
-
-        # Vérifions le mot de passe si l'utilisateur existe
-        if user and user.check_password(password):
-            # Authentifier l'utilisateur et le connecter
-            auth_login(request, user)
-            return redirect('scraping_page')  # Assurez-vous que 'scraping_page' est bien défini dans vos URLs
-        else:
-            messages.error(request, 'Identifiant ou mot de passe incorrect.')
-
-    # Si la méthode HTTP n'est pas POST ou si l'authentification a échoué, affichez à nouveau le formulaire de connexion
-    return render(request, 'home.html')  # Assurez-vous que 'home.html' est bien le template pour la connexion
+from django.contrib.auth.views import LoginView
+from django.shortcuts import render, redirect
+from django.contrib import auth, messages
+from django.views import View
 
 
+class LoginView(View):
+    def get(self, request):
+            return render(request, 'registration/login.html')
+    def post(self, request):
+        username = request.POST['email']
+        password = request.POST['password']
 
-
+        if username and password:
+            user = auth.authenticate(username=username, password=password)
+            if user:
+                if user.is_active:
+                    auth.login(request, user)
+                    messages.success(request, 'Welcome, ' +
+                                     user.username+' you are now logged in')
+                    return redirect('dashboard')
+                
+                messages.error(
+                        request, 'Acount is not active, please check your email')
+                    
+                return render(request, 'authentication/login.html')
+                
+            messages.error(
+                    request, 'Invalid credentials, try again')
+            return render(request, 'registration/login.html')
+            
+        messages.error(
+                request, 'Please fill all fields')
+        return render(request, 'registration/login.html')
 
 
 
@@ -150,6 +163,7 @@ def article_list(request):
             articles = articles.filter(nom_auteur__icontains=search_author)
     if search_categorie:
         articles = articles.filter(categorie__icontains=search_categorie)
+    
     context = {
         'articles': articles,
         'categories': categories,
@@ -240,8 +254,8 @@ def page_Acceuil(request):
 
 def home(request):
     context = {}  # Vous pouvez ajouter des données contextuelles si nécessaire
-    template = loader.get_template("scraping_page.html")
-    
+    template = loader.get_template("registration/login.html")
+    #template = loader.get_template("scraping_page.html")
     return HttpResponse(template.render(context, request))
 
 def scraping_page(request):
@@ -359,90 +373,83 @@ def statistics_site_categorie(request):
     else:
         return render(request, 'statistiques.html', {'error': 'Invalid request method.'})
 
-from django.shortcuts import render
-from django.http import HttpResponse
-
-
-global selected_value
-
-selected_value=None
-
-# views.py
 from django.shortcuts import render, redirect
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseBadRequest, JsonResponse
+from AppScraping.models import ScrapingStatus
 
+# Déclarez la variable globale pour stocker la valeur du combobox
+selected_value_global = None
 
+# Vue pour démarrer le scraping
 def find_articles(request):
+    global selected_value_global  # Accéder à la variable globale
+    
     if request.method == 'POST':
-        # Stocker la valeur du combobox dans la session
-        request.session['selected_value'] = request.POST.get('combobox', None)
-        combobox_value = request.POST.get('combobox')
+        # Récupérer la valeur du combobox et la stocker dans la variable globale
+        selected_value_global = request.POST.get('combobox', None)
         duree_value = request.POST.get('textfield1')
+        status, created = ScrapingStatus.objects.get_or_create(id=1)
+        status.is_scraping = True
+        status.save()
         
-        if combobox_value == "option1":
+        # Démarrer le scraping selon l'option sélectionnée
+        if selected_value_global == "option1":
             from AppScraping.Scriptes.Lemonde_Scraping import Lemonde_Find_All_Article
             Lemonde_Find_All_Article(int(duree_value))
-        elif combobox_value == "option2":
+        elif selected_value_global == "option2":
             from AppScraping.Scriptes.Liberation_Scraping import fonction_liberation
             fonction_liberation(int(duree_value))
-        elif combobox_value == "option3":
-            from  AppScraping.Scriptes.Lefigaro_Scraping import start_scraping
+        elif selected_value_global == "option3":
+            from AppScraping.Scriptes.Lefigaro_Scraping import start_scraping
             start_scraping(int(duree_value))
     
-    return render(request, 'scraping_page.html')
+    # Afficher la page de scraping avec la valeur sélectionnée
+    return render(request, 'scraping_page.html', {'selected_value': selected_value_global})
 
 
+def get_scraping_status(request):
+    status = ScrapingStatus.get_status()  # Assurez-vous que cette méthode existe et retourne un objet avec l'attribut `is_scraping`
+    return JsonResponse({'is_scraping': status.is_scraping if status else False})
 
 ############################################################" Arrete le Scripte ###########################"
-from django.http import JsonResponse
-
-
+# Fonction pour arrêter le scraping
 def arreter_scraping(selected_value):
+    status, created = ScrapingStatus.objects.get_or_create(id=1)
     
-   
-        #if selected_value=='option3':
-          from AppScraping.Scriptes.Lefigaro_Scraping import fonction_Arrete_Script
-          fonction_Arrete_Script()
-          #return True
-        #elif selected_value=='option2':
-          from AppScraping.Scriptes.Liberation_Scraping import fonction_Arrete_Script
-          fonction_Arrete_Script()
-          #return True
-        #elif selected_value=='option1':
-          from AppScraping.Scriptes.Lemonde_Scraping import fonction_Arrete_Script
-          fonction_Arrete_Script()
-          return True
-        #else:
-          return False
-    
-# views.py
-from django.shortcuts import redirect
-from django.http import HttpResponseBadRequest
+    # Fonction d'arrêt pour chaque scraper
+    if selected_value == 'option3':
+        from AppScraping.Scriptes.Lefigaro_Scraping import fonction_Arrete_Script
+        fonction_Arrete_Script()
+    elif selected_value == 'option2':
+        from AppScraping.Scriptes.Liberation_Scraping import fonction_Arrete_Script
+        fonction_Arrete_Script()
+    elif selected_value == 'option1':
+        from AppScraping.Scriptes.Lemonde_Scraping import fonction_Arrete_Script
+        fonction_Arrete_Script()
+    else:
+        return False
 
+    # Mettre à jour le statut de scraping à False
+    status.is_scraping = False
+    status.save()
+    return True
+
+# Vue pour arrêter le scraping
 def arreter_scraping_view(request):
+    global selected_value_global  # Utiliser la variable globale
+    
     if request.method == 'POST':
-        # Récupérer la valeur du combobox depuis la session
-        selected_value = request.session.get('selected_value', None)
-        
-        if selected_value:
-            result = arreter_scraping(selected_value)
+        if selected_value_global:
+            # Appeler la fonction pour arrêter le scraping avec selected_value_global
+            result = arreter_scraping(selected_value_global)
             if result:
-                # Optionnel: Nettoyer la session si nécessaire
-                # del request.session['selected_value']
-                return redirect('scraping_page')
+                return redirect('scraping_page')  # Rediriger vers la page de scraping
             else:
                 return HttpResponseBadRequest('Valeur sélectionnée invalide.')
         else:
             return HttpResponseBadRequest('Aucune valeur sélectionnée.')
     else:
         return HttpResponseBadRequest('Méthode non autorisée.')
-
-
-
-
-
-
-
 
 import re
 import unicodedata

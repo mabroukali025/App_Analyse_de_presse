@@ -675,18 +675,18 @@ def Lemonde_Find_All_Article(d):
     i = 0
     while scraping_active:
      try:
-        print('***'*23)
+        print('***'*30)
         print('')
         print(" Le scraping de Lemonde a commencé à l'itération numéro :",i)
         print('')
-        print('***'*23)
+        print('***'*30)
         findAllArticles(url) 
         i=i+1
-        print('***'*23)
+        print('***'*30)
         print('')
         print(" le scrping de Lemonde a Termine l'Iteration numero : ",i)
         print('')
-        print('***'*23)
+        print('***'*30)
         
          # Appeler la fonction pour trouver tous les articles
         time.sleep(d)  # Attendre 60 secondes avant de recommencer (ou ajuster selon vos besoins)
@@ -698,11 +698,11 @@ def fonction_Arrete_Script():
     global scraping_active
     scraping_active = False
     WebDriverSingleton.quit_instance()
-    """print("***"*24)
+    print("***"*30)
     print("")
     print("Le scraping sur Lemonde s'est arrêté avec succès.")
     print('')
-    print('***'*24)"""
+    print('***'*30)
 
 
 

@@ -33,4 +33,11 @@ class Article(models.Model):
 
 
 
+class ScrapingStatus(models.Model):
+    is_scraping = models.BooleanField(default=False)
+
+    @classmethod
+    def get_status(cls):
+        return cls.objects.first()  # Retourne le premier enregistrement (ou ajustez selon votre logique)
+
 
