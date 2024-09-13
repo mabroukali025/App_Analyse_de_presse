@@ -145,6 +145,10 @@
             <button type="submit" class="btn btn-primary">Actualise les Donnees </button>
 
         </form>
+        <form method="get" action="{% url 'download_articles_excel' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">Télécharger en Excel</button>
+        </form>
         <!-- Table to Display Search Results -->
         {% if articles %}
         <div class="mt-8">

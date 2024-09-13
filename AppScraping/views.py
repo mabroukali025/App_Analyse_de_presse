@@ -970,3 +970,125 @@ def compter_doublons_articles(request, article_id):
     }
 
     return render(request, 'compter_doublons_articles.html', context)
+
+
+
+from .models import Article
+
+def get_articles_from_request(request):
+    """
+    Fonction pour récupérer les articles en fonction des paramètres de la requête.
+    Adaptez cette fonction selon la manière dont vous filtrez les articles dans votre application.
+    """
+    # Exemple simple de filtrage selon des paramètres de requête
+    # (remplacez ceci par la logique appropriée pour votre application)
+    queryset = Article.objects.all()
+
+    # Filtrer par date si fourni
+    date_debut = request.GET.get('date_debut')
+    date_fin = request.GET.get('date_fin')
+    if date_debut and date_fin:
+        queryset = queryset.filter(date_publication__range=[date_debut, date_fin])
+
+    # Filtrer par catégorie si fourni
+    categorie = request.GET.get('categorie')
+    if categorie:
+        queryset = queryset.filter(categorie=categorie)
+
+    # Vous pouvez ajouter d'autres filtres en fonction des paramètres de la requête ici
+
+    return queryset
+
+
+
+from django.http import HttpResponse
+import openpyxl
+from io import BytesIO
+
+def download_articles_excel(request):
+    # Créer un classeur Excel et une feuille
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+    sheet.title = 'Articles'
+
+    # En-têtes de colonnes
+    headers = ['Id', 'Titre page d\'accueil', 'Titre', 'Lien', 'Date Publication', 'Nom Auteur', 'Description Article', 'Statut Image', 'Actualité', 'Date Exportation', 'Catégorie', 'Ordre d\'Actualité']
+    sheet.append(headers)
+
+    # Récupérer les articles de la requête
+    articles = get_articles_from_request(request)  # Implémentez cette fonction selon vos besoins
+
+    for article in articles:
+        sheet.append([
+            article.id,
+            article.titre_page_accueil,
+            article.titre,
+            article.lien,
+            article.date_publication,
+            article.nom_auteur,
+            article.description_article,
+            article.statut_image,
+            article.actualite,
+            article.date_exportation,
+            article.categorie,
+            article.ordre_actualite
+        ])
+
+    # Utiliser BytesIO pour écrire le contenu du fichier Excel
+    output = BytesIO()
+    workbook.save(output)
+    output.seek(0)
+
+    # Créer une réponse HTTP avec le contenu du fichier Excel
+    response = HttpResponse(output, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="articles.xlsx"'
+    return response
+
+import pandas as pd
+from django.http import HttpResponse
+from .models import Article
+
+def telecharger_articles_excel(request):
+    # Récupérer tous les articles depuis la base de données
+    articles = Article.objects.all()
+
+    # Créer une liste des données à exporter
+    data = []
+    for article in articles:
+        # Si article.date_publication est timezone-aware, on enlève le fuseau horaire
+        date_publication = article.date_publication
+        date_exportation = article.date_exportation
+
+        if date_publication and date_publication.tzinfo is not None:
+            date_publication = date_publication.replace(tzinfo=None)
+        if date_exportation and date_exportation.tzinfo is not None:
+            date_exportation = date_exportation.replace(tzinfo=None)
+
+        # Ajouter les données de chaque article dans la liste
+        data.append({
+            'Id': article.id,
+            'Titre Accueil': article.titre_page_accueil,
+            'Titre': article.titre,
+            'Lien': article.lien,
+            'Date Publication': date_publication,  # Utiliser la date sans fuseau horaire
+            'Auteur': article.nom_auteur,
+            'Description': article.description_article,
+            'Statut Image': article.statut_image,
+            'Statut Actualite': article.actualite,
+            'Date Exportation': date_exportation,  # Utiliser la date sans fuseau horaire
+            'Categorie': article.categorie,
+            'Ordre Actualite': article.ordre_actualite,
+        })
+
+    # Convertir les données en DataFrame pandas
+    df = pd.DataFrame(data)
+
+    # Créer une réponse HTTP avec un fichier Excel
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=articles.xlsx'
+
+    # Utiliser pandas pour exporter le DataFrame vers un fichier Excel
+    df.to_excel(response, index=False, engine='openpyxl')
+
+    return response
+

@@ -1,103 +1,99 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Scraping</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Tableau d'Articles</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau d'Articles</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .page-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main.content {
+            flex: 1;
+            padding: 0;
+            position: relative;
+        }
+
+        .form-container {
+            margin: 0;
+            padding: 0;
+        }
+
+        .btn-info {
+            margin: 0;
+        }
+
+        .custom-table-striped {
+            font-size: 12px;
+        }
+
+        .custom-table-striped tbody tr:nth-of-type(odd) {
+            background-color: #f2f2f2;
+        }
+
+        .custom-table-striped tbody tr:nth-of-type(even) {
+            background-color: #e9e9e9;
+        }
+
+        .custom-table-striped th, .custom-table-striped td {
+            vertical-align: middle;
+            text-align: center;
+            padding: 8px;
+        }
+
+        .custom-table-striped .text-wrap {
+            max-width: 100px;
+            word-wrap: break-word;
+            white-space: normal;
+        }
+
+        .custom-table-striped {
+            min-width: 100px;
+        }
+
         
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" />
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-        
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
-        
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-         <style>
 
-body {
-    margin: -4; /* Supprimer les marges par défaut */
-    padding: -5; /* Supprimer le padding par défaut */
-}
-
-.page-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh; /* Assurer que le conteneur prend au moins toute la hauteur du viewport */
-}
-
-main.content {
-    flex: 1; /* Permet au contenu principal de s'étendre et de prendre l'espace restant */
-    padding: 0; /* Padding pour le contenu */
-    position: relative;
-}
-
-/* Ajuster les marges internes et les marges des boutons */
-.form-container {
-    margin: 0;
-    padding: 0;
-}
-
-.btn-info {
-    margin: 0;
-}
-
-/* Custom styling for the second table */
-.custom-table-striped {
-    font-size: 12px;
-}
-
-.custom-table-striped tbody tr:nth-of-type(odd) {
-    background-color: #f2f2f2;
-}
-
-.custom-table-striped tbody tr:nth-of-type(even) {
-    background-color: #e9e9e9;
-}
-
-.custom-table-striped th, .custom-table-striped td {
-    vertical-align: middle;
-    text-align: center;
-    padding: 8px;
-}
-
-.custom-table-striped .text-wrap {
-    max-width: 100px;
-    word-wrap: break-word;
-    white-space: normal;
-}
-
-.custom-table-striped {
-    min-width: 100px;
-}
-
-         </style>
-<header>
-        {% include 'navbar.html' %}
-</header>
+        .form-group {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
 <body>
+    <header>
+        {% include 'navbar.html' %}
+    </header>
     <main class="content mt-20">
         <div class="container">
             <br/>
+            <!-- Formulaire de mise à jour des données et téléchargement en Excel -->
             <form method="get" class="form-container" action="{% url 'remove_duplicate_articles' %}">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-info">Actualise les Donnees </button>
-    
+                <button type="submit" class="btn btn-info">Actualise les Données</button>
+                <a href="{% url 'telecharger_excel' %}" class="btn btn-success">Télécharger en Excel</a>
             </form>
+
             <br/>
-            <fieldset class="row g-9 border p-20 ">
+            <!-- Formulaire de recherche -->
+            <fieldset class="row g-9 border p-20">
                 <legend class="w-auto px-10"><h3>Recherche :</h3></legend>
                 <form method="get" action="{% url 'Statistiques_mot_cle' %}">
                     <div class="form-row col-md-12">
                         <div class="form-group col-md-2">
-                            <label for="combobox_select_site">Select Site :</label>
+                            <label for="combobox_select_site">Sélectionner le Site :</label>
                             <div class="input-group input-group-sm mb-3">
-                                <select id="combobox_select_site" name="combobox_select_site" class="form-control" value="{{ request.GET.combobox_select_site }}">
+                                <select id="combobox_select_site" name="combobox_select_site" class="form-control">
                                     <option value=" ">Tous Sites</option>
                                     <option value="www.Lemonde.fr">www.Lemonde.fr</option>
                                     <option value="www.Liberation.fr">www.Liberation.fr</option>
@@ -108,11 +104,11 @@ main.content {
                         <div class="form-group col-md-2">
                             <label for="search_order">Ordre d'Actualité :</label>
                             <div class="input-group input-group-sm mb-3">
-                                <select id="search_order" name="search_order" class="form-control" value="{{ request.GET.search_order }}">
+                                <select id="search_order" name="search_order" class="form-control">
                                     <option value=""> </option>
-                                    <option value="1">Order 1</option>
-                                    <option value="2">Order 2</option>
-                                    <option value="3">Order 3</option>
+                                    <option value="1">Ordre 1</option>
+                                    <option value="2">Ordre 2</option>
+                                    <option value="3">Ordre 3</option>
                                 </select>
                             </div>
                         </div>
@@ -120,8 +116,8 @@ main.content {
                             <label for="search_categories">Catégorie :</label>
                             <div class="input-group input-group-sm mb-3">
                                 <input list="search_categorie" name="search_categorie" class="form-control">
-                                <datalist id="search_categorie" name="search_categorie" value="{{ request.GET.search_categorie }}">
-                                    <option value="">Aucun categorie</option>
+                                <datalist id="search_categorie">
+                                    <option value="">Aucune catégorie</option>
                                     {% for cat in categories %}
                                     <option>{{ cat }}</option>
                                     {% endfor %}
@@ -129,7 +125,7 @@ main.content {
                             </div>
                         </div>
                         <div class="form-group col-md-2">
-                            <label for="search_mot_cle">Mot Cle :</label>
+                            <label for="search_mot_cle">Mot Clé :</label>
                             <div class="input-group input-group-sm mb-3">
                                 <input type="text" id="search_mot_cle" name="search_mot_cle" class="form-control" value="{{ request.GET.search_mot_cle }}">
                             </div>
@@ -165,174 +161,139 @@ main.content {
                 </form>  
             </fieldset>
             <br/>
-<div class="mt-8">
-    <h3>Tableau Statistiques Recherche :</h3>
-    <table class="table custom-table-statistics"> <!-- No changes here, keeping default Bootstrap style -->
-        <thead>
-            <tr>
-                <th>Mot-clé</th>
-                <th>Nbr Total Articles</th>
-                <th>Nbr Titre de page d'accueil</th>
-                <th>Nbr Titre</th>
-                <th>Nbr Auteur</th>
-                <th>Nbr Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% if index_mot == -1 %}
-                <tr>
-                    <td>{{ search_mot_cle }}</td>
-                    <td>{{ total_articles_count}}</td>
-                    <td>{{ mot_cle_count_titre_page_accueil }}</td>
-                    <td>{{ mot_cle_count_titre }}</td>
-                    <td>{{ mot_cle_count_auteur }}</td>
-                    <td>{{ mot_cle_count_description }}</td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td>{{ partie1_mot }}</td>
-                    <td>{{ total_articles_count_1 }}</td>
-                    <td>{{ mot_cle_1_count_titre_page_accueil }}</td>
-                    <td>{{ mot_cle_1_count_titre }}</td>
-                    <td>{{ mot_cle_1_count_auteur }}</td>
-                    <td>{{ mot_cle_1_count_description }}</td>
-                </tr>
-                <tr>
-                    <td>{{ partie2_mot }}</td>
-                    <td>{{ total_articles_count_2 }}</td>
-                    <td>{{ mot_cle_2_count_titre_page_accueil }}</td>
-                    <td>{{ mot_cle_2_count_titre }}</td>
-                    <td>{{ mot_cle_2_count_auteur }}</td>
-                    <td>{{ mot_cle_2_count_description }}</td>
-                </tr>
-            {% endif %}
-        </tbody>
-    </table>
-</div>
+            <div class="mt-8">
+                <h3>Tableau Statistiques Recherche :</h3>
+                <table class="table custom-table-statistics"> <!-- No changes here, keeping default Bootstrap style -->
+                    <thead>
+                        <tr>
+                            <th>Mot-clé</th>
+                            <th>Nbr Total Articles</th>
+                            <th>Nbr Titre d'accueil</th>
+                            <th>Nbr Titre</th>
+                            <th>Nbr Auteur</th>
+                            <th>Nbr Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if index_mot == -1 %}
+                            <tr>
+                                <td>{{ search_mot_cle }}</td>
+                                <td>{{ total_articles_count}}</td>
+                                <td>{{ mot_cle_count_titre_page_accueil }}</td>
+                                <td>{{ mot_cle_count_titre }}</td>
+                                <td>{{ mot_cle_count_auteur }}</td>
+                                <td>{{ mot_cle_count_description }}</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td>{{ partie1_mot }}</td>
+                                <td>{{ total_articles_count_1 }}</td>
+                                <td>{{ mot_cle_1_count_titre_page_accueil }}</td>
+                                <td>{{ mot_cle_1_count_titre }}</td>
+                                <td>{{ mot_cle_1_count_auteur }}</td>
+                                <td>{{ mot_cle_1_count_description }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ partie2_mot }}</td>
+                                <td>{{ total_articles_count_2 }}</td>
+                                <td>{{ mot_cle_2_count_titre_page_accueil }}</td>
+                                <td>{{ mot_cle_2_count_titre }}</td>
+                                <td>{{ mot_cle_2_count_auteur }}</td>
+                                <td>{{ mot_cle_2_count_description }}</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
 
-<!-- Table to Display Search Results -->
-{% if articles_Statistiques_mot_cle %}
-<div class="container mt-5">
-    <h3>Tableau d'Articles :</h3>
-    <div class="table-container mt-4">
-        <table class="table custom-table-striped">
-            <thead class="thead-primary">
-                <tr>
-                    <th class="font-weight-bold" style="width: 3%;">Id</th>
-                    <th class="font-weight-bold" style="width: 15%;">Titre Page Accueil</th>
-                    <th class="font-weight-bold" style="width: 15%;">Titre</th>
-                    <th class="font-weight-bold" style="width: 20%;">Lien</th>
-                    <th class="font-weight-bold" style="width: 15%;">Date Publication</th>
-                    <th class="font-weight-bold" style="width: 10%;">Auteur</th>
-                    <th class="font-weight-bold" style="width: 26%;">Description</th>
-                    <th class="font-weight-bold" style="width: 3%;">Statut Image</th>
-                    <th class="font-weight-bold" style="width: 3%;">Actualité</th>
-                    <th class="font-weight-bold" style="width: 8%;">Date Exportation</th>
-                    <th class="font-weight-bold" style="width: 8%;">Catégorie</th>
-                    <th class="font-weight-bold" style="width: 7%;">Ordre d'Actualité</th>
-                    <th class="font-weight-bold" style="width: 10%;">Cycle de Vie</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for article in articles_Statistiques_mot_cle %}
-                <tr>
-                    <td>{{ article.id }}</td>
-                    <td class="text-wrap">{{ article.titre_page_accueil|safe }}</td>
-                    <td class="text-wrap">{{ article.titre|safe }}</td>
-                    <td class="text-wrap">
-                        <a href="{{ article.lien }}">{{ article.lien }}</a>
-                    </td>
-                    <td class="text-wrap">{{ article.date_publication }}</td>
-                    <td class="text-wrap">{{ article.nom_auteur|safe }}</td>
-                    <td class="text-wrap">{{ article.description_article|safe }}</td>
-                    <td>{{ article.statut_image }}</td>
-                    <td>{{ article.actualite }}</td>
-                    <td>{{ article.date_exportation }}</td>
-                    <td>{{ article.categorie }}</td>
-                    <td>{{ article.ordre_actualite }}</td>
-                    <td>
-                        <a href="{% url 'compter_doublons_articles' article.id %}" class="btn btn-primary">Cycle Vie</a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="13">Aucun article trouvé.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        
-        <!-- Pagination Controls -->
-        <!-- Pagination Controls -->
-<div class="pagination mt-3">
-    <ul class="pagination justify-content-center">
-        {% if page_obj.has_previous %}
-        <li class="page-item">
-            <a class="page-link" href="?page=1" aria-label="First">
-                <span aria-hidden="true">&laquo;&laquo;</span>
-            </a>
-        </li>
-        <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
-        </li>
-        {% endif %}
-        {% for num in page_obj.paginator.page_range %}
-            {% if page_obj.number == num %}
-            <li class="page-item active"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
-            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
-            {% endif %}
-        {% endfor %}
-        {% if page_obj.has_next %}
-        <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-            </a>
-        </li>
-        <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
-                <span aria-hidden="true">&raquo;&raquo;</span>
-            </a>
-        </li>
-        {% endif %}
-    </ul>
-</div>
-
-    </div>
-</div>
-{% endif %}
+            <!-- Tableau des articles -->
+            <div class="container mt-5">
+                <h3>Articles :</h3>
+                <div class="table-responsive">
+                    <table class="table custom-table-striped">
+                        <thead class="thead-primary">
+                            <tr>
+                                <th class="font-weight-bold" style="width: 3%;">Id</th>
+                                <th class="font-weight-bold" style="width: 15%;">Titre Page Accueil</th>
+                                <th class="font-weight-bold" style="width: 15%;">Titre</th>
+                                <th class="font-weight-bold" style="width: 20%;">Lien</th>
+                                <th class="font-weight-bold" style="width: 15%;">Date Publication</th>
+                                <th class="font-weight-bold" style="width: 10%;">Auteur</th>
+                                <th class="font-weight-bold" style="width: 26%;">Description</th>
+                                <th class="font-weight-bold" style="width: 3%;">Statut Image</th>
+                                <th class="font-weight-bold" style="width: 3%;">Actualité</th>
+                                <th class="font-weight-bold" style="width: 8%;">Date Exportation</th>
+                                <th class="font-weight-bold" style="width: 8%;">Catégorie</th>
+                                <th class="font-weight-bold" style="width: 7%;">Ordre d'Actualité</th>
+                                <th class="font-weight-bold" style="width: 10%;">Cycle de Vie</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for article in articles_Statistiques_mot_cle %}
+                            <tr>
+                                <td>{{ article.id }}</td>
+                                <td class="text-wrap">{{ article.titre_page_accueil|safe }}</td>
+                                <td class="text-wrap">{{ article.titre|safe }}</td>
+                                <td class="text-wrap">
+                                    <a href="{{ article.lien }}">{{ article.lien }}</a>
+                                </td>
+                                <td class="text-wrap">{{ article.date_publication }}</td>
+                                <td class="text-wrap">{{ article.nom_auteur|safe }}</td>
+                                <td class="text-wrap">{{ article.description_article|safe }}</td>
+                                <td>{{ article.statut_image }}</td>
+                                <td>{{ article.actualite }}</td>
+                                <td>{{ article.date_exportation }}</td>
+                                <td>{{ article.categorie }}</td>
+                                <td>{{ article.ordre_actualite }}</td>
+                                <td>
+                                    <a href="{% url 'compter_doublons_articles' article.id %}" class="btn btn-primary">Cycle Vie</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="13"><h4> Aucun Article Trouvé.</h4> </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        {% if articles_Statistiques_mot_cle.has_previous %}
+                            <a class="btn btn-primary" href="?page=1">Première</a>
+                            <a class="btn btn-primary" href="?page={{ articles_Statistiques_mot_cle.previous_page_number }}">Précédente</a>
+                        {% endif %}
+                        {% if articles_Statistiques_mot_cle.has_next %}
+                            <a class="btn btn-primary" href="?page={{ articles_Statistiques_mot_cle.next_page_number }}">Suivante</a>
+                            <a class="btn btn-primary" href="?page={{ articles_Statistiques_mot_cle.paginator.num_pages }}">Dernière</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
 
         </div>
     </main>
-    
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('#combobox_select_site').select2();
-            $('#search_order').select2();
-    
-            // Gérer l'affichage des champs de date en fonction de la case à cocher
             $('#search_between_dates').change(function() {
                 if ($(this).is(':checked')) {
-                    $('#simple_date_search').hide();
                     $('#date_range_search').show();
                 } else {
-                    $('#simple_date_search').show();
                     $('#date_range_search').hide();
                 }
             });
-    
-            // Assurer l'état initial de l'affichage des champs de date
-            if ($('#search_between_dates').is(':checked')) {
-                $('#simple_date_search').hide();
-                $('#date_range_search').show();
-            } else {
-                $('#simple_date_search').show();
-                $('#date_range_search').hide();
-            }
+
+            // Activer ou désactiver les champs de date en fonction de la sélection au chargement de la page
+            $('#search_between_dates').trigger('change');
         });
     </script>
-    </body>
-    </html>
-    
+       <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+       <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+   
+</body>
+{% include 'footer.html' %}
+</html>

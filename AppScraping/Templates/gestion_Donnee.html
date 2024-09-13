@@ -1,0 +1,44 @@
+<div class="mt-8">
+    <h3>Tableau Statistiques Recherche :</h3>
+    <table class="table custom-table-statistics"> <!-- No changes here, keeping default Bootstrap style -->
+        <thead>
+            <tr>
+                <th>Mot-clé</th>
+                <th>Nbr Total Articles</th>
+                <th>Nbr Titre d'accueil</th>
+                <th>Nbr Titre</th>
+                <th>Nbr Auteur</th>
+                <th>Nbr Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if index_mot == -1 %}
+                <tr>
+                    <td>{{ search_mot_cle }}</td>
+                    <td>{{ total_articles_count}}</td>
+                    <td>{{ mot_cle_count_titre_page_accueil }}</td>
+                    <td>{{ mot_cle_count_titre }}</td>
+                    <td>{{ mot_cle_count_auteur }}</td>
+                    <td>{{ mot_cle_count_description }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td>{{ partie1_mot }}</td>
+                    <td>{{ total_articles_count_1 }}</td>
+                    <td>{{ mot_cle_1_count_titre_page_accueil }}</td>
+                    <td>{{ mot_cle_1_count_titre }}</td>
+                    <td>{{ mot_cle_1_count_auteur }}</td>
+                    <td>{{ mot_cle_1_count_description }}</td>
+                </tr>
+                <tr>
+                    <td>{{ partie2_mot }}</td>
+                    <td>{{ total_articles_count_2 }}</td>
+                    <td>{{ mot_cle_2_count_titre_page_accueil }}</td>
+                    <td>{{ mot_cle_2_count_titre }}</td>
+                    <td>{{ mot_cle_2_count_auteur }}</td>
+                    <td>{{ mot_cle_2_count_description }}</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
