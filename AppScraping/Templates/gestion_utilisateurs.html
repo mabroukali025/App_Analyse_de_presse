@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    {% include 'admin_navbar.html' %}
+    {% include 'navbar.html' %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des Utilisateurs</title>
@@ -9,7 +9,11 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h2 class="text-center mb-4">Gestion des Utilisateurs</h2>
+        <h5 class="text-center mb-4">Gestion des Utilisateurs</h5>
+        <div class="mb-3 text-right">
+            <!-- Bouton pour ajouter un utilisateur -->
+            <a href="{% url 'ajouter_utilisateur' %}" class="btn btn-success">Ajouter Utilisateur</a>
+        </div>
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead class="thead-dark">
@@ -44,4 +48,5 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+{% include 'footer.html' %}
 </html>

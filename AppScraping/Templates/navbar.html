@@ -16,19 +16,14 @@
         </a>
         <div class="nav-links">
             <ul id="navbar-items">
-                <li id="scraping" class="{% if request.resolver_match.url_name == 'admin_scraping_page' %}active{% endif %}">
-                    <a href="{% url 'admin_scraping_page' %}">
+                <li id="scraping" class="{% if request.resolver_match.url_name == 'scraping_page' %}active{% endif %}">
+                    <a href="{% url 'scraping_page' %}">
                         <h5><i class="fas fa-tasks"></i> Scraping</h5>
                     </a>
                 </li>
-                <li id="gestion_donnee" class="{% if request.resolver_match.url_name == 'admin_Gestion_Donnee' %}active{% endif %}">
-                    <a href="{% url 'admin_Gestion_Donnee' %}">
+                <li id="gestion_donnee" class="{% if request.resolver_match.url_name == 'Statistiques_Recherche' %}active{% endif %}">
+                    <a href="{% url 'Statistiques_Recherche' %}">
                         <h5><i class="fab fa-dochub"></i> Gestion Donnee</h5>
-                    </a>
-                </li>
-                <li id="statistiques" class="{% if request.resolver_match.url_name == 'statistiques_page' %}active{% endif %}">
-                    <a href="{% url 'statistiques_page' %}">
-                        <h5><i class="fas fa-chart-bar"></i> Statistiques</h5>
                     </a>
                 </li>
                 {% if user.is_staff %}
@@ -38,35 +33,47 @@
                     </a>
                 </li>
                 {% endif %}
+                <li id="statistiques" class="{% if request.resolver_match.url_name == 'statistiques_page' %}active{% endif %}">
+                    <a href="{% url 'statistiques_page' %}">
+                        <h5><i class="fas fa-chart-bar"></i> Statistiques</h5>
+                    </a>
+                </li>
+                
                 <li id="deconnexion">
                     <a href="{% url 'home_page' %}">
-                        <h5><i class="fas fa-sign-out-alt"></i></h5>
+                        <h5><i class="fas fa-sign-out-alt"></i> </h5>
                     </a>
                 </li>
             </ul>
         </div>
+       
     </nav>
+    
 </header>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const navItems = document.querySelectorAll('#navbar-items li');
+    const navItems = document.querySelectorAll('#navbar-items li');
 
-        // Récupère l'élément actif du stockage local
-        const activeNav = localStorage.getItem('activeNav');
+    // Récupère l'élément actif du stockage local
+    const activeNav = localStorage.getItem('activeNav');
 
-        if (activeNav) {
-            document.getElementById(activeNav).classList.add('active');
-        }
+    if (activeNav) {
+        document.getElementById(activeNav).classList.add('active');
+    }
 
-        navItems.forEach(item => {
-            item.addEventListener('click', function() {
-                navItems.forEach(nav => nav.classList.remove('active'));
-                this.classList.add('active');
+    navItems.forEach(item => {
+        item.addEventListener('click', function() {
+            navItems.forEach(nav => nav.classList.remove('active'));
+            this.classList.add('active');
 
-                // Enregistre l'ID de l'élément actif dans le stockage local
-                localStorage.setItem('activeNav', this.id);
-            });
+            // Enregistre l'ID de l'élément actif dans le stockage local
+            localStorage.setItem('activeNav', this.id);
         });
     });
+});
+
 </script>
+
+
+

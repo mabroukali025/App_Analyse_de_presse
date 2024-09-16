@@ -1200,3 +1200,29 @@ def bloquer_utilisateur(request, user_id):
     utilisateur.is_active = False
     utilisateur.save()
     return redirect('gestion_utilisateurs')
+
+
+
+
+
+##############################
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
+from django.contrib import messages
+
+
+def ajouter_utilisateur(request):
+    return render(request, 'ajouter_utilisateur.html')
+
+def enregistrer_utilisateur(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        email = request.POST['email']
+        password = request.POST['password']
+        
+        # Créer un nouvel utilisateur
+        user = User.objects.create_user(username=username, email=email, password=password)
+        user.save()
+        messages.success(request, 'Utilisateur ajouté avec succès.')
+        return redirect('gestion_utilisateurs')

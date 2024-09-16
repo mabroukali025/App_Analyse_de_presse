@@ -28,7 +28,7 @@ urlpatterns = [
     path('page_Acceuil',views.page_Acceuil),
     path('login/', views.custom_login, name='login'),
     path('register/', views.register, name='register'),
-    path('admin/', views.admin_view, name='admin_dashboard'),
+    
     
     # urls.py
 
@@ -36,9 +36,11 @@ urlpatterns = [
     path('modifier_utilisateur/<int:user_id>/', views.modifier_utilisateur, name='modifier_utilisateur'),
     path('bloquer_utilisateur/<int:user_id>/', views.bloquer_utilisateur, name='bloquer_utilisateur'),
     
-    path('login/admin_scraping/', views.admin_scraping_page, name='admin_scraping_page'),
-    path('admin_Gestion_Donnee/',views.admin_Gestion_Donnee, name='admin_Gestion_Donnee'),
+    
 
+    
+    path('utilisateurs/ajouter/', views.ajouter_utilisateur, name='ajouter_utilisateur'),
+    path('utilisateurs/enregistrer/', views.enregistrer_utilisateur, name='enregistrer_utilisateur'),
     
 
 
