@@ -119,24 +119,32 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_protect
 
 
-@csrf_protect
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_protect
+from django.core.exceptions import ValidationError
 
+@csrf_protect
 def custom_login(request):
     if request.method == 'POST':
-        print(request.POST)
-        print(request.COOKIES)
         form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            if user.is_staff:
-                return redirect('scraping_page')
+        try:
+            if form.is_valid():
+                user = form.get_user()
+                auth_login(request, user)
+                if user.is_staff:
+                    return redirect('scraping_page')  # Redirection pour les utilisateurs staff
+                else:
+                    return redirect('scraping_page')  # Redirection pour les autres utilisateurs
             else:
-                return redirect('scraping_page')
+                raise ValidationError("Nom d'utilisateur ou mot de passe incorrect.")
+        except ValidationError as e:
+            messages.error(request, str(e))
     else:
         form = AuthenticationForm()
-    return render(request, 'login.html', {'form': form})
-
+    return render(request, 'registration/login.html', {'form': form})
 
 
 
@@ -1226,3 +1234,18 @@ def enregistrer_utilisateur(request):
         user.save()
         messages.success(request, 'Utilisateur ajouté avec succès.')
         return redirect('gestion_utilisateurs')
+
+
+
+
+from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+
+def supprimer_utilisateur(request, utilisateur_id):
+    utilisateur = get_object_or_404(User, id=utilisateur_id)
+    if request.method == 'POST':
+        utilisateur.delete()
+        messages.success(request, "L'utilisateur a été supprimé avec succès.")
+        return redirect('gestion_utilisateurs')  # Redirection vers la liste des utilisateurs
+    return redirect('gestion_utilisateurs')  # Redirection si la méthode n'est pas POST

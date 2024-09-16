@@ -14,6 +14,15 @@
             <!-- Bouton pour ajouter un utilisateur -->
             <a href="{% url 'ajouter_utilisateur' %}" class="btn btn-success">Ajouter Utilisateur</a>
         </div>
+
+        {% if messages %}
+            <div class="alert alert-success">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead class="thead-dark">
@@ -32,9 +41,9 @@
                         <td>{{ utilisateur.email }}</td>
                         <td>
                             <a href="{% url 'modifier_utilisateur' utilisateur.id %}" class="btn btn-primary btn-sm">Modifier</a>
-                            <form action="{% url 'bloquer_utilisateur' utilisateur.id %}" method="post" style="display:inline;">
+                            <form action="{% url 'supprimer_utilisateur' utilisateur.id %}" method="post" style="display:inline;" onsubmit="return confirmBlock();">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-danger btn-sm">Bloquer</button>
+                                <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
                             </form>
                         </td>
                     </tr>
@@ -44,9 +53,11 @@
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function confirmBlock() {
+            return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');
+        }
+    </script>
 </body>
 {% include 'footer.html' %}
 </html>

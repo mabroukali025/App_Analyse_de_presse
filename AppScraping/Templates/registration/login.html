@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -5,41 +6,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'navbar.css' %}"> <!-- Include the navbar CSS -->
+    <style>
+        .login-form-container {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 <body>
+    <!-- Logo Navbar -->
+    <header>
+        <nav class="navbar">
+            <a class="navbar-brand" href="">
+                <img src="{% static 'lo.png' %}" alt="Logo">
+            </a>
+            <h3 class="text-primary">Analyse de Presse</h3>
+        </nav>
+    </header>
+    <!-- End of Logo Navbar -->
+
     <div class="container mt-5">
-        <h2 class="text-center">Connexion</h2>
-        <div class="row justify-content-center">
+        <div class="row">
+            <!-- Left Side: Information -->
             <div class="col-md-6">
-                <form method="post" action="{% url 'login' %}">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="username">Nom d'utilisateur</label>
-                        <input type="text" name="username" class="form-control" id="username" placeholder="Nom d'utilisateur" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Mot de passe</label>
-                        <input type="password" name="password" class="form-control" id="password" placeholder="Mot de passe" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
-                </form>
-                
-                {% if form.errors %}
-                    <div class="alert alert-danger mt-3">
-                        <ul>
-                            {% for field in form %}
-                                {% for error in field.errors %}
-                                    <li>{{ error }}</li>
-                                {% endfor %}
+                <p><h3>Informations sur l'Application Analyse de Presse:</h3> 
+                    Bienvenue sur notre plateforme d'analyse de presse, conçue pour collecter,
+                    traiter et analyser des articles provenant de diverses sources en ligne. 
+                    Notre application vous aide à suivre les tendances médiatiques et à explorer
+                    les sujets d'actualité avec précision. Que vous soyez un
+                    professionnel, un chercheur ou simplement curieux, nous facilitons votre 
+                    navigation dans l'information.
+                </p>
+            </div>
+
+            <!-- Right Side: Login Form -->
+            <div class="col-md-6">
+                <div class="login-form-container">
+                    <h3 class="text-center">Connexion</h3>
+                    <form method="post" action="{% url 'login' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="username">Nom d'utilisateur</label>
+                            <input type="text" name="username" class="form-control" id="username" placeholder="Nom d'utilisateur" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Mot de passe</label>
+                            <input type="password" name="password" class="form-control" id="password" placeholder="Mot de passe" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+                    </form>
+                    
+                    {% if messages %}
+                        <div class="alert alert-danger mt-3">
+                            {% for message in messages %}
+                                {{ message }}
                             {% endfor %}
-                        </ul>
-                    </div>
-                {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+{% include 'footer.html' %}
 </html>

@@ -41,7 +41,7 @@ urlpatterns = [
     
     path('utilisateurs/ajouter/', views.ajouter_utilisateur, name='ajouter_utilisateur'),
     path('utilisateurs/enregistrer/', views.enregistrer_utilisateur, name='enregistrer_utilisateur'),
-    
+    path('utilisateurs/supprimer/<int:utilisateur_id>/',views.supprimer_utilisateur, name='supprimer_utilisateur'),
 
 
     path('', views.home, name='home_page'), 
