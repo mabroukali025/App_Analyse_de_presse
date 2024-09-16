@@ -232,3 +232,16 @@
 </script>
 </body>
 </html>
+
+
+
+<ul class="icon">
+    {% if user.is_authenticated %}
+    <li><a href="{% url 'logout' %}" class="icon solid fa-sign-out-alt"><span class="label">Logout</span></a></li>
+        
+    {% else %}
+    <li><a href="{% url 'login' %}" class="icon solid fa-sign-in-alt"><span class="label">Login</span></a></li>
+        
+    {% endif %}
+
+</ul>

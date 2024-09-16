@@ -30,6 +30,7 @@ from django.contrib.auth.models import User
 # Imports de votre application
 #from .models import Article
 
+from .forms import UserRegistrationForm
 
 
 
@@ -43,36 +44,98 @@ from django.shortcuts import render, redirect
 from django.contrib import auth, messages
 from django.views import View
 
+from django.contrib.auth.views import LoginView
 
-class LoginView(View):
-    def get(self, request):
-            return render(request, 'registration/login.html')
-    def post(self, request):
-        username = request.POST['email']
-        password = request.POST['password']
+class CustomLoginView(LoginView):
+    template_name = 'login.html'  # Chemin vers ton template de connexion
 
-        if username and password:
-            user = auth.authenticate(username=username, password=password)
-            if user:
-                if user.is_active:
-                    auth.login(request, user)
-                    messages.success(request, 'Welcome, ' +
-                                     user.username+' you are now logged in')
-                    return redirect('dashboard')
-                
-                messages.error(
-                        request, 'Acount is not active, please check your email')
-                    
-                return render(request, 'authentication/login.html')
-                
-            messages.error(
-                    request, 'Invalid credentials, try again')
-            return render(request, 'registration/login.html')
-            
-        messages.error(
-                request, 'Please fill all fields')
-        return render(request, 'registration/login.html')
 
+
+from django import forms
+from django.contrib.auth.models import User
+
+class UserRegistrationForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput)
+    confirm_password = forms.CharField(widget=forms.PasswordInput)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        confirm_password = cleaned_data.get("confirm_password")
+
+        if password != confirm_password:
+            raise forms.ValidationError("Les mots de passe ne correspondent pas.")
+
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from .forms import UserRegistrationForm
+
+def register(request):
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            login(request, user)  # Connecter l'utilisateur automatiquement après l'inscription
+            return redirect('home')  # Redirige vers la page d'accueil ou une autre page
+    else:
+        form = UserRegistrationForm()
+    return render(request, 'register.html', {'form': form})
+
+
+from django.contrib.auth.decorators import user_passes_test
+
+def staff_required(function=None, redirect_field_name='redirect_to', login_url='login'):
+    """
+    Décorateur pour restreindre l'accès aux utilisateurs qui sont staff.
+    """
+    actual_decorator = user_passes_test(
+        lambda u: u.is_active and u.is_staff,
+        login_url=login_url,
+        redirect_field_name=redirect_field_name
+    )
+    if function:
+        return actual_decorator(function)
+    return actual_decorator
+@staff_required
+def admin_view(request):
+    # Vue réservée aux administrateurs
+    ...
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from django.contrib.auth.forms import AuthenticationForm
+
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from django.contrib.auth.forms import AuthenticationForm
+
+from django.http import HttpResponse
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_protect
+
+
+@csrf_protect
+
+def custom_login(request):
+    if request.method == 'POST':
+        print(request.POST)
+        print(request.COOKIES)
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            if user.is_staff:
+                return redirect('scraping_page')
+            else:
+                return redirect('scraping_page')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'login.html', {'form': form})
 
 
 
@@ -265,6 +328,12 @@ def scraping_page(request):
     }
     return render(request, 'scraping_page.html', context)
 
+def admin_scraping_page(request):
+    context={
+
+    }
+    return render(request, 'admin_scraping.html', context)
+
 def gestion_donnee_page(request):
     # Logique de vue pour la page de gestion des données
     context = { }
@@ -284,7 +353,14 @@ def Statistiques_Recherche(request):
         # Ajoutez des données contextuelles si nécessaire
     }
     return render(request, 'Statistiques_Recherche.html', context)
+#admin_Gestion_Donnee
 
+def admin_Gestion_Donnee(request):
+    # Logique de vue pour la page des statistiques
+    context = {
+        # Ajoutez des données contextuelles si nécessaire
+    }
+    return render(request, 'admin_Gestion_Donnee.html', context)
 
 from django.shortcuts import render
 from django.db import models
@@ -1092,3 +1168,35 @@ def telecharger_articles_excel(request):
 
     return response
 
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+
+@login_required
+def gestion_utilisateurs(request):
+    utilisateurs = User.objects.all()
+    return render(request, 'gestion_utilisateurs.html', {'utilisateurs': utilisateurs})
+
+@login_required
+def modifier_utilisateur(request, user_id):
+    utilisateur = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        utilisateur.username = request.POST['username']
+        utilisateur.email = request.POST['email']
+        password = request.POST['password']
+        if password:
+            utilisateur.set_password(password)
+        utilisateur.save()
+        return redirect('gestion_utilisateurs')
+    return render(request, 'modifier_utilisateur.html', {'utilisateur': utilisateur})
+
+@require_POST
+@login_required
+def bloquer_utilisateur(request, user_id):
+    utilisateur = get_object_or_404(User, id=user_id)
+    utilisateur.is_active = False
+    utilisateur.save()
+    return redirect('gestion_utilisateurs')

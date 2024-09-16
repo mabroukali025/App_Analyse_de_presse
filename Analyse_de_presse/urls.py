@@ -22,14 +22,29 @@ from django.contrib import admin
 from django.urls import path
 from AppScraping import views
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('page_Acceuil',views.page_Acceuil),
-    path('login/', LoginView.as_view(), name='login'),
-    path('logout/', LogoutView.as_view(), name='logout'),
+    path('login/', views.custom_login, name='login'),
+    path('register/', views.register, name='register'),
+    path('admin/', views.admin_view, name='admin_dashboard'),
+    
+    # urls.py
+
+    path('gestion_utilisateurs/', views.gestion_utilisateurs, name='gestion_utilisateurs'),
+    path('modifier_utilisateur/<int:user_id>/', views.modifier_utilisateur, name='modifier_utilisateur'),
+    path('bloquer_utilisateur/<int:user_id>/', views.bloquer_utilisateur, name='bloquer_utilisateur'),
+    
+    path('login/admin_scraping/', views.admin_scraping_page, name='admin_scraping_page'),
+    path('admin_Gestion_Donnee/',views.admin_Gestion_Donnee, name='admin_Gestion_Donnee'),
+
+    
+
+
     path('', views.home, name='home_page'), 
     path('home/', views.page_Acceuil, name='page_Acceuil'),
-    path('scraping/', views.scraping_page, name='scraping_page'),
+    path('login/scraping/', views.scraping_page, name='scraping_page'),
     path('gestion-donnee/', views.gestion_donnee_page, name='gestion_donnee_page'),
     path('statistiques/', views.statistiques_page, name='statistiques_page'),
     path('find_articles/',views.find_articles, name='find_articles'),

@@ -80,8 +80,8 @@
             <!-- Formulaire de mise à jour des données et téléchargement en Excel -->
             <form method="get" class="form-container" action="{% url 'remove_duplicate_articles' %}">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-info">Actualise les Données</button>
-                <a href="{% url 'telecharger_excel' %}" class="btn btn-success">Télécharger en Excel</a>
+                <button type="submit" class="btn btn-info">Actualise Donnees</button>
+                <a href="{% url 'telecharger_excel' %}" class="btn btn-success">Telecharger en Excel</a>
             </form>
 
             <br/>

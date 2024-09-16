@@ -50,7 +50,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    
+    
+    
 ]
+
+
+
 
 ROOT_URLCONF = 'Analyse_de_presse.urls'
 
@@ -146,3 +153,6 @@ LOGIN_REDIRECT_URL=''
 
 LOGOUT_URL='/logout/'
 LOGOUT_REDIRECT_URL='/login/'
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
