@@ -702,14 +702,14 @@ def Statistiques_mot_cle(request):
     
     paginator = Paginator(articles, 3)  # Affiche 3 articles par page
     page_number = request.GET.get('page')  # Obtient le numéro de la page actuelle
-    page_obj_pagination = paginator.get_page(page_number) 
+    articles = paginator.get_page(page_number) 
     
     
     
     
     # Context setup
     context = {
-        'articles_Statistiques_pagination': page_obj_pagination, 
+        'articles_Statistiques_pagination': articles, 
         'articles_Statistiques_mot_cle': articles,
         'categories': categories,
         'total_articles_count': total_articles_count,

@@ -22,15 +22,20 @@ output_excel_file = "LefigaroSansDoub.xlsx"
 
 
 
+
+
 def fonction_date_exportation():
- import locale
- locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
- from datetime import datetime
- Date_Exportation = datetime.now()
- return Date_Exportation
+    import pytz
+    from datetime import datetime
+    # Define the French time zone
+    french_tz = pytz.timezone('Europe/Paris')
+    
+    # Get the current date and time in the French time zone
+    now = datetime.now(french_tz)
+    return now
 
 scraping_active = True
-date_exportation=fonction_date_exportation().strftime("%Y-%m-%d %H:%M:%S")
+date_exportation=fonction_date_exportation().strftime('%Y-%m-%dT%H:%M:%S')
 class WebDriverSingleton:
     _instance = None
 

@@ -18,12 +18,35 @@ import pytz
 url="https://www.lemonde.fr/"
 
 def fonction_date_exportation():
- import locale
- locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
- from datetime import datetime
- Date_Exportation = datetime.now()
- return Date_Exportation
+    import pytz
+    from datetime import datetime
+    french_tz = pytz.timezone('Europe/Paris')
+    
+    # Get the current date and time in the French time zone
+    now = datetime.now(french_tz)
+    
+    # Format the date and time
+    Date_Exportation = now.strftime('%Y-%m-%dT%H:%M:%S')
+    
+    return Date_Exportation
+ 
 Date_Exportation=fonction_date_exportation().strftime('%Y-%m-%dT%H:%M:%S') 
+######################################################################
+from datetime import datetime
+import pytz
+
+# Define the French time zone
+french_tz = pytz.timezone('Europe/Paris')
+
+# Get the current date and time in the French time zone
+now = datetime.now(french_tz)
+
+# Format the date and time
+Date_Exportation = now.strftime('%Y-%m-%dT%H:%M:%S')
+date_exportation_obj = datetime.strptime(Date_Exportation, '%Y-%m-%dT%H:%M:%S')
+
+
+
 ######################################################## fonction principle  ##########################################
 scraping_active = True
 

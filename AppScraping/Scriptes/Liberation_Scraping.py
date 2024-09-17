@@ -21,15 +21,17 @@ from AppScraping.models import Article
 url = 'https://www.liberation.fr/'
 input_csv_file = "LiberationVF.csv"
 
-import locale
+from datetime import datetime
+import pytz
 
-locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
+# Define the French time zone
+french_tz = pytz.timezone('Europe/Paris')
 
-# Obtenir la date et l'heure actuelles
-#current_datetime = datetime.today()
+# Get the current date and time in the French time zone
+now = datetime.now(french_tz)
 
-# Formater la date et l'heure en français
-Date_Exportation = datetime.now().strftime('%Y-%m-%dT%H:%M:%S') 
+# Format the date and time
+Date_Exportation = now.strftime('%Y-%m-%dT%H:%M:%S')
 date_exportation_obj = datetime.strptime(Date_Exportation, '%Y-%m-%dT%H:%M:%S')
                     
 
