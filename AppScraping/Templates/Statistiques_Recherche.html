@@ -229,7 +229,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for article in articles_Statistiques_mot_cle %}
+                            {% for article in articles_Statistiques_pagination %}
                             <tr>
                                 <td>{{ article.id }}</td>
                                 <td class="text-wrap">{{ article.titre_page_accueil|safe }}</td>
@@ -256,19 +256,44 @@
                             {% endfor %}
                         </tbody>
                     </table>
-                    <div class="pagination">
-                        {% if articles_Statistiques_mot_cle.has_previous %}
-                            <a class="btn btn-primary" href="?page=1">Première</a>
-                            <a class="btn btn-primary" href="?page={{ articles_Statistiques_mot_cle.previous_page_number }}">Précédente</a>
-                        {% endif %}
-                        {% if articles_Statistiques_mot_cle.has_next %}
-                            <a class="btn btn-primary" href="?page={{ articles_Statistiques_mot_cle.next_page_number }}">Suivante</a>
-                            <a class="btn btn-primary" href="?page={{ articles_Statistiques_mot_cle.paginator.num_pages }}">Dernière</a>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
 
+<!-- Pagination Controls -->
+                    <div class="d-flex justify-content-center">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination">
+                                {% if articles_Statistiques_pagination.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ articles_Statistiques_pagination.previous_page_number }}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                    
+                                <!-- Loop through page numbers -->
+                                {% for num in articles_Statistiques_pagination.paginator.page_range %}
+                                    {% if num > articles_Statistiques_pagination.number|add:-5 and num < articles_Statistiques_pagination.number|add:5 %}
+                                        <li class="page-item {% if articles_Statistiques_pagination.number == num %}active{% endif %}">
+                                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                    
+                                {% if articles_Statistiques_pagination.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ articles_Statistiques_pagination.next_page_number }}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                    
+
+                    
+                  
+                </div>
+            </div>          
         </div>
     </main>
 

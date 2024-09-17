@@ -569,6 +569,8 @@ def highlight_keywords(text, keyword):
 from django.shortcuts import render
 from datetime import datetime
 from .models import Article
+from django.core.paginator import Paginator
+
  # Assurez-vous que cette fonction est correctement définie
 
 def Statistiques_mot_cle(request):
@@ -693,13 +695,21 @@ def Statistiques_mot_cle(request):
 
 
   
-
+     # Pagination setup
+    #paginator = Paginator(articles.distinct(), 3)  # Limite à 3 articles par page
+    #page_number = request.GET.get('page')  # Obtient le numéro de la page actuelle
+    #page_obj = paginator.get_page(page_number)  # Récupère la page actuelle des articles
+    
+    paginator = Paginator(articles, 3)  # Affiche 3 articles par page
+    page_number = request.GET.get('page')  # Obtient le numéro de la page actuelle
+    page_obj_pagination = paginator.get_page(page_number) 
     
     
     
     
     # Context setup
     context = {
+        'articles_Statistiques_pagination': page_obj_pagination, 
         'articles_Statistiques_mot_cle': articles,
         'categories': categories,
         'total_articles_count': total_articles_count,
@@ -745,6 +755,8 @@ def Statistiques_mot_cle(request):
 
     return render(request, 'Statistiques_Recherche.html', context)
 
+   
+#return render(request, 'Statistiques_Recherche.html', context)
 ###############################""import plotly.graph_objects as go
 import plotly.io as pio
 import plotly.express as px
