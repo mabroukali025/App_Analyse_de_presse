@@ -17,20 +17,20 @@ import pytz
 
 url="https://www.lemonde.fr/"
 
-def fonction_date_exportation():
-    import pytz
-    from datetime import datetime
-    french_tz = pytz.timezone('Europe/Paris')
+
+import pytz
+from datetime import datetime
+french_tz = pytz.timezone('Europe/Paris')
+french_tz = pytz.timezone('Europe/Paris')
+
+# Get the current date and time in the French time zone
+now = datetime.now(french_tz)
+
+# Format the date and time
+Date_Exportation_obj = now.strftime('%Y-%m-%dT%H:%M:%S')
+date_exportation = datetime.strptime(Date_Exportation_obj, '%Y-%m-%dT%H:%M:%S')
     
-    # Get the current date and time in the French time zone
-    now = datetime.now(french_tz)
     
-    # Format the date and time
-    Date_Exportation = now.strftime('%Y-%m-%dT%H:%M:%S')
-    
-    return Date_Exportation
- 
-Date_Exportation=fonction_date_exportation().strftime('%Y-%m-%dT%H:%M:%S') 
 ######################################################################
 from datetime import datetime
 import pytz

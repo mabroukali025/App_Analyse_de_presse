@@ -27,15 +27,19 @@ output_excel_file = "LefigaroSansDoub.xlsx"
 def fonction_date_exportation():
     import pytz
     from datetime import datetime
-    # Define the French time zone
+    # Définir le fuseau horaire français
     french_tz = pytz.timezone('Europe/Paris')
-    
-    # Get the current date and time in the French time zone
-    now = datetime.now(french_tz)
-    return now
+    # Obtenir la date et l'heure actuelles en France
+    return datetime.now(french_tz)
+
+# Obtenir l'objet datetime
+date_exportation_obj = fonction_date_exportation()
+# Formatter la date
+date_exportation = date_exportation_obj.strftime('%Y-%m-%dT%H:%M:%S')
+
 
 scraping_active = True
-date_exportation=fonction_date_exportation().strftime('%Y-%m-%dT%H:%M:%S')
+
 class WebDriverSingleton:
     _instance = None
 
