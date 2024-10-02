@@ -18,17 +18,26 @@ import pytz
 url="https://www.lemonde.fr/"
 
 
+
 import pytz
 from datetime import datetime
-french_tz = pytz.timezone('Europe/Paris')
-french_tz = pytz.timezone('Europe/Paris')
+""""
+def fonction_date_exportation():
+    french_tz = pytz.timezone('Europe/Paris')
+    now = datetime.now(french_tz)  # Récupère l'heure actuelle avec le fuseau horaire
+    return now
 
-# Get the current date and time in the French time zone
-now = datetime.now(french_tz)
+# Appel de la fonction pour obtenir la date et l'heure actuelles sous forme d'objet datetime
+date_exportation_article_reconverted = fonction_date_exportation()
 
-# Format the date and time
-Date_Exportation_obj = now.strftime('%Y-%m-%dT%H:%M:%S')
-date_exportation = datetime.strptime(Date_Exportation_obj, '%Y-%m-%dT%H:%M:%S')
+# Si tu veux convertir cet objet datetime en chaîne formatée
+date_exportation_article = date_exportation_article_reconverted.strftime('%Y-%m-%dT%H:%M:%S')
+
+
+print("Date exportation (chaîne) :", date_exportation_article)
+
+"""
+
     
     
 ######################################################################
@@ -43,7 +52,7 @@ now = datetime.now(french_tz)
 
 # Format the date and time
 Date_Exportation = now.strftime('%Y-%m-%dT%H:%M:%S')
-date_exportation_obj = datetime.strptime(Date_Exportation, '%Y-%m-%dT%H:%M:%S')
+date_exportation_article = datetime.strptime(Date_Exportation, '%Y-%m-%dT%H:%M:%S')
 
 
 
@@ -88,7 +97,7 @@ class WebDriverSingleton:
 ########################################################################
 
 def creer_article(titre_page_accueil, titre, lien, date_text, auteur_name, paragraphe, has_image, Actualite, Date_Exportation, categorie, order):
-    
+    from django.utils import timezone
     article = Article(
         titre_page_accueil=titre_page_accueil,
         titre=titre,
@@ -102,6 +111,12 @@ def creer_article(titre_page_accueil, titre, lien, date_text, auteur_name, parag
         categorie=categorie,
         ordre_actualite=order,
     )
+    # Exemple de manipulation pour rendre la date timezone-aware avant enregistrement
+    #if article.date_publication.tzinfo is None:
+        #article.date_publication = timezone.make_aware(article.date_publication, timezone.get_current_timezone())
+
+    #if article.date_exportation.tzinfo is None:
+        #article.date_exportation = timezone.make_aware(article.date_exportation, timezone.get_current_timezone())
     article.save()
 
     return article  
@@ -213,7 +228,7 @@ def gerer_date(chaine):
     elif chaine.startswith("Publié le"):
         return date_publier_le(chaine) # A implémenter si nécessaire
     else:
-        return fonction_date_exportation().strftime('%Y-%m-%dT%H:%M:%S')
+        return date_exportation_article
 
 def extraire_heure_Lemonde(chaine: str) -> str:
     import re
@@ -233,7 +248,7 @@ def convertir_chaine_en_date_Lemonde(chaine: str) -> str:
         heure_str = extraire_heure_Lemonde(chaine)
         # Convertir l'heure au format HH:MM
         heure_formatee = heure_str.replace('h', ':')
-        date_exportation = fonction_date_exportation()
+        date_exportation = date_exportation_article
         # Combiner la date d'exportation avec l'heure extraite
         date_heure_str = date_exportation.strftime("%Y-%m-%d") + 'T' + heure_formatee + ':00'
         
@@ -349,9 +364,7 @@ def fonction_find_Article(divs_in_section,driver,Sous_Actualite,order):
              has_img='Non'
              categorie='Non Trouvee'
              date_text=None
-             date_pub=None
-
-
+             date_pub=None 
              link=divs_in_section.find('a')
              has_img='Non'
              if link:
@@ -403,9 +416,9 @@ def fonction_find_Article(divs_in_section,driver,Sous_Actualite,order):
                                   title_page_Acceuil='Non Trouvee' 
                               
                               if date_text is None:
-                                  date_text=fonction_date_exportation().strftime('%Y-%m-%d %H:%M:%S')
+                                  date_text=date_exportation_article
                               
-                              creer_article(title_page_Acceuil,title, link_page,date_text,auteur_name,paragraphe,has_img,Sous_Actualite,Date_Exportation,categorie,order)
+                              creer_article(title_page_Acceuil,title, link_page,date_text,auteur_name,paragraphe,has_img,Sous_Actualite,date_exportation_article,categorie,order)
                               initialisation_varialbes(title,date_text,auteur_name,paragraphe,has_img,Sous_Actualite,categorie,order)
                       
                       if section:                                      
@@ -469,9 +482,9 @@ def fonction_find_Article(divs_in_section,driver,Sous_Actualite,order):
                                       else:
                                          has_img='Non'                             
                                       if date_publication is None or date_element is None:
-                                         date_publication=fonction_date_exportation().strftime("%Y-%m-%d %H:%M:%S")
+                                         date_publication=date_exportation_article
 
-                                      creer_article(title_page_Acceuil,title, link_page,date_publication,auteur_name,paragraphe,has_img,Sous_Actualite,Date_Exportation,categorie,order)
+                                      creer_article(title_page_Acceuil,title, link_page,date_publication,auteur_name,paragraphe,has_img,Sous_Actualite,date_exportation_article,categorie,order)
                                       
                                           
                                       initialisation_varialbes(title,date_text,auteur_name,p,has_img,Sous_Actualite,categorie,order)
@@ -529,8 +542,8 @@ def fonction_find_Article(divs_in_section,driver,Sous_Actualite,order):
                                          has_img='Non'                             
                                       
                                       if date_publication is None or date_element is None:
-                                          date_publication=fonction_date_exportation().strftime("%Y-%m-%d %H:%M:%S")
-                                      creer_article(title_page_Acceuil,title, link_page,date_publication,auteur_name,paragraphe,has_img,Sous_Actualite,Date_Exportation,categorie,order)
+                                          date_publication=date_exportation_article
+                                      creer_article(title_page_Acceuil,title, link_page,date_publication,auteur_name,paragraphe,has_img,Sous_Actualite,date_exportation_article,categorie,order)
                                      
                                       initialisation_varialbes(title,date_text,auteur_name,p,has_img,Sous_Actualite,categorie,order)
                       if article_art:
@@ -593,9 +606,9 @@ def fonction_find_Article(divs_in_section,driver,Sous_Actualite,order):
                                           has_img='Oui'
                                 
                                       if date_publication is None or date_element is None:
-                                        date_publication=fonction_date_exportation().strftime("%Y-%m-%d %H:%M:%S")
+                                        date_publication=date_exportation_article
                                      
-                                      creer_article(title_page_Acceuil,title, link_page,date_publication,auteur_name,paragraphe,has_img,Sous_Actualite,Date_Exportation,categorie,order)
+                                      creer_article(title_page_Acceuil,title, link_page,date_publication,auteur_name,paragraphe,has_img,Sous_Actualite,date_exportation_article,categorie,order)
                                       
                                       initialisation_varialbes(title,date_publication,auteur_name,p,has_img,Sous_Actualite,categorie,order)
                                   
@@ -665,6 +678,7 @@ def findAllArticles(url):
       
       div_princ=main_page.find('div',id='habillagepub') #le premiere div apres le main
       if div_princ:
+      
        zone_1=div_princ.find('section',{'class':lambda k:k and(k.startswith('zone zone--homepage'))})
        zone_2=div_princ.find('section',{'class':lambda c:c and(c.startswith('area area--runner'))})
        zone_3=div_princ.find('section',{'class':lambda j:j and(j.startswith('area area--river'))})
@@ -735,4 +749,41 @@ def start_scraping(d):
     scraping_thread = threading.Thread(target=Lemonde_Find_All_Article, args=(d,))
     scraping_thread.start()
 
+import threading
 
+def start_all_Scraping(duree_value):
+    global scraping_active
+    scraping_active = True
+
+    # Démarre le scraping pour Le Monde dans un thread
+    monde_thread = threading.Thread(target=Lemonde_Find_All_Article, args=(int(duree_value),))
+    monde_thread.start()
+
+    # Démarre le scraping pour Libération dans un autre thread
+    from AppScraping.Scriptes.Liberation_Scraping import fonction_liberation
+    liberation_thread = threading.Thread(target=fonction_liberation, args=(int(duree_value),))
+    liberation_thread.start()
+
+    # Démarre le scraping pour Le Figaro dans un autre thread
+    from AppScraping.Scriptes.Lefigaro_Scraping import start_scraping
+    figaro_thread = threading.Thread(target=start_scraping, args=(int(duree_value),))
+    figaro_thread.start()
+
+    # Tu peux attendre que tous les threads soient terminés (optionnel)
+    monde_thread.join()
+    liberation_thread.join()
+    figaro_thread.join()
+
+    print("Tous les scripts de scraping sont terminés.")
+
+import threading
+
+def stop_all_Scraping():
+    global scraping_active
+    scraping_active = False
+    from AppScraping.Scriptes.Lefigaro_Scraping import fonction_Arrete_Script
+    fonction_Arrete_Script()
+    from AppScraping.Scriptes.Liberation_Scraping import fonction_Arrete_Script
+    fonction_Arrete_Script()
+    
+    fonction_Arrete_Script()

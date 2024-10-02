@@ -10,7 +10,7 @@ class Article(models.Model):
     id = models.AutoField(primary_key=True)
     titre_page_accueil = models.CharField(max_length=255, default='Titre par défaut')
     titre = models.CharField(max_length=255, default='Titre par défaut')
-    lien = models.CharField(max_length=255, default='https://exemple.com')
+    lien = models.CharField(max_length=500, default='https://exemple.com')
     date_publication =models.DateTimeField(verbose_name="Date d'exportation", help_text="Date au format jour mois année, heure:minute:seconde")
     nom_auteur = models.CharField(max_length=255, default='Auteur inconnu')
     description_article = models.TextField(default='Description par défaut')

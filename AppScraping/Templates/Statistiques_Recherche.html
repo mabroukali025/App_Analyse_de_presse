@@ -225,11 +225,11 @@
                                 <th class="font-weight-bold" style="width: 8%;">Date Exportation</th>
                                 <th class="font-weight-bold" style="width: 8%;">Catégorie</th>
                                 <th class="font-weight-bold" style="width: 7%;">Ordre d'Actualité</th>
-                                <th class="font-weight-bold" style="width: 10%;">Cycle de Vie</th>
+                                <th class="font-weight-bold" style="width: 10%;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for article in articles_Statistiques_pagination %}
+                            {% for article in articles_Statistiques_mot_cle %}
                             <tr>
                                 <td>{{ article.id }}</td>
                                 <td class="text-wrap">{{ article.titre_page_accueil|safe }}</td>
@@ -246,8 +246,18 @@
                                 <td>{{ article.categorie }}</td>
                                 <td>{{ article.ordre_actualite }}</td>
                                 <td>
-                                    <a href="{% url 'compter_doublons_articles' article.id %}" class="btn btn-primary">Cycle Vie</a>
+                                    <!-- Utilisation de div pour forcer l'affichage en bloc avec un espace entre chaque bouton -->
+                                    <div class="mb-2">
+                                        <!-- Bouton "Cycle Vie" -->
+                                        <a href="{% url 'compter_doublons_articles' article.id %}" class="btn btn-primary">Cycle Vie</a>
+                                    </div>
+                                    <div>
+                                        <!-- Bouton "Télécharger" -->
+                                        <a href="{% url 'telecharger_article_unique_excel' article.id %}" class="btn btn-success">Télécharger</a>
+                                    </div>
                                 </td>
+                                      
+                                
                             </tr>
                             {% empty %}
                             <tr>
@@ -258,37 +268,37 @@
                     </table>
 
 <!-- Pagination Controls -->
-                    <div class="d-flex justify-content-center">
-                        <nav aria-label="Page navigation example">
-                            <ul class="pagination">
-                                {% if articles_Statistiques_pagination.has_previous %}
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page={{ articles_Statistiques_pagination.previous_page_number }}" aria-label="Previous">
-                                            <span aria-hidden="true">&laquo;</span>
-                                        </a>
-                                    </li>
-                                {% endif %}
-                    
-                                <!-- Loop through page numbers -->
-                                {% for num in articles_Statistiques_pagination.paginator.page_range %}
-                                    {% if num > articles_Statistiques_pagination.number|add:-5 and num < articles_Statistiques_pagination.number|add:5 %}
-                                        <li class="page-item {% if articles_Statistiques_pagination.number == num %}active{% endif %}">
-                                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                                        </li>
-                                    {% endif %}
-                                {% endfor %}
-                    
-                                {% if articles_Statistiques_pagination.has_next %}
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page={{ articles_Statistiques_pagination.next_page_number }}" aria-label="Next">
-                                            <span aria-hidden="true">&raquo;</span>
-                                        </a>
-                                    </li>
-                                {% endif %}
-                            </ul>
-                        </nav>
-                    </div>
-                    
+<div class="d-flex justify-content-center">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            {% if articles_Statistiques_pagination.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ articles_Statistiques_pagination.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+
+            <!-- Loop through page numbers -->
+            {% for num in articles_Statistiques_pagination.paginator.page_range %}
+                {% if num > articles_Statistiques_pagination.number|add:-5 and num < articles_Statistiques_pagination.number|add:5 %}
+                    <li class="page-item {% if articles_Statistiques_pagination.number == num %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if articles_Statistiques_pagination.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ articles_Statistiques_pagination.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+
 
                     
                   

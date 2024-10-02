@@ -479,6 +479,7 @@ def find_articles(request):
         # Démarrer le scraping selon l'option sélectionnée
         if selected_value_global == "option1":
             from AppScraping.Scriptes.Lemonde_Scraping import Lemonde_Find_All_Article
+            print(' le monde est commancer   ')
             Lemonde_Find_All_Article(int(duree_value))
         elif selected_value_global == "option2":
             from AppScraping.Scriptes.Liberation_Scraping import fonction_liberation
@@ -486,6 +487,11 @@ def find_articles(request):
         elif selected_value_global == "option3":
             from AppScraping.Scriptes.Lefigaro_Scraping import start_scraping
             start_scraping(int(duree_value))
+        elif selected_value_global=="option0":
+            from AppScraping.Scriptes.Lemonde_Scraping import  start_all_Scraping
+            start_all_Scraping(int(duree_value))
+            
+
     
     # Afficher la page de scraping avec la valeur sélectionnée
     return render(request, 'scraping_page.html', {'selected_value': selected_value_global})
@@ -510,6 +516,10 @@ def arreter_scraping(selected_value):
     elif selected_value == 'option1':
         from AppScraping.Scriptes.Lemonde_Scraping import fonction_Arrete_Script
         fonction_Arrete_Script()
+    elif selected_value == 'option0':
+        
+        from AppScraping.Scriptes.Lemonde_Scraping import stop_all_Scraping
+        stop_all_Scraping()
     else:
         return False
 
@@ -539,32 +549,38 @@ import re
 import unicodedata
 
 def remove_accents(input_str):
-    
     nfkd_form = unicodedata.normalize('NFKD', input_str)
     return ''.join([c for c in nfkd_form if not unicodedata.combining(c)])
 
 def highlight_keywords(text, keyword):
-    
-    # Supprimer les accents des chaînes de texte et de mot-clé pour la comparaison
+    # Supprimer les accents des chaînes de texte et du mot-clé pour la comparaison
     text_no_accents = remove_accents(text)
     keyword_no_accents = remove_accents(keyword)
 
     # Échapper les caractères spéciaux dans le mot clé pour éviter les problèmes avec les expressions régulières
     escaped_keyword = re.escape(keyword_no_accents)
 
-    # Utiliser une expression régulière pour trouver les occurrences du mot clé en ignorant la casse
+    # Fonction interne pour remplacer les mots-clés correspondants dans le texte original
     def highlight_match(match):
-        #return f'<mark>{match.group(0)}</mark>'
-        return f'<mark style="background-color: gree; color: black; font-size: 18px;">{match.group(0)}</mark>'
+        # Extraire la position de correspondance dans le texte original
+        start_pos = match.start()
+        end_pos = match.end()
+        original_text_match = text[start_pos:end_pos]  # Extraire le texte original avec accents
 
-    # Remplacer toutes les occurrences du mot-clé par la version surlignée
+        # Retourner le texte surligné avec <mark>
+        return f'<mark style="background-color: primary; color: black; font-size: 18px;">{original_text_match}</mark>'
+
+    # Utiliser la version sans accents pour rechercher les correspondances, mais appliquer les surlignages au texte d'origine
     highlighted_text = re.sub(
-        fr'(?i){escaped_keyword}',  # (?i) rend la recherche insensible à la casse
-        highlight_match,
+        fr'(?i){escaped_keyword}',  # (?i) pour ignorer la casse
+        lambda match: highlight_match(match),
         text_no_accents
     )
 
     return highlighted_text
+
+
+
 
 from django.shortcuts import render
 from datetime import datetime
@@ -574,7 +590,7 @@ from django.core.paginator import Paginator
  # Assurez-vous que cette fonction est correctement définie
 
 def Statistiques_mot_cle(request):
-    articles = Article.objects.all()
+    articles = Article.objects.all().distinct()
     categories = Article.objects.values_list('categorie', flat=True).distinct().order_by('categorie')
     categories = [categorie.strip() for categorie in categories if categorie.strip()]
 
@@ -635,11 +651,9 @@ def Statistiques_mot_cle(request):
             articles = mot_cle_in_titre | mot_cle_in_description | mot_cle_in_auteur | mot_cle_in_titre_page_accueil
             total_articles_count = articles.distinct().count()
 
-            for article in articles:
-                article.titre = highlight_keywords(article.titre, search_mot_cle)
-                article.description_article = highlight_keywords(article.description_article, search_mot_cle)
-                article.nom_auteur = highlight_keywords(article.nom_auteur, search_mot_cle)
-                article.titre_page_accueil = highlight_keywords(article.titre_page_accueil, search_mot_cle)
+            
+
+
 
         else:
             # Recherche avec deux parties de mot-clé
@@ -679,32 +693,27 @@ def Statistiques_mot_cle(request):
             articles = articles_1 | articles_2
             total_articles_count = articles.distinct().count()
 
-            for article in articles:
-                if partie1_mot:
-                    article.titre = highlight_keywords(article.titre, partie1_mot)
-                    article.description_article = highlight_keywords(article.description_article, partie1_mot)
-                    article.nom_auteur = highlight_keywords(article.nom_auteur, partie1_mot)
-                    article.titre_page_accueil = highlight_keywords(article.titre_page_accueil, partie1_mot)
-                if partie2_mot:
-                    article.titre = highlight_keywords(article.titre, partie2_mot)
-                    article.description_article = highlight_keywords(article.description_article, partie2_mot)
-                    article.nom_auteur = highlight_keywords(article.nom_auteur, partie2_mot)
-                    article.titre_page_accueil = highlight_keywords(article.titre_page_accueil, partie2_mot)
+            
+
     else:
         total_articles_count = articles.distinct().count()
-
-
-  
-     # Pagination setup
-    #paginator = Paginator(articles.distinct(), 3)  # Limite à 3 articles par page
-    #page_number = request.GET.get('page')  # Obtient le numéro de la page actuelle
-    #page_obj = paginator.get_page(page_number)  # Récupère la page actuelle des articles
-    
-    paginator = Paginator(articles, 3)  # Affiche 3 articles par page
+    # Pagination setup
+    paginator = Paginator(articles.distinct(), 3)  # Limite à 3 articles par page
     page_number = request.GET.get('page')  # Obtient le numéro de la page actuelle
-    articles = paginator.get_page(page_number) 
-    
-    
+    articles = paginator.get_page(page_number)  # Applique la pagination directement à la variable 'articles'
+    for article in articles:
+        if partie1_mot:
+            article.titre = highlight_keywords(article.titre, partie1_mot)
+            article.description_article = highlight_keywords(article.description_article, partie1_mot)
+            article.nom_auteur = highlight_keywords(article.nom_auteur, partie1_mot)
+            article.titre_page_accueil = highlight_keywords(article.titre_page_accueil, partie1_mot)
+
+        if partie2_mot:
+            article.titre = highlight_keywords(article.titre, partie2_mot)
+            article.description_article = highlight_keywords(article.description_article, partie2_mot)
+            article.nom_auteur = highlight_keywords(article.nom_auteur, partie2_mot)
+            article.titre_page_accueil = highlight_keywords(article.titre_page_accueil, partie2_mot)
+
     
     
     # Context setup
@@ -749,11 +758,14 @@ def Statistiques_mot_cle(request):
             'search_date': search_date,
             'search_mot_cle': search_mot_cle,
             'index_mot': index_mot,
+
+            
         })
 
         
 
     return render(request, 'Statistiques_Recherche.html', context)
+
 
    
 #return render(request, 'Statistiques_Recherche.html', context)
@@ -1261,3 +1273,51 @@ def supprimer_utilisateur(request, utilisateur_id):
         messages.success(request, "L'utilisateur a été supprimé avec succès.")
         return redirect('gestion_utilisateurs')  # Redirection vers la liste des utilisateurs
     return redirect('gestion_utilisateurs')  # Redirection si la méthode n'est pas POST
+
+
+
+
+###############
+def telecharger_article_unique_excel(request, article_id):
+    # Récupérer l'article correspondant à l'ID
+    try:
+        article = Article.objects.get(id=article_id)
+    except Article.DoesNotExist:
+        return HttpResponse("Article introuvable", status=404)
+
+    # Si article.date_publication est timezone-aware, on enlève le fuseau horaire
+    date_publication = article.date_publication
+    date_exportation = article.date_exportation
+
+    if date_publication and date_publication.tzinfo is not None:
+        date_publication = date_publication.replace(tzinfo=None)
+    if date_exportation and date_exportation.tzinfo is not None:
+        date_exportation = date_exportation.replace(tzinfo=None)
+
+    # Créer une liste des données à exporter
+    data = [{
+        'Id': article.id,
+        'Titre Accueil': article.titre_page_accueil,
+        'Titre': article.titre,
+        'Lien': article.lien,
+        'Date Publication': date_publication,  # Utiliser la date sans fuseau horaire
+        'Auteur': article.nom_auteur,
+        'Description': article.description_article,
+        'Statut Image': article.statut_image,
+        'Statut Actualite': article.actualite,
+        'Date Exportation': date_exportation,  # Utiliser la date sans fuseau horaire
+        'Categorie': article.categorie,
+        'Ordre Actualite': article.ordre_actualite,
+    }]
+
+    # Convertir les données en DataFrame pandas
+    df = pd.DataFrame(data)
+
+    # Créer une réponse HTTP avec un fichier Excel
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = f'attachment; filename=article_{article_id}.xlsx'
+
+    # Utiliser pandas pour exporter le DataFrame vers un fichier Excel
+    df.to_excel(response, index=False, engine='openpyxl')
+
+    return response

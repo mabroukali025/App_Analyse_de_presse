@@ -66,6 +66,7 @@ urlpatterns = [
     path('get_scraping_status/', views.get_scraping_status, name='get_scraping_status'),
     path('download_articles_excel/', views.download_articles_excel, name='download_articles_excel'),
     path('telecharger-excel/', views.telecharger_articles_excel, name='telecharger_excel'),
+    path('telecharger-article/<int:article_id>/', views.telecharger_article_unique_excel, name='telecharger_article_unique_excel'),
 
 
     

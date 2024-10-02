@@ -123,11 +123,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'fr'
 TIME_ZONE = 'Europe/Paris'
+USE_TZ = True
 
+DEBUG = True
 
 USE_I18N = True
 
-USE_TZ = True
+
 
 
 # Static files (CSS, JavaScript, Images)

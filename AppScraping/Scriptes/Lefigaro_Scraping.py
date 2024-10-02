@@ -687,6 +687,7 @@ def findAllArticles(url):
             Sous_Actualite='Non'
             
             Find_Article(x,driver,Sous_Actualite,order)
+            
 def fonction_Lefigaro(d):
     global scraping_active
     i = 0
@@ -725,9 +726,15 @@ def fonction_Arrete_Script():
 
 
 def start_scraping(d):
+    
     global scraping_active
     scraping_active = True
     scraping_thread = threading.Thread(target=fonction_Lefigaro, args=(d,))
+    print('***'*30)
+    print('')
+    print("Le scraping de Lefigaro a commencé à l'itération numéro :")
+    print('')
+    print('***'*30)
     scraping_thread.start()
 
 findAllArticles(url) 
