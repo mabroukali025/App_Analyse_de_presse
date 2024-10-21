@@ -87,6 +87,7 @@ duree='Non Trouvee'
 #date_str = datetime.today().strftime("%d %B %Y , %H:%M:%S") 
 
 ################################################################"  Create de Article #######################"
+
 def creer_article(titre_page_accueil, titre, lien, date_text, auteur_name, paragraphe, has_image, Actualite, Date_Exportation, categorie, order):
 
     article = Article(
@@ -105,6 +106,7 @@ def creer_article(titre_page_accueil, titre, lien, date_text, auteur_name, parag
     article.save()
 
     return article
+
 ################################################# convert string to date #############################
 import datetime
 import locale
@@ -271,9 +273,10 @@ def reformulate_date(chaine: str) -> str:
         formatted_date = f"{day.zfill(2)}-{month_num}-{year}T{hour}:{minute}:{second}"
 
         # Convertir en objet datetime pour vérification (optionnel)
-        datetime_object = datetime.strptime(formatted_date, '%Y-%m-%dT%H:%M:%S')
+        print( 'formated date est **********   :',formatted_date)
+        datetime_object = format_date_django(formatted_date)
 
-        return formatted_date
+        return datetime_object
 
     except (IndexError, ValueError) as e:
         # En cas d'erreur, renvoyer la chaîne d'entrée originale
@@ -306,59 +309,102 @@ def calculer_date_publication(chaine_duree: str) -> str:
 
 
 
-def convertir_chaine_en_date(chaine_2: str) -> str:
-    # Liste des formats de date à tester
-    chaine=chaine_2[3:]
-    formats = [
-        "%d/%m/%Y à %H:%M",
-        "%d-%m-%Y à %H:%M",
-        "%d %B %Y à %H:%M",
-        "%d/%m/%Y %H:%M",
-        "%d-%m-%Y %H:%M",
-        "%d %B %Y %H:%M",
-        "%d %B %Y à %H:%M",
-        '%Y-%m-%dT%H:%M:%S', '%Y-%m-%dT%H:%M', '%Y-%m-%d', '%d/%m/%Y', '%d/%m/%Y %H:%M',"%d %b %Y, %Hh%M", "%d %B %Y, %H:%M", "%d %b %Y, %H:%M:%S",
-        "%d %B %Y, %H:%M:%S", "%d %B %Y , %H:%M:%S", "%d %B %Y, %H:%M,:%S",
-        "%d %b %Y ,%Hh%M:%S", "%Y-%m-%dT%H:%M", "%d %b %Y ,%Hh%M):%S",
-        "%d %b %Y ,%Hh%M,:%S","%d %B %Y à %Hh%M",
-        "%d/%m/%Y à %H:%M",
-        "le %d-%m-%Y à %H:%M",
-        "le %d %B %Y à %H:%M",
-        "%d/%m/%Y %H:%M",
-        "%d-%m-%Y %H:%M",
-        "%d %B %Y %H:%M"
+
+
+
+
+import re
+
+mois_fr_to_num = {
+    'janvier': '01', 'jan': '01', 'janv': '01',
+    'février': '02', 'févr': '02', 'fév': '02', 'fevrier': '02', 'fev': '02',
+    'mars': '03', 'mar': '03',
+    'avril': '04', 'avr': '04',
+    'mai': '05',
+    'juin': '06',
+    'juillet': '07', 'juil': '07',
+    'août': '08', 'aout': '08',
+    'septembre': '09', 'sep': '09',
+    'octobre': '10', 'oct': '10',
+    'novembre': '11', 'nov': '11',
+    'décembre': '12', 'dec': '12', 'decembre': '12'
+}
+
+def format_date_django(composants):
+    return f"{composants['année']}-{composants['mois']}-{composants['jour']}T{composants['heure']}:00"
+
+def extraire_date_heure(chaine):
+    regex_patterns = [
+        r'le[ ]+(\d{1,2})[ ]+(\w+)[ ]+(\d{4})[ ]+à[ ]+(\d{1,2})h(\d{2})',
+        r'le[ ]+(\d{1,2})[ ]+(\w+)[ ]+(\d{4})[ ]*,[ ]+(\d{1,2})h(\d{2})',
+        r'(\d{4})[ ]+(\w+)[ ]+(\d{1,2})[ ]+à[ ]*(\d{1,2})h(\d{2})',
+        r'le[ ]+(\d{1,2})[ ]+(\w+)[ ]+(\d{4})[ ]+à[ ]+(\d{1,2})h(\d{2})',
+        r'le[ ]+(\d{1,2})[ ]+(\w+)[ ]+(\d{4})[ ]*,[ ]+(\d{1,2})h(\d{2})',
+        r'(\d{1,2})[ ]+(\w+)[ ]+(\d{4})[ ]+à[ ]+(\d{1,2})h(\d{2})',  # sans "le"
+        r'(\d{1,2})[ ]+(\w+)[ ]+(\d{4})[ ]*,[ ]+(\d{1,2})h(\d{2})',  # sans "le" avec virgule
+        r'publié[ ]+le[ ]+(\d{1,2})[ ]+(\w+)[ ]+(\d{4})[ ]+à[ ]+(\d{1,2})h(\d{2})',
+        r'publié[ ]+le[ ]+(\d{1,2})[ ]+(\w+)[ ]+(\d{4})[ ]*,[ ]+(\d{1,2})h(\d{2})',
+        r'(\d{4})[ /](\d{1,2})[ /](\d{1,2})[ ]*,?[ ]*(\d{1,2})h(\d{2})',  # Format YYYY/MM/DD
+        r'(\d{4})[ -](\d{1,2})[ -](\d{1,2})[ ]+à[ ]*(\d{1,2})h(\d{2})',  # Format YYYY-MM-DD
+        r'(\d{4})[ -](\d{1,2})[ -](\d{1,2})[ ]*,[ ]*(\d{1,2})h(\d{2})',  # Format YYYY-MM-DD avec virgule
+        r'(\d{4})[ ]+(\w+)[ ]+(\d{1,2}),[ ]*(\d{1,2})h(\d{2})',
+        r'(\d{4})[ ]+(\w+)[ ]+(\d{1,2})[ ]*,[ ]*(\d{1,2})h(\d{2}):(\d{2})',
+        
+        r'(\d{4})[ ]+(\w+)[ ]+(\d{1,2})[ ]+à[ ]*(\d{1,2})h(\d{2})'# Format YYYY-MM-DD
     ]
     
-    # Expression régulière pour extraire la date et l'heure
-    regex_date_heure = r"(\d{2}/\d{2}/\d{4}) à (\d{2}:\d{2})|(\d{2}-\d{2}-\d{4}) à (\d{2}:\d{2})|(\d{2} \w+ \d{4}) à (\d{2}:\d{2})|(\d{2} \w+ \d{4}) (\d{2}:\d{2})"
-    match = re.match(regex_date_heure, chaine)
+    for regex in regex_patterns:
+        match = re.search(regex, chaine)
+        if match:
+            if regex == regex_patterns[2]:  # Format 'YYYY mois DD à HHhMM'
+                annee = match.group(1)
+                mois = mois_fr_to_num.get(match.group(2), '01')
+                jour = match.group(3).zfill(2)
+                heure = match.group(4).zfill(2) + ':' + match.group(5)
+            else:  # Pour les autres formats
+                jour = match.group(1).zfill(2)
+                mois = mois_fr_to_num.get(match.group(2), '01')
+                annee = match.group(3)
+                heure = match.group(4).zfill(2) + ':' + match.group(5)
+
+            resultat = {
+                'année': annee,
+                'mois': mois,
+                'jour': jour,
+                'heure': heure
+            }
+
+            date_formatee = format_date_django(resultat)
+            # Nettoyage des espaces indésirables
+            date_formatee = date_formatee.replace('\xa0', '').strip()
+
+            return date_formatee
     
-    if match:
-        # Récupère toutes les captures
-        date_strs = match.groups()
+    print(f"Format non reconnu pour la chaîne : {chaine}")
+    return None
+
+###########################################################################
+
+def convertir_date_format_x(date_input):
+    # Si l'entrée est déjà un objet datetime, le convertir en chaîne au format souhaité
+    if isinstance(date_input, datetime):
+        return date_input.strftime('%Y-%m-%dT%H:%M:%S')
+    
+    # Vérifier si la chaîne est dans le format 'YYYY-MM-DDTHH:MM:SS'
+    if len(date_input) == 19 and date_input[4] == '-' and date_input[7] == '-' and date_input[10] == 'T':
+        return date_input  # Retourner la date telle quelle
+
+    # Vérifier si la chaîne est dans le format 'DD-MM-YYYYTHH:MM:SS'
+    try:
+        # Séparer la date et l'heure
+        date_part, time_part = date_input.split('T')
+        jour, mois, annee = date_part.split('-')
         
-        # Essayer chaque combinaison de date et heure capturées
-        for i in range(0, len(date_strs), 2):
-            date_str = date_strs[i]
-            heure_str = date_strs[i+1]
-            if date_str and heure_str:
-                # Concaténer date et heure
-                date_heure_str = f"{date_str} {heure_str}"
-                
-                # Essayer chaque format de date
-                for format_str in formats:
-                    try:
-                        # Convertir la chaîne de date en objet datetime
-                        date_obj = datetime.strptime(date_heure_str, format_str)
-                        # Convertir en chaîne au format souhaité
-                        date_formatee = date_obj.strftime("%Y-%m-%dT%H:%M:%S")
-                        return date_formatee
-                    except ValueError:
-                        continue
-        print("Erreur: Aucune correspondance de format trouvée.")
-        return None
-    else:
-        print("La chaîne ne correspond pas au format attendu.")
+        # Réorganiser au format 'YYYY-MM-DD'
+        date_convertie = f"{annee}-{mois}-{jour}T{time_part}"
+        return date_convertie
+    except ValueError:
+        print("Format de date invalide. Assurez-vous qu'il est au format 'DD-MM-YYYYTHH:MM:SS' ou 'YYYY-MM-DDTHH:MM:SS'.")
         return None
 
 
@@ -369,16 +415,19 @@ def date_publication_article(chaine: str) -> str:
     date_expo=fonction_date_exportation()
     
     # Votre logique existante pour formater la date en fonction des préfixes
-    if chaine.startswith("il y a"):
+    #print(' mon chaine date est :',chaine)
+    if chaine.startswith("il"):
         # Calculer la date de publication
         date_publication = calculer_date_publication(chaine)
         return date_publication
     elif chaine.startswith("le"):
         
-        date_publication=convertir_chaine_en_date(chaine)
+        date_publication=extraire_date_heure(chaine)
     elif chaine.startswith("hier"):
         date_publication_A = joindre_date_et_partie_heure(chaine)
-        date_publication=reformulate_date(date_publication_A)
+        if date_publication_A:
+           #print(' date publication X est ',date_publication_A)
+           date_publication=extraire_date_heure(date_publication_A)
     elif chaine.startswith("à l’instant"):
         date_publication = date_expo.strftime('%Y-%m-%dT%H:%M:%S') 
     else:
@@ -491,7 +540,10 @@ def Find_Article(article_section_order_1,driver,Sous_Actualite,order):
                                title="Non Trouvee"
                             if date_publication is None:
                                date_publication=fonction_date_exportation()
-                            
+                            date_publication=convertir_date_format_x(date_publication)
+                            #print('le lien est ',link_element)
+                            #print('date poublication est :',date_publication)
+                            #print('*******'*23)
                             creer_article(title_accueil, title, link_element, date_publication, auteur_name, p, has_figure, Sous_Actualite, date_exportation, categorie_text, order)
                             
 
@@ -560,8 +612,13 @@ def Find_Article(article_section_order_1,driver,Sous_Actualite,order):
                                  
 
                             fonction_date_exportation().strftime('%d-%m-%YT%H:%M:%S')
+                            date_publication=convertir_date_format_x(date_publication)
+                            #print('le lien est ',link_element)
+                            #print('date poublication est :',date_publication)
+                            #print('*******'*23)
                             creer_article(title_accueil, title, link_element, date_publication, auteur_name, p, has_figure, Sous_Actualite, date_exportation, categorie_text, order)
-                    
+                            
+                            
                             
                    
                       
@@ -624,8 +681,16 @@ def Find_Article(article_section_order_1,driver,Sous_Actualite,order):
                             duree=''
                             if title is None:
                                title="Non Trouvee"
-                            
-                            
+                            #print('***'*20)
+                            #print('title_accueil',title_accueil)
+                            #print('link_element  : ',link_element)
+                            #print('date_publication :',date_publication)
+                            #print('date_exportation  : ',date_exportation)
+                            #print('***'*20)
+                            date_publication=convertir_date_format_x(date_publication)
+                            #print('le lien est ',link_element)
+                            #print('date poublication est :',date_publication)
+                            #print('*******'*23)
                             creer_article(title_accueil, title, link_element, date_publication, auteur_name, p, has_figure, Sous_Actualite, date_exportation, categorie_text, order)
                             
 

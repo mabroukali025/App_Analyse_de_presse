@@ -138,7 +138,7 @@ mois_mapping = {
 }
 
 def date_publier_le(chaine):
- if chaine.startswith('Publié le '):
+ if chaine and chaine.startswith('Publié le '):
     x=len("Publié le ")
     chaine=chaine[x:]
     # Nettoyer la chaîne en enlevant les espaces superflus et les virgules

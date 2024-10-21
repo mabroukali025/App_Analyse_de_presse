@@ -281,18 +281,31 @@ def remove_duplicate_articles(request):
                     article.titre,
                     article.lien,
                     article.description_article,
-                    article.ordre_actualite
+                    article.ordre_actualite,
+                    article.date_publication,
+                    article.titre_page_accueil,
+                    article.actualite,
+                    article.categorie,
+                    article.date_exportation,
+                    article.nom_auteur,
+                    article.statut_image
+
                 )
+                
+
+
+                
 
                 if unique_key in seen_articles:
                     # Comparer les dates d'exportation pour garder l'article avec la date la plus ancienne
-                    if seen_articles[unique_key].date_exportation > article.date_exportation:
+                    if seen_articles[unique_key].date_exportation < article.date_exportation:
+                        # L'article actuel a une date d'exportation plus récente, supprimer l'actuel
+                        to_delete.add(article)
+                    else:
                         # L'article actuel a une date d'exportation plus ancienne, supprimer l'ancien
                         to_delete.add(seen_articles[unique_key])
                         seen_articles[unique_key] = article
-                    else:
-                        # L'article actuel a une date d'exportation plus récente, supprimer l'actuel
-                        to_delete.add(article)
+
                 else:
                     # Conserver le premier article unique avec ce `unique_key`
                     seen_articles[unique_key] = article
