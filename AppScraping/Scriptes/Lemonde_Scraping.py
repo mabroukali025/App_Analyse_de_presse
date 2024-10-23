@@ -13,6 +13,22 @@ import datetime
 import datetime
 from datetime import datetime, date, timedelta
 import threading
+from datetime import datetime
+import pytz
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+import csv
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+import time
+from datetime import date, datetime, timedelta
+import pytz
+import threading
+import re
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service
 import pytz
 
 url="https://www.lemonde.fr/"
@@ -65,19 +81,23 @@ class WebDriverSingleton:
     @staticmethod
     def get_instance():
         if WebDriverSingleton._instance is None:
+            
             chrome_options = Options()
+            chrome_options.add_argument("--start-maximized")
             chrome_options.add_argument("--disable-features=NotificationPermissions")
             chrome_options.add_argument('--disable-notifications')
             chrome_options.add_argument("--disable-infobars")
             chrome_options.add_argument("--disable-extensions")
-            chrome_options.add_argument("start-maximized")
-            chrome_options.add_argument("--headless")
-            
-            
+            chrome_options.add_argument("--headless")  # Optional: Headless mode for background scraping
+
+            # Initialize WebDriver using ChromeDriverManager
+            service = Service(ChromeDriverManager().install())
+            WebDriverSingleton._instance = webdriver.Chrome(service=service, options=chrome_options)
             import locale
             locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
             
-            WebDriverSingleton._instance = webdriver.Chrome(options=chrome_options)
+            
+            
         return WebDriverSingleton._instance
 
     @staticmethod

@@ -265,17 +265,21 @@ from django.shortcuts import render
 from django.db import transaction
 from .models import Article
 
+from django.shortcuts import render
+from django.db import transaction
+from .models import Article
+
 def remove_duplicate_articles(request):
     try:
         with transaction.atomic():
-            # Étape 1: Récupérer tous les articles et les trier par date d'exportation ASC
-            articles = Article.objects.order_by('date_exportation')
+            # Récupérer tous les articles et les trier par date d'exportation DESC
+            articles = Article.objects.order_by('-date_exportation')
 
-            # Étape 2: Initialiser les variables pour la logique de suppression
+            # Dictionnaire pour suivre les articles déjà vus
             seen_articles = {}
-            to_delete = set()  # Utiliser un set pour éviter les doublons dans la liste de suppression
+            to_delete = set()  # Ensemble pour éviter les doublons dans la liste de suppression
 
-            # Étape 3: Itérer sur les articles, marquer les doublons et les ajouter à la liste de suppression
+            # Itérer sur les articles pour détecter les doublons
             for article in articles:
                 unique_key = (
                     article.titre,
@@ -286,31 +290,25 @@ def remove_duplicate_articles(request):
                     article.titre_page_accueil,
                     article.actualite,
                     article.categorie,
-                    article.date_exportation,
                     article.nom_auteur,
-                    article.statut_image
-
+                    article.statut_image,
                 )
-                
 
-
-                
-
+                # Si l'article a déjà été vu
                 if unique_key in seen_articles:
-                    # Comparer les dates d'exportation pour garder l'article avec la date la plus ancienne
+                    # Comparer les dates d'exportation
                     if seen_articles[unique_key].date_exportation < article.date_exportation:
-                        # L'article actuel a une date d'exportation plus récente, supprimer l'actuel
-                        to_delete.add(article)
-                    else:
-                        # L'article actuel a une date d'exportation plus ancienne, supprimer l'ancien
+                        # L'article actuel a une date plus récente, supprimer l'ancien
                         to_delete.add(seen_articles[unique_key])
-                        seen_articles[unique_key] = article
-
+                        seen_articles[unique_key] = article  # Mettre à jour avec l'article actuel
+                    else:
+                        # L'article actuel a une date plus ancienne, supprimer l'actuel
+                        to_delete.add(article)
                 else:
-                    # Conserver le premier article unique avec ce `unique_key`
+                    # Conserver l'article dans seen_articles
                     seen_articles[unique_key] = article
 
-            # Supprimer les articles marqués
+            # Supprimer les articles marqués pour suppression
             if to_delete:
                 Article.objects.filter(id__in=[article.id for article in to_delete]).delete()
 
@@ -330,6 +328,8 @@ def remove_duplicate_articles(request):
         # Gérer les exceptions ici
         print(f"Error deleting duplicate articles: {e}")
         return render(request, 'error.html', {'error_message': 'Une erreur est survenue lors de la suppression des articles en double.'})
+
+
 
 def page_Acceuil(request):
  context={}
