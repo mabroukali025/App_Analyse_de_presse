@@ -18,6 +18,7 @@ from datetime import datetime
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
 from AppScraping.models import Article 
+from selenium.common.exceptions import WebDriverException, InvalidSessionIdException
 
 url = 'https://www.liberation.fr/'
 input_csv_file = "LiberationVF.csv"
@@ -44,7 +45,7 @@ class WebDriverSingleton:
 
     @staticmethod
     def get_instance():
-        if WebDriverSingleton._instance is None:
+        if WebDriverSingleton._instance is None or not WebDriverSingleton.is_session_valid():
             chrome_options = Options()
             chrome_options.add_argument("--start-maximized")
             chrome_options.add_argument("--disable-features=NotificationPermissions")
@@ -56,15 +57,30 @@ class WebDriverSingleton:
             # Initialize WebDriver using ChromeDriverManager
             service = Service(ChromeDriverManager().install())
             WebDriverSingleton._instance = webdriver.Chrome(service=service, options=chrome_options)
+
+            # Setting locale for date parsing
             import locale
             locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
+        
         return WebDriverSingleton._instance
 
     @staticmethod
+    def is_session_valid():
+        """Vérifie si la session WebDriver est encore active et valide."""
+        try:
+            # Effectuer une action simple pour vérifier la validité de la session
+            WebDriverSingleton._instance.title  # Vérifier si l'instance est active via une action légère
+            return True
+        except (InvalidSessionIdException, WebDriverException, AttributeError):
+            return False
+
+    @staticmethod
     def quit_instance():
+        """Quitte proprement l'instance WebDriver et réinitialise le singleton."""
         if WebDriverSingleton._instance is not None:
             WebDriverSingleton._instance.quit()
             WebDriverSingleton._instance = None
+
 
 
 #########################################  Created Article   ###############"
@@ -462,22 +478,27 @@ def findAllArticles(url):
         
 ###################
 def fonction_liberation(d):
+    print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  hi   LIBERATION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
     global scraping_active
-    i = 0
+    if scraping_active==False:
+        scraping_active=True
+    i = 1
+    print(' ***************    scraping_active   ****************',scraping_active)
     while scraping_active:
      try:
         print('***'*30)
         print('')
-        print(' le scrping de Liberation a commance ')
+        print(' le scrping de Liberation a commance Iteration numero : ',i)
         print('')
         print('***'*30)
         findAllArticles(url) 
+        
+        print('***'*30)
+        print('')
+        print(' le scrping de Liberation a Termine Iteration numero : ',i)
+        print('')
+        print('***'*30)
         i=i+1
-        print('***'*30)
-        print('')
-        print(' le scrping de Liberation a Termine en Iteration numero : ',i)
-        print('')
-        print('***'*30)
          # Appeler la fonction pour trouver tous les articles
         time.sleep(d)  # Attendre 60 secondes avant de recommencer (ou ajuster selon vos besoins)
      except Exception as e:

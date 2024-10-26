@@ -12,7 +12,14 @@ import locale
 import os
 from AppScraping.models import Article 
 import threading
-
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.common.exceptions import WebDriverException, InvalidSessionIdException
+import locale
 url = 'https://www.lefigaro.fr/'
 
 input_csv_file = "LefigaroVF.csv"
@@ -40,34 +47,46 @@ date_exportation = date_exportation_obj.strftime('%Y-%m-%dT%H:%M:%S')
 
 scraping_active = True
 
+
+
 class WebDriverSingleton:
     _instance = None
 
     @staticmethod
     def get_instance():
-        if WebDriverSingleton._instance is None:
+        # Vérifier si l'instance existe et si la session est valide
+        if WebDriverSingleton._instance is None or not WebDriverSingleton.is_session_valid():
             chrome_options = Options()
             chrome_options.add_argument("--disable-features=NotificationPermissions")
             chrome_options.add_argument('--disable-notifications')
             chrome_options.add_argument("--disable-infobars")
             chrome_options.add_argument("--disable-extensions")
             chrome_options.add_argument("start-maximized")
-            chrome_options.add_argument("--headless")
+            chrome_options.add_argument("--headless")  # Si tu veux exécuter en mode headless
             
-            
-            import locale
+            service = Service(ChromeDriverManager().install())
+            WebDriverSingleton._instance = webdriver.Chrome(service=service, options=chrome_options)
+
+            # Configurer la locale en français
             locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
-            
-            WebDriverSingleton._instance = webdriver.Chrome(options=chrome_options)
+        
         return WebDriverSingleton._instance
+
+    @staticmethod
+    def is_session_valid():
+        """Vérifie si la session WebDriver est encore active et valide."""
+        try:
+            # Effectuer une action simple pour vérifier la validité de la session
+            WebDriverSingleton._instance.current_url  # Vérifier l'URL courante
+            return True
+        except (InvalidSessionIdException, WebDriverException):
+            return False
 
     @staticmethod
     def quit_instance():
         if WebDriverSingleton._instance is not None:
             WebDriverSingleton._instance.quit()
             WebDriverSingleton._instance = None
-
-
 
 
 
@@ -755,12 +774,16 @@ def findAllArticles(url):
             
 def fonction_Lefigaro(d):
     global scraping_active
-    i = 0
+    print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  hi   LEFIGARO  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+    
+    if scraping_active==False:
+        scraping_active=True
+    i = 1
     while scraping_active:
      try:
         print('***'*30)
         print('')
-        print("Le scraping de Lefigaro a commencé à l'itération numéro :",i)
+        print(" Le processus de scraping du site Le Figaro a démarré à l itération numéro :",i)
         print('')
         print('***'*30)
         findAllArticles(url) 
@@ -768,7 +791,7 @@ def fonction_Lefigaro(d):
         
         print('***'*30)
         print('')
-        print(' le scrping de Lefigaro a Termine en Iteration numero : ',i)
+        print(' Le processus de scraping du site Le Figaro a démarré à l itération numéro ',i)
         print('')
         print('***'*30)
         
@@ -784,7 +807,7 @@ def fonction_Arrete_Script():
     WebDriverSingleton.quit_instance()
     print("***"*30)
     print("")
-    print("Le scraping sur Lefigaro s'est arrêté avec succès.")
+    print("Le scraping du site Le Figaro s'est arrêté avec succès..")
     print('')
     print('***'*30)
 
@@ -795,11 +818,6 @@ def start_scraping(d):
     global scraping_active
     scraping_active = True
     scraping_thread = threading.Thread(target=fonction_Lefigaro, args=(d,))
-    print('***'*30)
-    print('')
-    print("Le scraping de Lefigaro a commencé à l'itération numéro :")
-    print('')
-    print('***'*30)
+    
     scraping_thread.start()
 
-findAllArticles(url) 

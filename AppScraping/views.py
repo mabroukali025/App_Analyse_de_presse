@@ -272,40 +272,50 @@ from .models import Article
 def remove_duplicate_articles(request):
     try:
         with transaction.atomic():
-            # Récupérer tous les articles et les trier par date d'exportation DESC
+            # Récupérer tous les articles triés par date d'exportation DESC
             articles = Article.objects.order_by('-date_exportation')
 
-            # Dictionnaire pour suivre les articles déjà vus
+            # Dictionnaire pour suivre les articles déjà vus par clé unique
             seen_articles = {}
-            to_delete = set()  # Ensemble pour éviter les doublons dans la liste de suppression
+            to_delete = set()  # Ensemble d'articles à supprimer
 
-            # Itérer sur les articles pour détecter les doublons
+            # Parcourir les articles pour détecter les doublons
             for article in articles:
+                # Clé unique sans inclure date_exportation ni date_publication
                 unique_key = (
-                    article.titre,
                     article.lien,
                     article.description_article,
                     article.ordre_actualite,
-                    article.date_publication,
                     article.titre_page_accueil,
                     article.actualite,
                     article.categorie,
                     article.nom_auteur,
-                    article.statut_image,
                 )
 
-                # Si l'article a déjà été vu
+                # Vérifier si un article avec cette clé unique a déjà été vu
                 if unique_key in seen_articles:
-                    # Comparer les dates d'exportation
-                    if seen_articles[unique_key].date_exportation < article.date_exportation:
-                        # L'article actuel a une date plus récente, supprimer l'ancien
-                        to_delete.add(seen_articles[unique_key])
-                        seen_articles[unique_key] = article  # Mettre à jour avec l'article actuel
+                    existing_article = seen_articles[unique_key]
+
+                    # Cas 1 : Même clé unique et même date_publication
+                    if article.date_publication == existing_article.date_publication:
+                        # Conserver l'article avec la date_exportation la plus récente
+                        if existing_article.date_exportation < article.date_exportation:
+                            to_delete.add(existing_article)
+                            seen_articles[unique_key] = article
+                        else:
+                            to_delete.add(article)
+
+                    # Cas 2 : Même clé unique mais date_publication différente
                     else:
-                        # L'article actuel a une date plus ancienne, supprimer l'actuel
-                        to_delete.add(article)
+                        # Conserver l'article avec la date_publication la plus ancienne
+                        # et la date_exportation la plus récente
+                        if article.date_publication < existing_article.date_publication or article.date_exportation > existing_article.date_exportation:
+                            to_delete.add(existing_article)
+                            seen_articles[unique_key] = article
+                        else:
+                            to_delete.add(article)
                 else:
-                    # Conserver l'article dans seen_articles
+                    # Ajouter l'article courant au dictionnaire `seen_articles`
                     seen_articles[unique_key] = article
 
             # Supprimer les articles marqués pour suppression
@@ -315,7 +325,7 @@ def remove_duplicate_articles(request):
             # Nombre d'articles supprimés
             message = f"Suppression réussie : {len(to_delete)} articles en double supprimés."
 
-        # Afficher tous les articles restants après la suppression
+        # Récupérer les articles restants pour affichage
         articles_remaining = Article.objects.order_by('date_exportation')
 
         context = {
@@ -325,10 +335,9 @@ def remove_duplicate_articles(request):
         return render(request, 'Statistiques_Recherche.html', context)
 
     except Exception as e:
-        # Gérer les exceptions ici
-        print(f"Error deleting duplicate articles: {e}")
-        return render(request, 'error.html', {'error_message': 'Une erreur est survenue lors de la suppression des articles en double.'})
-
+        # Gérer les exceptions avec un message d'erreur détaillé
+        print(f"Erreur lors de la suppression des articles en double : {e}")
+        return render(request, 'Statistiques_Recherche.html', {'error_message': 'Une erreur est survenue lors de la suppression des articles en double.'})
 
 
 def page_Acceuil(request):
@@ -492,7 +501,7 @@ def find_articles(request):
         # Démarrer le scraping selon l'option sélectionnée
         if selected_value_global == "option1":
             from AppScraping.Scriptes.Lemonde_Scraping import Lemonde_Find_All_Article
-            print(' le monde est commancer   ')
+            
             Lemonde_Find_All_Article(int(duree_value))
         elif selected_value_global == "option2":
             from AppScraping.Scriptes.Liberation_Scraping import fonction_liberation
@@ -501,8 +510,9 @@ def find_articles(request):
             from AppScraping.Scriptes.Lefigaro_Scraping import start_scraping
             start_scraping(int(duree_value))
         elif selected_value_global=="option0":
-            from AppScraping.Scriptes.Lemonde_Scraping import  start_all_Scraping
-            start_all_Scraping(int(duree_value))
+            #from AppScraping.Scriptes.Lemonde_Scraping import  start_all_Scraping
+            from AppScraping.Scriptes.all_sites import start_all_scraping
+            start_all_scraping(int(duree_value))
             
 
     
@@ -531,8 +541,8 @@ def arreter_scraping(selected_value):
         fonction_Arrete_Script()
     elif selected_value == 'option0':
         
-        from AppScraping.Scriptes.Lemonde_Scraping import stop_all_Scraping
-        stop_all_Scraping()
+        from AppScraping.Scriptes.all_sites import stop_all_scraping
+        stop_all_scraping()
     else:
         return False
 
@@ -929,7 +939,7 @@ def article_lifecycle_plot(request, article_title):
             else:
                 try:
                     # Convertir la chaîne en datetime si nécessaire
-                    date_exportation = datetime.strptime(date_exportation, '%d-%m-%YT%H:%M:%S')
+                    date_exportation = datetime.strptime(date_exportation, '%d-%m-%Y %H:%M:%S')
                     dates.append(date_exportation)
                 except ValueError:
                     continue
@@ -938,19 +948,35 @@ def article_lifecycle_plot(request, article_title):
             if ordre_actualite in [1, 2, 3]:
                 orders.append(ordre_actualite)
 
-    # Création du graphique de nuage de points avec lignes
-    scatter_fig = go.Figure(data=[
-        go.Scatter(x=dates, y=orders, mode='lines+markers', name='Articles')
-    ])
-    scatter_fig.update_layout(title=f'Cycle de Vie de l\'Article "{article_title}"',
-                              xaxis_title='Date d\'Exportation',
-                              yaxis_title='Ordre Actualité',
-                              xaxis_rangeslider_visible=True)  # Afficher le slider pour la plage de dates
+    # Création du graphique avec une ligne directe (sans interpolation)
+    scatter_fig = go.Figure()
+
+    scatter_fig.add_trace(
+        go.Scatter(
+            x=dates, 
+            y=orders, 
+            mode='lines+markers',  # Ajoute des lignes directes et des marqueurs
+            line_shape='hv',       # Utilise 'hv' pour une ligne en escalier directe entre les points
+            name='Cycle de vie'
+        )
+    )
+
+    scatter_fig.update_layout(
+        title=f'Cycle de Vie de l\'Article "{article_title}"',
+        xaxis_title='Date d\'Exportation',
+        yaxis_title='Ordre Actualité',
+        xaxis_rangeslider_visible=True,  # Afficher le slider pour la plage de dates
+        yaxis=dict(tickvals=[1, 2, 3], range=[1, 3]),  # Limiter les ticks de l'axe Y à 1, 2, 3
+        showlegend=False,
+    )
     
     # Convertir le graphique en HTML
     scatter_plot_html = pio.to_html(scatter_fig, full_html=False)
     
-    return render(request, 'article_lifecycle_plot.html', {'scatter_plot_html': scatter_plot_html})
+    return render(request, 'article_lifecycle_plot.html', {
+        'scatter_plot_html': scatter_plot_html,
+        'article_title': article_title,
+    })
 
 
 
@@ -995,15 +1021,16 @@ def cycle_vie_article(request):
                 dates.append(article.date_exportation)
                 ordres.append(article.ordre_actualite)
         
-        # Tracer le graphe
+        # Tracer le graphe avec une ligne directe et des points entiers
         plt.figure(figsize=(10, 6))
-        plt.plot(dates, ordres, marker='o', linestyle='-', color='b')
+        plt.step(dates, ordres, where='post', color='b')  # Utilisation de 'step' pour une ligne directe sans interpolation
         plt.title(f"Cycle de vie de l'article: {key[1]}")
         plt.xlabel('Date')
         plt.ylabel("Ordre d'Actualité")
         plt.yticks([1, 2, 3])  # Limiter les ticks de l'axe Y à 1, 2, 3
+        plt.ylim(1, 3)  # Forcer l'axe Y à rester entre 1 et 3 sans valeurs intermédiaires
         plt.grid(True)
-        
+
         # Sauvegarder le graphe dans un buffer
         buffer = io.BytesIO()
         plt.savefig(buffer, format='png')
@@ -1030,7 +1057,7 @@ def cycle_vie_article(request):
     }
     return render(request, 'cycle_vie_article.html', context)
 
-# compte les articles doublons(qu'elles ont le meme titre ect mais differentes valeures de order actualite apres il trace le graphe pour le cycle de vie d'article)
+
 
 
 def compter_doublons_articles(request, article_id):
@@ -1076,7 +1103,7 @@ def compter_doublons_articles(request, article_id):
             for article in articles:
                 if article.ordre_actualite in [1, 2, 3]:
                     date_exportation = make_naive(article.date_exportation)
-                    dates.append(date_exportation.strftime('%d-%m-%Y %H:%M:%S'))
+                    dates.append(date_exportation.strftime('%Y-%m-%d %H:%M:%S'))
                     ordres.append(article.ordre_actualite)
 
             if dates and ordres:

@@ -12,8 +12,17 @@
         body {
             margin: 0;
             padding: 0;
+        
+    
         }
-
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+           
+            
+        }
         .page-container {
             display: flex;
             flex-direction: column;
@@ -81,7 +90,7 @@
             <form method="get" class="form-container" action="{% url 'remove_duplicate_articles' %}">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-info">Actualise Donnees</button>
-                <a href="{% url 'telecharger_excel' %}" class="btn btn-success">Telecharger en Excel</a>
+                <a href="{% url 'telecharger_excel' %}" class="btn btn-success">Telecharger Articles</a>
             </form>
 
             <br/>
@@ -206,11 +215,12 @@
                 </table>
             </div>
 
-            <!-- Tableau des articles -->
-            <div class="container mt-5">
+            <!-- Tableau des articles 
+            <fieldset class="row g-9 border p-20">-->
+            <div class="row px-3 g-9 p-20">
                 <h3>Articles :</h3>
                 <div class="table custom-table-striped">
-                    <table class="table table-hover table-info text-dark">
+                    <table class="table table-hover table-info text-dark px-3">
                         <thead class="thead-secondary text-dark h7">
                             <tr>
                                 <th class="font-weight-bold" style="width: 3%;">Id</th>

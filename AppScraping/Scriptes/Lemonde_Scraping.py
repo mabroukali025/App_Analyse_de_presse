@@ -27,6 +27,7 @@ from datetime import date, datetime, timedelta
 import pytz
 import threading
 import re
+from selenium.common.exceptions import WebDriverException, InvalidSessionIdException
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
 import pytz
@@ -99,6 +100,15 @@ class WebDriverSingleton:
             
             
         return WebDriverSingleton._instance
+    @staticmethod
+    def is_session_valid():
+        """Vérifie si la session WebDriver est encore active et valide."""
+        try:
+            # Effectuer une action simple pour vérifier la validité de la session
+            WebDriverSingleton._instance.current_url  # Vérifier l'URL courante
+            return True
+        except (InvalidSessionIdException, WebDriverException):
+            return False
 
     @staticmethod
     def quit_instance():
@@ -241,14 +251,15 @@ def extraire_date(chaine):
     return None
 ###############################################################################
 def gerer_date(chaine):
-    if chaine.startswith("Publié aujourd’hui à"):
+    if chaine and chaine.startswith("Publié aujourd’hui à"):
         return convertir_chaine_en_date_Lemonde(chaine)
-    elif chaine.startswith("Publié hier à"):
+    elif chaine and chaine.startswith("Publié hier à"):
         return date_publiee_hier(chaine)
-    elif chaine.startswith("Publié le"):
-        return date_publier_le(chaine) # A implémenter si nécessaire
+    elif chaine and chaine.startswith("Publié le"):
+        return date_publier_le(chaine)  # À implémenter si nécessaire
     else:
-        return date_exportation_article
+        return date_exportation_article  # Assurez-vous que cette variable est définie
+
 
 def extraire_heure_Lemonde(chaine: str) -> str:
     import re
@@ -300,7 +311,7 @@ def extraire_partie_publication(chaine: str) -> str:
         return None
 
 def date_publiee_hier(chaine):
-    if chaine.startswith("Publié hier à "):
+    if chaine and chaine.startswith("Publié hier à "):
         chaine = extraire_partie_publication(chaine)
        
         
@@ -338,9 +349,9 @@ def initialisation_varialbes(title,date_publication,auteur_name,p,has_figure,Act
 ######################################################################"
 def supprimer_slashes(texte):
     # Supprimer les "/" au début et à la fin de la chaîne
-    while texte.startswith("/"):
+    while texte and texte.startswith("/"):
         texte = texte[1:]
-    while texte.endswith("/"):
+    while texte and  texte.endswith("/"):
         texte = texte[:-1]
     return texte
 
@@ -727,41 +738,42 @@ def findAllArticles(url):
 
 
 
+import threading
+import time
+
 def Lemonde_Find_All_Article(d):
     global scraping_active
-    i = 0
+    print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  hi   LEMONDE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+    
+    if scraping_active==False:
+        scraping_active=True
+    i = 1
     while scraping_active:
-     try:
-        print('***'*30)
-        print('')
-        print(" Le scraping de Lemonde a commencé à l'itération numéro :",i)
-        print('')
-        print('***'*30)
-        findAllArticles(url) 
-        i=i+1
-        print('***'*30)
-        print('')
-        print(" le scrping de Lemonde a Termine l'Iteration numero : ",i)
-        print('')
-        print('***'*30)
-        
-         # Appeler la fonction pour trouver tous les articles
-        time.sleep(d)  # Attendre 60 secondes avant de recommencer (ou ajuster selon vos besoins)
-     except Exception as e:
-        print(f"Une erreur s'est produite : {e}")
-        break 
+        try:
+            print('***' * 30)
+            print(f"\n Le scraping de Lemonde a commencé à l'itération numéro : {i}\n")
+            print('***' * 30)
+
+            # Appeler la fonction pour trouver tous les articles
+            findAllArticles(url)  # Assurez-vous que 'url' est défini quelque part
+
+            print('***' * 30)
+            print(f"\n Le scraping de Lemonde a terminé l'itération numéro : {i}\n")
+            print('***' * 30)
+
+            i += 1
+            time.sleep(d)  # Attendre 'd' secondes avant la prochaine itération
+        except Exception as e:
+            print(f"Une erreur s'est produite : {e}")
+            break
 
 def fonction_Arrete_Script():
     global scraping_active
     scraping_active = False
     WebDriverSingleton.quit_instance()
-    print("***"*30)
-    print("")
-    print("Le scraping sur Lemonde s'est arrêté avec succès.")
-    print('')
-    print('***'*30)
-
-
+    print('***' * 30)
+    print("\nLe scraping sur Lemonde s'est arrêté avec succès.\n")
+    print('***' * 30)
 
 def start_scraping(d):
     global scraping_active
@@ -769,41 +781,3 @@ def start_scraping(d):
     scraping_thread = threading.Thread(target=Lemonde_Find_All_Article, args=(d,))
     scraping_thread.start()
 
-import threading
-
-def start_all_Scraping(duree_value):
-    global scraping_active
-    scraping_active = True
-
-    # Démarre le scraping pour Le Monde dans un thread
-    monde_thread = threading.Thread(target=Lemonde_Find_All_Article, args=(int(duree_value),))
-    monde_thread.start()
-
-    # Démarre le scraping pour Libération dans un autre thread
-    from AppScraping.Scriptes.Liberation_Scraping import fonction_liberation
-    liberation_thread = threading.Thread(target=fonction_liberation, args=(int(duree_value),))
-    liberation_thread.start()
-
-    # Démarre le scraping pour Le Figaro dans un autre thread
-    from AppScraping.Scriptes.Lefigaro_Scraping import start_scraping
-    figaro_thread = threading.Thread(target=start_scraping, args=(int(duree_value),))
-    figaro_thread.start()
-
-    # Tu peux attendre que tous les threads soient terminés (optionnel)
-    monde_thread.join()
-    liberation_thread.join()
-    figaro_thread.join()
-
-    print("Tous les scripts de scraping sont terminés.")
-
-import threading
-
-def stop_all_Scraping():
-    global scraping_active
-    scraping_active = False
-    from AppScraping.Scriptes.Lefigaro_Scraping import fonction_Arrete_Script
-    fonction_Arrete_Script()
-    from AppScraping.Scriptes.Liberation_Scraping import fonction_Arrete_Script
-    fonction_Arrete_Script()
-    
-    fonction_Arrete_Script()

@@ -54,26 +54,26 @@
             const stopBtn = document.getElementById('stop-btn');
             const spinnerContainer = document.getElementById('spinner-container');
             const startBtn = document.getElementById('start-btn');
+            const combobox = document.getElementById('combobox');  // Récupère le champ combobox
     
             // Fonction pour récupérer l'état du scraping
             function checkScrapingStatus() {
-    fetch("{% url 'get_scraping_status' %}")
-        .then(response => response.json())
-        .then(data => {
-            console.log("Data received:", data);  // Ajouté pour déboguer
-            if (data.is_scraping) {
-                spinnerContainer.style.display = 'block';  // Afficher l'icône de chargement
-                stopBtn.disabled = false;  // Activer le bouton "Arrêter Script"
-                startBtn.disabled = true;  // Désactiver le bouton "Démarrer Script"
-            } else {
-                spinnerContainer.style.display = 'none';  // Cacher l'icône de chargement
-                stopBtn.disabled = true;  // Désactiver le bouton "Arrêter Script"
-                startBtn.disabled = false;  // Activer le bouton "Démarrer Script"
+                fetch("{% url 'get_scraping_status' %}")
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("Data received:", data);  // Ajouté pour déboguer
+                        if (data.is_scraping) {
+                            spinnerContainer.style.display = 'block';  // Afficher l'icône de chargement
+                            stopBtn.disabled = false;  // Activer le bouton "Arrêter Script"
+                            startBtn.disabled = true;  // Désactiver le bouton "Démarrer Script"
+                        } else {
+                            spinnerContainer.style.display = 'none';  // Cacher l'icône de chargement
+                            stopBtn.disabled = true;  // Désactiver le bouton "Arrêter Script"
+                            startBtn.disabled = false;  // Activer le bouton "Démarrer Script"
+                        }
+                    })
+                    .catch(error => console.error('Error fetching scraping status:', error));
             }
-        })
-        .catch(error => console.error('Error fetching scraping status:', error));
-}
-
     
             // Vérifier l'état du scraping au chargement de la page
             checkScrapingStatus();
@@ -94,10 +94,12 @@
                     stopBtn.disabled = true;  // Désactiver le bouton "Arrêter Script"
                     startBtn.disabled = false;  // Activer le bouton "Démarrer Script"
                     spinnerContainer.style.display = 'none';  // Cacher l'icône de chargement
+                    combobox.value = "";  // Réinitialiser le combobox
                 }
             });
         });
     </script>
+    
     <script>
         $(document).ready(function() {
             $('#arreter-scraping').on('click', function() {
@@ -112,6 +114,7 @@
                         },
                         success: function(response) {
                             alert("Scraping arrêté avec succès.");
+                            $('#combobox').val("");  // Réinitialiser la sélection du combobox
                             location.reload();  // Recharge la page pour afficher la valeur sélectionnée
                         },
                         error: function(xhr, status, error) {

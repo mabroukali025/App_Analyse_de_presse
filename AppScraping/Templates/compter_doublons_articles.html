@@ -9,6 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js"></script>
     <style>
         canvas {
             max-width: 1000px; /* Ajusté pour s'adapter à la modale */
@@ -39,11 +41,15 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="cycleVieModalLabel">Cycle de Vie Article</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-body">
                     <div id="charts-container"></div>
                 </div>
                 <div class="modal-footer">
+                    <button id="downloadChart" class="btn btn-success">Telecharger</button>
                     <a href="{% url 'Statistiques_Recherche' %}" class="btn btn-primary">Retour</a>
                 </div>
             </div>
@@ -155,6 +161,46 @@
 
                 cycleVieModal.show();
             }
+
+            // Fonction pour télécharger le graphique actuel en PNG
+            function downloadCurrentChart() {
+                const canvas = document.querySelector('#charts-container canvas');
+                if (canvas) {
+                    const title = canvas.previousElementSibling.innerText; // Obtenir le titre de l'article
+                    const imgData = canvas.toDataURL("image/png");
+
+                    const tempCanvas = document.createElement('canvas');
+                    const tempCtx = tempCanvas.getContext('2d');
+                    tempCanvas.width = canvas.width;
+                    tempCanvas.height = canvas.height + 50; // Espace pour le titre
+
+                    // Dessiner le fond blanc
+                    tempCtx.fillStyle = 'white';
+                    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+                    // Dessiner le graphique
+                    tempCtx.drawImage(canvas, 0, 50); // Décaler pour faire de la place pour le titre
+
+                    // Dessiner le titre
+                    tempCtx.fillStyle = 'black';
+                    tempCtx.font = 'bold 20px Arial';
+                    tempCtx.textAlign = 'center';
+                    tempCtx.fillText(title, tempCanvas.width / 2, 30); // Placer le titre au-dessus du graphique
+
+                    const imgName = "graphique_article.png";
+                    const link = document.createElement('a');
+                    link.href = tempCanvas.toDataURL("image/png");
+                    link.download = imgName;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    console.log("Aucun graphique à télécharger.");
+                }
+            }
+
+            // Ajoutez un gestionnaire d'événements pour le bouton de téléchargement
+            document.getElementById('downloadChart').onclick = downloadCurrentChart;
 
             // Vérifiez si des données sont passées à partir de la page de statistiques
             const dataString = '{{ graphs_data|escapejs }}';
