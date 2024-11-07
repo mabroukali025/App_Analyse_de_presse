@@ -33,9 +33,20 @@ french_tz = pytz.timezone('Europe/Paris')
 now = datetime.now(french_tz)
 
 # Format the date and time
-Date_Exportation = now.strftime('%Y-%m-%dT%H:%M:%S')
-date_exportation_obj = datetime.strptime(Date_Exportation, '%Y-%m-%dT%H:%M:%S')
-                    
+#Date_Exportation = now.strftime('%Y-%m-%dT%H:%M:%S')
+#date_exportation_obj = datetime.strptime(Date_Exportation, '%Y-%m-%dT%H:%M:%S')
+
+from datetime import datetime
+
+def obtenir_date_exportation():
+    french_tz = pytz.timezone('Europe/Paris')
+
+    # Get the current date and time in the French time zone
+    now = datetime.now(french_tz)
+    Date_Exportation = now.strftime('%Y-%m-%dT%H:%M:%S')
+    date_exportation_obj = datetime.strptime(Date_Exportation, '%Y-%m-%dT%H:%M:%S')
+    #now = datetime.now()  # Obtenir la date et l'heure actuelles
+    return date_exportation_obj           
 
 #################################################################### 
 scraping_active = True
@@ -100,6 +111,7 @@ def creer_article(titre_page_accueil, titre, lien, date_text, auteur_name, parag
         ordre_actualite=order,
     )
     article.save()
+    print(' ****************************************************       Save with success          ***********************************')
 
     return article
 
@@ -116,11 +128,13 @@ Sous_Actualite="Non Trouvee"
 categorie="Non Trouvee"
 order=""
 #########################################################################  la fonction DE supprime au de but de chaine   ############"
-def fonction_Supprime_au_debut(chaine,date_exportation_obj):
+def fonction_Supprime_au_debut(chaine):
+    date_exportation_obj=obtenir_date_exportation()
     if chaine.startswith("publié aujourd'hui à"):
         x=len("publié aujourd'hui à")
         chaine_sans_debut=chaine[x+1:]
-        date_publication=obtenir_date_publication(chaine_sans_debut, date_exportation_obj)
+        
+        date_publication=obtenir_date_publication(chaine_sans_debut)
         return date_publication
     elif chaine.startswith("publié le "):
         x_2=len("publié le ")
@@ -130,15 +144,15 @@ def fonction_Supprime_au_debut(chaine,date_exportation_obj):
         date_publication=extraire_et_formater_date(chaine_sans_debut)
         return date_publication
     else:
-        date_publication=Date_Exportation
+        date_publication=date_exportation_obj
         return date_publication
 ########################################################################################################
 from datetime import datetime, timedelta
 
-def obtenir_date_publication(heure_publication, date_exportation_obj):
+def obtenir_date_publication(heure_publication):
     # Assurer que date_exportation est déjà un objet datetime
     from datetime import datetime
-    
+    date_exportation_obj=obtenir_date_exportation()
     date_sans_heure = date_exportation_obj.date()
     
     # Combiner date_sans_heure avec heure_publication pour obtenir la date de publication complète
@@ -420,12 +434,12 @@ def find_Article(art, actualite, order_Actualite, driver):
                                     else:
                                         categorie = "Catégorie non Trouvée"
         if date_pub is None:
-            date_pub=Date_Exportation
+            date_pub=obtenir_date_exportation()#Date_Exportation
        
-        chaine_sans_debut=fonction_Supprime_au_debut(date_pub,date_exportation_obj)
-       
+        chaine_sans_debut=fonction_Supprime_au_debut(date_pub)
+        Date_Exportation=obtenir_date_exportation()
         #save_in_file(title_Acceuil2, title, link, chaine_sans_debut, auteur_, paragraphe, has_image, actualite, Date_Exportation, categorie, order_Actualite)
-                            
+        print('************************************************************  la date dexportation est :',Date_Exportation)        
         
         creer_article(title_Acceuil2, title, link, chaine_sans_debut, auteur_, paragraphe, has_image, actualite, Date_Exportation, categorie, order_Actualite)
         if creer_article:
@@ -491,6 +505,8 @@ def fonction_liberation(d):
         print(' le scrping de Liberation a commance Iteration numero : ',i)
         print('')
         print('***'*30)
+        Date_Exportation=obtenir_date_exportation()
+        print('la date dexportation est :',Date_Exportation)
         findAllArticles(url) 
         
         print('***'*30)

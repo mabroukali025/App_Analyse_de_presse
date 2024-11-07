@@ -261,19 +261,19 @@ def article_list(request):
 
  # Assurez-vous que le modèle Article est correctement importé
 
-from django.shortcuts import render
 from django.db import transaction
+from django.shortcuts import render
 from .models import Article
 
-from django.shortcuts import render
 from django.db import transaction
+from django.shortcuts import render
 from .models import Article
 
 def remove_duplicate_articles(request):
     try:
         with transaction.atomic():
-            # Récupérer tous les articles triés par date d'exportation DESC
-            articles = Article.objects.order_by('-date_exportation')
+            # Récupérer tous les articles triés par date de publication DESC
+            articles = Article.objects.order_by('-date_publication')
 
             # Dictionnaire pour suivre les articles déjà vus par clé unique
             seen_articles = {}
@@ -281,7 +281,7 @@ def remove_duplicate_articles(request):
 
             # Parcourir les articles pour détecter les doublons
             for article in articles:
-                # Clé unique sans inclure date_exportation ni date_publication
+                # Clé unique pour identifier les articles similaires, sans inclure les dates
                 unique_key = (
                     article.lien,
                     article.description_article,
@@ -289,40 +289,38 @@ def remove_duplicate_articles(request):
                     article.titre_page_accueil,
                     article.actualite,
                     article.categorie,
-                    article.nom_auteur,
+                    article.nom_auteur
                 )
 
                 # Vérifier si un article avec cette clé unique a déjà été vu
                 if unique_key in seen_articles:
                     existing_article = seen_articles[unique_key]
 
-                    # Cas 1 : Même clé unique et même date_publication
-                    if article.date_publication == existing_article.date_publication:
-                        # Conserver l'article avec la date_exportation la plus récente
-                        if existing_article.date_exportation < article.date_exportation:
+                    # Comparaison des dates d'exportation et ordre d'actualité
+                    if existing_article.date_exportation < article.date_exportation:
+                        if existing_article.ordre_actualite == article.ordre_actualite:
+                            # Remplacer l'article existant par l'article actuel s'il est plus récent
                             to_delete.add(existing_article)
                             seen_articles[unique_key] = article
                         else:
+                            # Sinon, fusionner les dates de publication et d'exportation
+                            existing_article.date_publication = min(existing_article.date_publication, article.date_publication)
+                            existing_article.date_exportation = max(existing_article.date_exportation, article.date_exportation)
                             to_delete.add(article)
-
-                    # Cas 2 : Même clé unique mais date_publication différente
                     else:
-                        # Conserver l'article avec la date_publication la plus ancienne
-                        # et la date_exportation la plus récente
-                        if article.date_publication < existing_article.date_publication or article.date_exportation > existing_article.date_exportation:
-                            to_delete.add(existing_article)
-                            seen_articles[unique_key] = article
-                        else:
-                            to_delete.add(article)
+                        # Si l'article existant est plus récent, garder les dates les plus pertinentes
+                        existing_article.date_publication = min(existing_article.date_publication, article.date_publication)
+                        existing_article.date_exportation = max(existing_article.date_exportation, article.date_exportation)
+                        to_delete.add(article)
                 else:
-                    # Ajouter l'article courant au dictionnaire `seen_articles`
+                    # Ajouter l'article courant au dictionnaire `seen_articles` s'il n'est pas un doublon
                     seen_articles[unique_key] = article
 
             # Supprimer les articles marqués pour suppression
             if to_delete:
                 Article.objects.filter(id__in=[article.id for article in to_delete]).delete()
 
-            # Nombre d'articles supprimés
+            # Message de confirmation du nombre d'articles supprimés
             message = f"Suppression réussie : {len(to_delete)} articles en double supprimés."
 
         # Récupérer les articles restants pour affichage

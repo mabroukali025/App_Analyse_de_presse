@@ -19,6 +19,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import WebDriverException, InvalidSessionIdException
+from datetime import datetime, timedelta
 import locale
 url = 'https://www.lefigaro.fr/'
 
@@ -31,18 +32,13 @@ output_excel_file = "LefigaroSansDoub.xlsx"
 
 
 
-def fonction_date_exportation():
-    import pytz
-    from datetime import datetime
-    # Définir le fuseau horaire français
-    french_tz = pytz.timezone('Europe/Paris')
-    # Obtenir la date et l'heure actuelles en France
-    return datetime.now(french_tz)
+from datetime import datetime
+import pytz
 
-# Obtenir l'objet datetime
-date_exportation_obj = fonction_date_exportation()
-# Formatter la date
-date_exportation = date_exportation_obj.strftime('%Y-%m-%dT%H:%M:%S')
+def get_exportation_date():
+    # Obtenir la date et l'heure actuelles en France (Europe/Paris) et les formater
+    french_tz = pytz.timezone('Europe/Paris')
+    return datetime.now(french_tz).strftime('%Y-%m-%dT%H:%M:%S')
 
 
 scraping_active = True
@@ -123,6 +119,7 @@ def creer_article(titre_page_accueil, titre, lien, date_text, auteur_name, parag
         ordre_actualite=order,
     )
     article.save()
+    print(' ****************************************************       Save with success          ***********************************')
 
     return article
 
@@ -202,18 +199,23 @@ def extraire_secondes(chaine: str) -> int:
 ############################################################# convertir un nombre des secondes a une dateTime ##############################
 
 ################################################# cree une date complet d'apres la chaine "hier a 07:00" #######################"
+from datetime import datetime, timedelta
+
 def joindre_date_et_partie_heure(chaine: str) -> str:
-    import datetime 
     # Obtenir la date d'aujourd'hui
-    date_aujourdhui = datetime.datetime.today()
+    date_aujourdhui = datetime.today()
+    
     # Si la chaîne contient 'hier', obtenir la date d'hier
     if 'hier' in chaine:
         date_aujourdhui -= timedelta(days=1)
+    
     # Séparer la partie de l'heure de la chaîne
     partie_heure = chaine.split('à')[-1].strip()
-    # Formater la date et la partie de l'heure
-    date_formatee = date_aujourdhui.strftime("%Y %B %d") + " , " + partie_heure + ":00"
+    
+    # Formater la date et ajouter la partie de l'heure
+    date_formatee = date_aujourdhui.strftime("%Y-%m-%d") + " " + partie_heure + ":00"
     return date_formatee
+
 ############################################## convertir la forme date : le 07/05/2024 a le 07 may 2024   ######################
 
 
@@ -302,10 +304,17 @@ def reformulate_date(chaine: str) -> str:
         print(f"Erreur de traitement de la date: {e}")
         return chaine
 ############################################################################
+from datetime import datetime, timedelta
+
 def convertir_secondes_en_date(secondes: int) -> str:
-    from datetime import datetime, timedelta
-    # Obtenir la date et l'heure actuelles
-    maintenant = fonction_date_exportation()
+    # Obtenir la date et l'heure actuelles en tant qu'objet datetime
+    maintenant_str = get_exportation_date()  # Vérifiez que get_exportation_date() renvoie une chaîne au bon format
+    # Convertir en objet datetime si c'est une chaîne
+    if isinstance(maintenant_str, str):
+        maintenant = datetime.strptime(maintenant_str, "%Y-%m-%dT%H:%M:%S")
+    else:
+        maintenant = maintenant_str
+    
     # Soustraire le nombre de secondes de la date actuelle
     nouvelle_date = maintenant - timedelta(seconds=secondes)
     
@@ -313,6 +322,7 @@ def convertir_secondes_en_date(secondes: int) -> str:
     date_formatee = nouvelle_date.strftime("%Y-%m-%dT%H:%M:%S")
     
     return date_formatee
+
 
 
 ############################################################ calculer_date_publication ################################
@@ -431,7 +441,7 @@ def convertir_date_format_x(date_input):
 
 ########################################################### fonction date publication #########################################*
 def date_publication_article(chaine: str) -> str:
-    date_expo=fonction_date_exportation()
+    date_expo=get_exportation_date()
     
     # Votre logique existante pour formater la date en fonction des préfixes
     #print(' mon chaine date est :',chaine)
@@ -456,6 +466,7 @@ def date_publication_article(chaine: str) -> str:
 
 ##################################################################""  Fonction findArticle   ##########################################
 def Find_Article(article_section_order_1,driver,Sous_Actualite,order):
+      date_exportation=get_exportation_date()
       title_accueil='Non Trouvee'
       title='Non Trouvee'
       link_element='Non Trouvee'
@@ -550,7 +561,7 @@ def Find_Article(article_section_order_1,driver,Sous_Actualite,order):
                                 if date_text:
                                  date_pub=supprimer_espaces_debut(date_text)
                                  if date_pub is None:
-                                    date_publication=fonction_date_exportation()
+                                    date_publication=get_exportation_date()
                                  else:
                                     date_publication=date_publication_article(date_pub)
 
@@ -558,11 +569,13 @@ def Find_Article(article_section_order_1,driver,Sous_Actualite,order):
                             if title is None:
                                title="Non Trouvee"
                             if date_publication is None:
-                               date_publication=fonction_date_exportation()
+                               date_publication=date_exportation
                             date_publication=convertir_date_format_x(date_publication)
                             #print('le lien est ',link_element)
                             #print('date poublication est :',date_publication)
                             #print('*******'*23)
+                            #date_exportation=get_exportation_date()
+                            print('************  date_exportation  : ',date_exportation)
                             creer_article(title_accueil, title, link_element, date_publication, auteur_name, p, has_figure, Sous_Actualite, date_exportation, categorie_text, order)
                             
 
@@ -625,16 +638,19 @@ def Find_Article(article_section_order_1,driver,Sous_Actualite,order):
                                 if date_text:
                                  date_pub=supprimer_espaces_debut(date_text)
                                  if date_pub is None:
-                                    date_publication=fonction_date_exportation()
+                                    
+                                    date_publication=get_exportation_date()
                                  else:
                                     date_publication=date_publication_article(date_pub)
                                  
 
-                            fonction_date_exportation().strftime('%d-%m-%YT%H:%M:%S')
+                            #fonction_date_exportation().strftime('%d-%m-%YT%H:%M:%S')
                             date_publication=convertir_date_format_x(date_publication)
                             #print('le lien est ',link_element)
                             #print('date poublication est :',date_publication)
                             #print('*******'*23)
+                            #date_exportation=get_exportation_date()
+                            print('*************************   date_exportation  : ',date_exportation)
                             creer_article(title_accueil, title, link_element, date_publication, auteur_name, p, has_figure, Sous_Actualite, date_exportation, categorie_text, order)
                             
                             
@@ -673,7 +689,7 @@ def Find_Article(article_section_order_1,driver,Sous_Actualite,order):
                                 if date_text:
                                  date_pub=supprimer_espaces_debut(date_text)
                                  if date_pub is None:
-                                    date_publication=fonction_date_exportation()
+                                    date_publication=get_exportation_date()
                                  else:
                                     date_publication=date_publication_article(date_pub)
                                  
@@ -704,7 +720,8 @@ def Find_Article(article_section_order_1,driver,Sous_Actualite,order):
                             #print('title_accueil',title_accueil)
                             #print('link_element  : ',link_element)
                             #print('date_publication :',date_publication)
-                            #print('date_exportation  : ',date_exportation)
+
+                            print('%%%%%%%%%%%%%  date_exportation  : ',date_exportation)
                             #print('***'*20)
                             date_publication=convertir_date_format_x(date_publication)
                             #print('le lien est ',link_element)
@@ -781,6 +798,8 @@ def fonction_Lefigaro(d):
     i = 1
     while scraping_active:
      try:
+        date_exportation=get_exportation_date()
+        print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  la date dexportation est :',date_exportation)
         print('***'*30)
         print('')
         print(" Le processus de scraping du site Le Figaro a démarré à l itération numéro :",i)

@@ -32,6 +32,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
 import pytz
 
+
 url="https://www.lemonde.fr/"
 
 
@@ -58,18 +59,13 @@ print("Date exportation (chaîne) :", date_exportation_article)
     
     
 ######################################################################
-from datetime import datetime
-import pytz
 
-# Define the French time zone
-french_tz = pytz.timezone('Europe/Paris')
 
-# Get the current date and time in the French time zone
-now = datetime.now(french_tz)
+
 
 # Format the date and time
-Date_Exportation = now.strftime('%Y-%m-%dT%H:%M:%S')
-date_exportation_article = datetime.strptime(Date_Exportation, '%Y-%m-%dT%H:%M:%S')
+#Date_Exportation = now.strftime('%Y-%m-%dT%H:%M:%S')
+#date_exportation_article = datetime.strptime(Date_Exportation, '%Y-%m-%dT%H:%M:%S')
 
 
 
@@ -148,6 +144,7 @@ def creer_article(titre_page_accueil, titre, lien, date_text, auteur_name, parag
     #if article.date_exportation.tzinfo is None:
         #article.date_exportation = timezone.make_aware(article.date_exportation, timezone.get_current_timezone())
     article.save()
+    print(' ****************************************************       Save with success          ***********************************')
 
     return article  
 #################################################################################
@@ -251,6 +248,7 @@ def extraire_date(chaine):
     return None
 ###############################################################################
 def gerer_date(chaine):
+    date_exportation_article=obtenir_date_exportation()
     if chaine and chaine.startswith("Publié aujourd’hui à"):
         return convertir_chaine_en_date_Lemonde(chaine)
     elif chaine and chaine.startswith("Publié hier à"):
@@ -275,7 +273,7 @@ def extraire_heure_Lemonde(chaine: str) -> str:
 def convertir_chaine_en_date_Lemonde(chaine: str) -> str:
     try:
         # Extraire l'heure de la chaîne
-        
+        date_exportation_article=obtenir_date_exportation()
         heure_str = extraire_heure_Lemonde(chaine)
         # Convertir l'heure au format HH:MM
         heure_formatee = heure_str.replace('h', ':')
@@ -362,6 +360,19 @@ def remove_characters(text, num_characters):
         raise ValueError("Le nombre de caractères à supprimer doit être positif")
     return text[num_characters:]
 
+###########################################################################################################################
+from datetime import datetime
+
+def obtenir_date_exportation():
+    # Define the French time zone
+    french_tz = pytz.timezone('Europe/Paris')
+
+    # Get the current date and time in the French time zone
+    now = datetime.now(french_tz)
+    now = datetime.now()  # Obtenir la date et l'heure actuelles
+    return datetime.strptime(now.strftime('%Y-%m-%dT%H:%M:%S'), '%Y-%m-%dT%H:%M:%S')
+
+
 
 ##############################################################################################################################
 def supprimer_modification(chaine):
@@ -385,7 +396,8 @@ def check_classes(classes):
 # Trouver l'élément <main> avec les classes spécifiées
 ######################################################################## fonction find Article ####################################
 def fonction_find_Article(divs_in_section,driver,Sous_Actualite,order):
-            
+             # Utilisation
+             date_exportation_article = obtenir_date_exportation()
              title_page_Acceuil='Non Trouvee'
              title='Non Trouvee'
              link_page='Non Trouvee'
@@ -400,9 +412,11 @@ def fonction_find_Article(divs_in_section,driver,Sous_Actualite,order):
              has_img='Non'
              if link:
               link_page=link['href']
-              t=link.find(['h1','h3','p'],{'class':lambda d:d and(d.startswith('article__title'))})
+              t=link.find(['h1', 'h3', 'p','a'], class_=lambda class_name: class_name and (class_name.startswith('article__title') or class_name.startswith('lmd-article__title')))
               if t:
                 title_page_Acceuil=t.getText()
+              else:
+                  title_page_Acceuil=link.getText()
               if link_page.startswith(url):
                 driver.get(link_page)
                 html_article = BeautifulSoup(driver.page_source, 'html.parser')
@@ -449,6 +463,11 @@ def fonction_find_Article(divs_in_section,driver,Sous_Actualite,order):
                               if date_text is None:
                                   date_text=date_exportation_article
                               
+
+
+                              
+
+
                               creer_article(title_page_Acceuil,title, link_page,date_text,auteur_name,paragraphe,has_img,Sous_Actualite,date_exportation_article,categorie,order)
                               initialisation_varialbes(title,date_text,auteur_name,paragraphe,has_img,Sous_Actualite,categorie,order)
                       
@@ -514,10 +533,9 @@ def fonction_find_Article(divs_in_section,driver,Sous_Actualite,order):
                                          has_img='Non'                             
                                       if date_publication is None or date_element is None:
                                          date_publication=date_exportation_article
-
+                                      #print('******************** date exportation est  :',date_exportation_article)
                                       creer_article(title_page_Acceuil,title, link_page,date_publication,auteur_name,paragraphe,has_img,Sous_Actualite,date_exportation_article,categorie,order)
-                                      
-                                          
+                                       
                                       initialisation_varialbes(title,date_text,auteur_name,p,has_img,Sous_Actualite,categorie,order)
                                    else:
                                       title1 = header.find('h1', class_=lambda x: x.startswith('article__title') or x.startswith('title'))
@@ -574,8 +592,22 @@ def fonction_find_Article(divs_in_section,driver,Sous_Actualite,order):
                                       
                                       if date_publication is None or date_element is None:
                                           date_publication=date_exportation_article
+                                      #print('******************** date exportation est  :',date_exportation_article)
                                       creer_article(title_page_Acceuil,title, link_page,date_publication,auteur_name,paragraphe,has_img,Sous_Actualite,date_exportation_article,categorie,order)
-                                     
+                                      """
+                                      print("Title Page (Accueil):",title_page_Acceuil)
+                                      print("Title:",title)
+                                      print("Link Page:",link_page)
+                                      print("Date Text:", date_text)
+                                      print("Auteur Name:",auteur_name)
+                                      print("Paragraphe:", paragraphe)
+                                      print("Has Image:", has_img)
+                                      print("Sous Actualite:", Sous_Actualite)
+                                      print("Date Exportation Article:",date_exportation_article)
+                                      print("Categorie:", categorie)
+                                      print("Order:", order)
+                                      print("-" * 50)  # Séparateur pour chaque article
+                                      """
                                       initialisation_varialbes(title,date_text,auteur_name,p,has_img,Sous_Actualite,categorie,order)
                       if article_art:
                           section_imag=article_art.find('section',{'class':lambda f:f and(f.startswith('article__cover'))})
@@ -638,11 +670,25 @@ def fonction_find_Article(divs_in_section,driver,Sous_Actualite,order):
                                 
                                       if date_publication is None or date_element is None:
                                         date_publication=date_exportation_article
-                                     
+                                      #print('******************** date exportation est  :',date_exportation_article)
                                       creer_article(title_page_Acceuil,title, link_page,date_publication,auteur_name,paragraphe,has_img,Sous_Actualite,date_exportation_article,categorie,order)
-                                      
+                                      #print('******************** date exportation est  :',date_exportation_article)
                                       initialisation_varialbes(title,date_publication,auteur_name,p,has_img,Sous_Actualite,categorie,order)
-                                  
+                                      #date_exportation_article=None
+                                      """
+                                      print("Title Page (Accueil):",title_page_Acceuil)
+                                      print("Title:",title)
+                                      print("Link Page:",link_page)
+                                      print("Date Text:", date_text)
+                                      print("Auteur Name:",auteur_name)
+                                      print("Paragraphe:", paragraphe)
+                                      print("Has Image:", has_img)
+                                      print("Sous Actualite:", Sous_Actualite)
+                                      print("Date Exportation Article:",date_exportation_article)
+                                      print("Categorie:", categorie)
+                                      print("Order:", order)
+                                      print("-" * 50)  # Séparateur pour chaque article
+                                      """
                           
 
 
@@ -653,25 +699,38 @@ def fonction_find_Article(divs_in_section,driver,Sous_Actualite,order):
 ################################################################ fonction_extraire donnee section d'order                   ################################################################
 def fonction_exportation_articles_order_1(section_order_1,driver,Sous_Actualite,order):
     if section_order_1:
-        divs_in_section=section_order_1.find('div',class_=('article article--main'))
-        if divs_in_section:
-             sous_divs=divs_in_section.find('div',{'class':lambda f:f and(f.startswith('article__re'))})
-             
-             fonction_find_Article(divs_in_section,driver,'Non',order)
-             if sous_divs:
-                 list_divs=sous_divs.find_all('div',{'class':lambda x:x and(x.startswith('article article--related'))})
-                 if list_divs:
-                     
-                     for i in list_divs:
-                         if i:
-                             fonction_find_Article(i,driver,Sous_Actualite,order)
+        divs_in_section=section_order_1.find('h1',class_=('home-block-une__title'))
+        #sous_divs=section_order_1.find('div',{'class':lambda f:f and(f.startswith('home-block-une__grid'))})
+        if divs_in_section:                                                                
+            fonction_find_Article(divs_in_section,driver,'Non',order)
+                        #if sous_divs:
+                                #list_divs=sous_divs.find_all('div',{'class':lambda x:x and(x.startswith('home-block-une'))})
+                                #if list_divs:
+                                    
+                                    # for i in list_divs:
+                                    #  if i:
+                                        #  fonction_find_Article(i,driver,Sous_Actualite,order)
              
             
 ################################################################ fonction_extraire donnee section d'order                   ################################################################
 def fonction_exportation_articles_order_2(section_order_2,driver,Sous_Actualite,order) :
     if section_order_2:
-        for i_2 in section_order_2:
-            fonction_find_Article(i_2,driver,Sous_Actualite,order)
+        sous_divs=section_order_2.find('div',{'class':lambda f:f and(f.startswith('home-block-une__grid'))})
+        if sous_divs:
+                 #print('2 sous div ')                                                    
+                 list_divs=sous_divs.find_all('div',{'class':lambda x:x and(x.startswith('home-block-une__une-related-articles'))})
+                 if list_divs:
+                     
+                    for i_2 in list_divs:
+                        all_articles=i_2.find_all('article',{'class':lambda x:x and(x.startswith('lmd-article'))})
+                        if all_articles:                       
+                            for art in all_articles:
+                              if art:
+                                  div_art=art.find('div',{'class':lambda x:x and(x.startswith('lmd-article__header'))})
+                                  if div_art:
+                                      div_h3=div_art.find('h3',{'class':lambda x:x and(x.startswith('lmd-article__title'))})
+                                      if div_h3:
+                                        fonction_find_Article(div_h3,driver,Sous_Actualite,order)
 
             
 ################################################################ fonction_extraire donnee section d'order 3                  ################################################################
@@ -710,21 +769,22 @@ def findAllArticles(url):
       div_princ=main_page.find('div',id='habillagepub') #le premiere div apres le main
       if div_princ:
       
-       zone_1=div_princ.find('section',{'class':lambda k:k and(k.startswith('zone zone--homepage'))})
-       zone_2=div_princ.find('section',{'class':lambda c:c and(c.startswith('area area--runner'))})
+       zone_1=div_princ.find('div',{'class':lambda k:k and(k.startswith('home-revo-top'))})
+       zone_2=div_princ.find('div',{'class':lambda c:c and(c.startswith('home-revo-top'))})
        zone_3=div_princ.find('section',{'class':lambda j:j and(j.startswith('area area--river'))})
        if zone_1:
-           section_order_1=zone_1.find('section',{'class':lambda j:j and(j.startswith('area area--m'))})# or j.startswith('area area--r'))})
+           section_order_1=zone_1.find('div',{'class':lambda j:j and(j.startswith('home-block-une'))})# or j.startswith('area area--r'))})
            if section_order_1: 
                    order = "1"
                    Sous_Actualite="Oui"
                    fonction_exportation_articles_order_1(section_order_1,driver,Sous_Actualite,order) 
        if zone_2:
-           section_order_2=zone_2.find_all('div',{'class':lambda j:j and(j.startswith('article'))})# or j.startswith('area area--r'))})
+           section_order_2=zone_2.find('div',{'class':lambda j:j and(j.startswith('home-block-une'))})# or j.startswith('area area--r'))})
            if section_order_2:
                    
                    order = "2"
                    Sous_Actualite="Non"
+                   print('order',order)
                    fonction_exportation_articles_order_2(section_order_2,driver,Sous_Actualite,order)   
        if zone_3:
            section_order_3=zone_3.find_all('div',{'class':lambda j:j and(j.startswith('article article--river'))})# or j.startswith('area area--r'))})
@@ -732,7 +792,7 @@ def findAllArticles(url):
                   
                    order = "3"
                    Sous_Actualite="Non"
-                   fonction_exportation_articles_order_3(section_order_3,driver,Sous_Actualite,order) 
+                   #fonction_exportation_articles_order_3(section_order_3,driver,Sous_Actualite,order) 
          
 
 
@@ -753,8 +813,11 @@ def Lemonde_Find_All_Article(d):
             print('***' * 30)
             print(f"\n Le scraping de Lemonde a commencé à l'itération numéro : {i}\n")
             print('***' * 30)
-
+            
             # Appeler la fonction pour trouver tous les articles
+            # Utilisation
+            date_exportation_article = obtenir_date_exportation()
+            print('la date exportation est  : ',date_exportation_article )
             findAllArticles(url)  # Assurez-vous que 'url' est défini quelque part
 
             print('***' * 30)
@@ -781,3 +844,5 @@ def start_scraping(d):
     scraping_thread = threading.Thread(target=Lemonde_Find_All_Article, args=(d,))
     scraping_thread.start()
 
+
+#Lemonde_Find_All_Article(65)
