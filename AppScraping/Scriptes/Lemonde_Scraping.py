@@ -422,6 +422,7 @@ def fonction_find_Article(divs_in_section,driver,Sous_Actualite,order):
                 html_article = BeautifulSoup(driver.page_source, 'html.parser')
                 body_page_2=html_article.find('body')
                 if body_page_2:
+                   print(' je suis dans body __2')
                    main_page=body_page_2.find('main')
                    if main_page:
                       section=main_page.find('section',class_=lambda x:x and (x.startswith('article')))
@@ -699,23 +700,28 @@ def fonction_find_Article(divs_in_section,driver,Sous_Actualite,order):
 ################################################################ fonction_extraire donnee section d'order                   ################################################################
 def fonction_exportation_articles_order_1(section_order_1,driver,Sous_Actualite,order):
     if section_order_1:
+        
         divs_in_section=section_order_1.find('h1',class_=('home-block-une__title'))
+        div_article=section_order_1.find('div',class_=('article'))
         #sous_divs=section_order_1.find('div',{'class':lambda f:f and(f.startswith('home-block-une__grid'))})
         if divs_in_section:                                                                
             fonction_find_Article(divs_in_section,driver,'Non',order)
-                        #if sous_divs:
-                                #list_divs=sous_divs.find_all('div',{'class':lambda x:x and(x.startswith('home-block-une'))})
-                                #if list_divs:
-                                    
-                                    # for i in list_divs:
-                                    #  if i:
-                                        #  fonction_find_Article(i,driver,Sous_Actualite,order)
+        if div_article:
+            list_ul=div_article.find('ul',{'class':lambda x:x and(x.startswith('article_'))})
+            if list_ul:
+                list_lis=list_ul.find_all('li',{'class':lambda g:g and g.startswith('old__article')})
+                for i in list_lis:
+                     if i:
+                      Sous_Actualite="Oui"
+                      fonction_find_Article(i,driver,Sous_Actualite,order)
              
             
 ################################################################ fonction_extraire donnee section d'order                   ################################################################
 def fonction_exportation_articles_order_2(section_order_2,driver,Sous_Actualite,order) :
     if section_order_2:
+       
         sous_divs=section_order_2.find('div',{'class':lambda f:f and(f.startswith('home-block-une__grid'))})
+        all_div=section_order_2.find_all('div',{'class':lambda f:f and(f.startswith('article article--headlines'))})
         if sous_divs:
                  #print('2 sous div ')                                                    
                  list_divs=sous_divs.find_all('div',{'class':lambda x:x and(x.startswith('home-block-une__une-related-articles'))})
@@ -731,6 +737,9 @@ def fonction_exportation_articles_order_2(section_order_2,driver,Sous_Actualite,
                                       div_h3=div_art.find('h3',{'class':lambda x:x and(x.startswith('lmd-article__title'))})
                                       if div_h3:
                                         fonction_find_Article(div_h3,driver,Sous_Actualite,order)
+        if all_div:
+            for i in all_div:
+                fonction_find_Article(i,driver,Sous_Actualite,order)
 
             
 ################################################################ fonction_extraire donnee section d'order 3                  ################################################################
@@ -770,29 +779,57 @@ def findAllArticles(url):
       if div_princ:
       
        zone_1=div_princ.find('div',{'class':lambda k:k and(k.startswith('home-revo-top'))})
+       zone_1_2=div_princ.find('section',{'class':lambda k:k and(k.startswith('zone zone--homepage'))})
        zone_2=div_princ.find('div',{'class':lambda c:c and(c.startswith('home-revo-top'))})
        zone_3=div_princ.find('section',{'class':lambda j:j and(j.startswith('area area--river'))})
-       if zone_1:
-           section_order_1=zone_1.find('div',{'class':lambda j:j and(j.startswith('home-block-une'))})# or j.startswith('area area--r'))})
-           if section_order_1: 
+       
+       if zone_1 is not None or zone_1_2 is not None:
+           
+           if zone_1_2:                                            
+              section_order_1_2=zone_1_2.find('section',{'class':lambda j:j and(j.startswith('area area--main old__area-'))})
+              if section_order_1_2 : 
                    order = "1"
-                   Sous_Actualite="Oui"
+                   Sous_Actualite="Non"
+                   
+                   fonction_exportation_articles_order_1(section_order_1_2,driver,Sous_Actualite,order) 
+
+
+
+           if zone_1:
+              section_order_1=zone_1.find('div',{'class':lambda j:j and(j.startswith('home-block-une'))})# or j.startswith('area area--r'))})
+              if section_order_1: 
+                   order = "1"
+                   Sous_Actualite="Non"
+                   
                    fonction_exportation_articles_order_1(section_order_1,driver,Sous_Actualite,order) 
+
+
+
        if zone_2:
            section_order_2=zone_2.find('div',{'class':lambda j:j and(j.startswith('home-block-une'))})# or j.startswith('area area--r'))})
            if section_order_2:
                    
                    order = "2"
                    Sous_Actualite="Non"
-                   print('order',order)
-                   fonction_exportation_articles_order_2(section_order_2,driver,Sous_Actualite,order)   
+                  
+                   fonction_exportation_articles_order_2(section_order_2,driver,Sous_Actualite,order) 
+       if zone_1_2:
+           
+            
+           section_order_2=zone_1_2.find('section',{'class':lambda j:j and(j.startswith('area area--headlines old__area'))})# or j.startswith('area area--r'))})
+           if section_order_2:
+                   
+                   order = "2"
+                   Sous_Actualite="Non"
+                   
+                   fonction_exportation_articles_order_2(section_order_2,driver,Sous_Actualite,order)
        if zone_3:
            section_order_3=zone_3.find_all('div',{'class':lambda j:j and(j.startswith('article article--river'))})# or j.startswith('area area--r'))})
            if section_order_3:
                   
                    order = "3"
                    Sous_Actualite="Non"
-                   #fonction_exportation_articles_order_3(section_order_3,driver,Sous_Actualite,order) 
+                   fonction_exportation_articles_order_3(section_order_3,driver,Sous_Actualite,order) 
          
 
 
@@ -803,7 +840,7 @@ import time
 
 def Lemonde_Find_All_Article(d):
     global scraping_active
-    print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  hi   LEMONDE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+    print('%%%%%%%%%%%%%%%%%%%%%%%%%                                       hi   LEMONDE                            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
     
     if scraping_active==False:
         scraping_active=True
