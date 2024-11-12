@@ -137,6 +137,7 @@ def creer_article(titre_page_accueil, titre, lien, date_text, auteur_name, parag
         categorie=categorie,
         ordre_actualite=order,
     )
+    
     # Exemple de manipulation pour rendre la date timezone-aware avant enregistrement
     #if article.date_publication.tzinfo is None:
         #article.date_publication = timezone.make_aware(article.date_publication, timezone.get_current_timezone())
@@ -147,6 +148,7 @@ def creer_article(titre_page_accueil, titre, lien, date_text, auteur_name, parag
     print(' ****************************************************       Save with success          ***********************************')
 
     return article  
+    
 #################################################################################
 
 
@@ -165,6 +167,7 @@ mois_mapping = {
 }
 
 def date_publier_le(chaine):
+ print(' la date de publication est commasser par le :',chaine)
  if chaine and chaine.startswith('Publié le '):
     x=len("Publié le ")
     chaine=chaine[x:]
@@ -176,23 +179,20 @@ def date_publier_le(chaine):
     
     # Trouver la partie heure
     heure_partie = chaine.split('à')[1].strip()
-    
+    print('partie date ',date_partie)
+    print('partie heur ',heure_partie)
     # Remplacer les mois français par leurs équivalents anglais
     for mois_fr, mois_en in mois_mapping.items():
         if mois_fr in date_partie:
             date_partie = date_partie.replace(mois_fr, mois_en)
+            
             break
     
-    # Convertir la partie date en format utilisable
-    try:
-        date_obj = datetime.strptime(date_partie, '%d %B %Y') # Date sans heure
-    except ValueError:
-        print(f"Erreur de format de date : {date_partie}")
-        return None
+   
     
     # Combiner la date et l'heure
-    date_heure_str = date_obj.strftime('%Y-%m-%d') + ' ' + heure_partie.replace('h', ':') + ':00'
-    
+    date_heure_str = date_partie.strftime('%Y-%m-%d') + ' ' + heure_partie.replace('h', ':') + ':00'
+    print('date heur str est : ',date_heure_str)
     # Convertir en objet datetime
     try:
         # Assumer que la chaîne fournie est en heure locale (Europe/Paris)
@@ -422,7 +422,7 @@ def fonction_find_Article(divs_in_section,driver,Sous_Actualite,order):
                 html_article = BeautifulSoup(driver.page_source, 'html.parser')
                 body_page_2=html_article.find('body')
                 if body_page_2:
-                   print(' je suis dans body __2')
+                   #print(' je suis dans body __2')
                    main_page=body_page_2.find('main')
                    if main_page:
                       section=main_page.find('section',class_=lambda x:x and (x.startswith('article')))
@@ -467,7 +467,12 @@ def fonction_find_Article(divs_in_section,driver,Sous_Actualite,order):
 
 
                               
-
+                              #print("")
+                              #print('****'*23)
+                              #print("Date Text:", date_text)
+                              #print(' link de la page est : ',link_page)
+                              #print('****'*23)
+                              #print("")
 
                               creer_article(title_page_Acceuil,title, link_page,date_text,auteur_name,paragraphe,has_img,Sous_Actualite,date_exportation_article,categorie,order)
                               initialisation_varialbes(title,date_text,auteur_name,paragraphe,has_img,Sous_Actualite,categorie,order)
@@ -536,7 +541,12 @@ def fonction_find_Article(divs_in_section,driver,Sous_Actualite,order):
                                          date_publication=date_exportation_article
                                       #print('******************** date exportation est  :',date_exportation_article)
                                       creer_article(title_page_Acceuil,title, link_page,date_publication,auteur_name,paragraphe,has_img,Sous_Actualite,date_exportation_article,categorie,order)
-                                       
+                                      #print("")
+                                      #print('****'*23)
+                                      #print("Date Text:", date_publication)
+                                      #print(' link de la page est : ',link_page)
+                                      #print('****'*23)
+                                      #print("")
                                       initialisation_varialbes(title,date_text,auteur_name,p,has_img,Sous_Actualite,categorie,order)
                                    else:
                                       title1 = header.find('h1', class_=lambda x: x.startswith('article__title') or x.startswith('title'))
@@ -594,6 +604,12 @@ def fonction_find_Article(divs_in_section,driver,Sous_Actualite,order):
                                       if date_publication is None or date_element is None:
                                           date_publication=date_exportation_article
                                       #print('******************** date exportation est  :',date_exportation_article)
+                                      #print("")
+                                      #print('****'*23)
+                                      #print("Date Text:", date_publication)
+                                      #print(' link de la page est : ',link_page)
+                                      #print('****'*23)
+                                      #print("")
                                       creer_article(title_page_Acceuil,title, link_page,date_publication,auteur_name,paragraphe,has_img,Sous_Actualite,date_exportation_article,categorie,order)
                                       """
                                       print("Title Page (Accueil):",title_page_Acceuil)
@@ -673,6 +689,12 @@ def fonction_find_Article(divs_in_section,driver,Sous_Actualite,order):
                                         date_publication=date_exportation_article
                                       #print('******************** date exportation est  :',date_exportation_article)
                                       creer_article(title_page_Acceuil,title, link_page,date_publication,auteur_name,paragraphe,has_img,Sous_Actualite,date_exportation_article,categorie,order)
+                                      #print("")
+                                      #print('****'*23)
+                                      #print("Date Text:", date_publication)
+                                      #print(' link de la page est : ',link_page)
+                                      #print('****'*23)
+                                      #print("")
                                       #print('******************** date exportation est  :',date_exportation_article)
                                       initialisation_varialbes(title,date_publication,auteur_name,p,has_img,Sous_Actualite,categorie,order)
                                       #date_exportation_article=None
@@ -882,4 +904,4 @@ def start_scraping(d):
     scraping_thread.start()
 
 
-#Lemonde_Find_All_Article(65)
+#Lemonde_Find_All_Article(25)

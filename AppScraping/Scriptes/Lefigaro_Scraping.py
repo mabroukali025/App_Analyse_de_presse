@@ -128,6 +128,43 @@ import datetime
 import locale
 
 
+def convertir_date_en_form_Django(date_str):
+   
+    """
+    Cette fonction prend une chaîne de date (date_str), nettoie les espaces insécables et le 'h' 
+    entre l'heure et les minutes, puis la convertit en un objet datetime.
+
+    Args:
+        date_str (str): La chaîne représentant la date, au format 'YYYY-MM-DD HH:MM:SS' ou 'YYYY-MM-DDTHH:MM:SS'.
+
+    Returns:
+        datetime: L'objet datetime représentant la date dans le format 'YYYY-MM-DDTHH:MM:SS'.
+    """
+    # Nettoyer les espaces insécables et remplacer 'h' par ':'
+    cleaned_date_str = date_str.replace("\xa0", " ").replace("h", ":").strip()
+
+    # Remplacer l'espace entre la date et l'heure par un 'T'
+    cleaned_date_str = cleaned_date_str.replace(" ", "T")
+
+    # Affichage de la chaîne nettoyée pour vérification
+    #print("Date nettoyée:", cleaned_date_str)
+
+    # Conversion de la date nettoyée en un objet datetime (format attendu)
+    try:
+        # Convertir la date au format 'YYYY-MM-DDTHH:MM:SS'
+        date_obj = datetime.strptime(cleaned_date_str, "%Y-%m-%dT%H:%M:%S")
+        return date_obj
+    except ValueError as e:
+        print("Erreur lors de la conversion de la date:", e)
+        return None 
+
+
+
+
+
+
+
+
 
 
 def convert_string_to_datetime(date_str):
@@ -149,7 +186,8 @@ def convert_string_to_datetime(date_str):
                 # Si le format contient des secondes, les retirer
                 date_obj = date_obj.replace(second=0, microsecond=0)
                 # Convertir l'objet datetime en chaîne au format ISO 8601
-                return date_obj.strftime('%Y-%m-%dT%H:%M:%S')
+                if date_obj:
+                 return date_obj.strftime('%Y-%m-%dT%H:%M:%S') 
             except ValueError:
                 pass
         
@@ -162,7 +200,8 @@ def convert_string_to_datetime(date_str):
         return None       
 ####################################################################################################################################
 def supprimer_caracteres_debut(nombre, chaine):
-    if nombre >= len(chaine):
+    if chaine:
+     if nombre >= len(chaine):
         return ""  # Retourner une chaîne vide si le nombre de caractères à supprimer est supérieur ou égal à la longueur de la chaîne
     
     return chaine[nombre:]
@@ -213,7 +252,8 @@ def joindre_date_et_partie_heure(chaine: str) -> str:
     partie_heure = chaine.split('à')[-1].strip()
     
     # Formater la date et ajouter la partie de l'heure
-    date_formatee = date_aujourdhui.strftime("%Y-%m-%d") + " " + partie_heure + ":00"
+    if date_aujourdhui:
+       date_formatee = date_aujourdhui.strftime("%Y-%m-%d") + " " + partie_heure + ":00"
     return date_formatee
 
 ############################################## convertir la forme date : le 07/05/2024 a le 07 may 2024   ######################
@@ -235,7 +275,8 @@ def convertir_format_date(chaine: str) -> str:
         # Extraire les heures et les minutes de l'heure
         heure, minute = heure_str.split(':')
         # Construire la chaîne au format souhaité
-        date_formatee = date_obj.strftime(f"%Y-%m-%d") + f"T{heure}:{minute}:00"
+        if date_obj:
+          date_formatee = date_obj.strftime(f"%Y-%m-%d") + f"T{heure}:{minute}:00"
         
         return date_formatee
     else:
@@ -294,7 +335,7 @@ def reformulate_date(chaine: str) -> str:
         formatted_date = f"{day.zfill(2)}-{month_num}-{year}T{hour}:{minute}:{second}"
 
         # Convertir en objet datetime pour vérification (optionnel)
-        print( 'formated date est **********   :',formatted_date)
+        #print( 'formated date est **********   :',formatted_date)
         datetime_object = format_date_django(formatted_date)
 
         return datetime_object
@@ -317,9 +358,9 @@ def convertir_secondes_en_date(secondes: int) -> str:
     
     # Soustraire le nombre de secondes de la date actuelle
     nouvelle_date = maintenant - timedelta(seconds=secondes)
-    
+    if nouvelle_date:
     # Convertir la nouvelle date en chaîne au format souhaité
-    date_formatee = nouvelle_date.strftime("%Y-%m-%dT%H:%M:%S")
+     date_formatee = nouvelle_date.strftime("%Y-%m-%dT%H:%M:%S")
     
     return date_formatee
 
@@ -378,8 +419,15 @@ def extraire_date_heure(chaine):
         r'(\d{4})[ -](\d{1,2})[ -](\d{1,2})[ ]*,[ ]*(\d{1,2})h(\d{2})',  # Format YYYY-MM-DD avec virgule
         r'(\d{4})[ ]+(\w+)[ ]+(\d{1,2}),[ ]*(\d{1,2})h(\d{2})',
         r'(\d{4})[ ]+(\w+)[ ]+(\d{1,2})[ ]*,[ ]*(\d{1,2})h(\d{2}):(\d{2})',
+
+        # Modèle pour le format "YYYY-MM-DD HHhMM:SS" ou "YYYY-MM-DD HHhMM"
+        r"(\d{4})-(\d{2})-(\d{2})[ ]+(\d{2})h(\d{2})(?::(\d{2}))?",
         
-        r'(\d{4})[ ]+(\w+)[ ]+(\d{1,2})[ ]+à[ ]*(\d{1,2})h(\d{2})'# Format YYYY-MM-DD
+        r'(\d{4})[ ]+(\w+)[ ]+(\d{1,2})[ ]+à[ ]*(\d{1,2})h(\d{2})',# Format YYYY-MM-DD
+        # Modèle pour le format "YYYY-MM-DD HHhMM:SS"
+        r"(\d{4})-(\d{2})-(\d{2})[ ]+(\d{2})h(\d{2}):(\d{2})",
+        # Modèle pour le format "hier à HHhMM"
+        r"hier à (\d{2})h(\d{2})"
     ]
     
     for regex in regex_patterns:
@@ -406,7 +454,7 @@ def extraire_date_heure(chaine):
             date_formatee = format_date_django(resultat)
             # Nettoyage des espaces indésirables
             date_formatee = date_formatee.replace('\xa0', '').strip()
-
+            #print('date forme est ',date_formatee)
             return date_formatee
     
     print(f"Format non reconnu pour la chaîne : {chaine}")
@@ -442,26 +490,35 @@ def convertir_date_format_x(date_input):
 ########################################################### fonction date publication #########################################*
 def date_publication_article(chaine: str) -> str:
     date_expo=get_exportation_date()
-    
+    #print(' la date de publication est : ',chaine)
     # Votre logique existante pour formater la date en fonction des préfixes
     #print(' mon chaine date est :',chaine)
-    if chaine.startswith("il"):
-        # Calculer la date de publication
-        date_publication = calculer_date_publication(chaine)
+    if chaine is not None:  
+        if chaine.startswith("il"):
+            # Calculer la date de publication
+            date_publication = calculer_date_publication(chaine)
+            return date_publication
+        elif chaine.startswith("le"):
+            
+            date_publication=extraire_date_heure(chaine)
+        elif chaine.startswith("hier"):
+            date_publication_A = joindre_date_et_partie_heure(chaine)
+            if date_publication_A:
+            # print(' date publication X est ',date_publication_A)
+            #date_publication=extraire_date_heure(date_publication_A)
+            #date_publication=convertir_date_format_x(date_publication_A)
+            
+            #print('date publication pour heir est :',date_publication_A.replace(" ", "T"))
+            
+              date_publication=convertir_date_en_form_Django(date_publication_A)#.replace(" ", "T")
+        elif chaine.startswith("à l’instant"):
+            date_publication = get_exportation_date() 
+        else:
+            date_publication = get_exportation_date()
         return date_publication
-    elif chaine.startswith("le"):
-        
-        date_publication=extraire_date_heure(chaine)
-    elif chaine.startswith("hier"):
-        date_publication_A = joindre_date_et_partie_heure(chaine)
-        if date_publication_A:
-           #print(' date publication X est ',date_publication_A)
-           date_publication=extraire_date_heure(date_publication_A)
-    elif chaine.startswith("à l’instant"):
-        date_publication = date_expo.strftime('%Y-%m-%dT%H:%M:%S') 
     else:
-        date_publication = date_expo.strftime('%Y-%m-%dT%H:%M:%S') 
-    return date_publication
+       date_publication=date_expo
+       return date_publication
 ######################################################################################
 
 ##################################################################""  Fonction findArticle   ##########################################
@@ -568,16 +625,26 @@ def Find_Article(article_section_order_1,driver,Sous_Actualite,order):
                             duree=''
                             if title is None:
                                title="Non Trouvee"
-                            if date_publication is None:
-                               date_publication=date_exportation
+                            #print('date pub    ',date_publication)
                             date_publication=convertir_date_format_x(date_publication)
                             #print('le lien est ',link_element)
                             #print('date poublication est :',date_publication)
                             #print('*******'*23)
                             #date_exportation=get_exportation_date()
-                            print('************  date_exportation  : ',date_exportation)
+                            #print('************  date_exportation  : ',date_exportation)
                             creer_article(title_accueil, title, link_element, date_publication, auteur_name, p, has_figure, Sous_Actualite, date_exportation, categorie_text, order)
-                            
+                            #print(title_accueil)
+                            #print(title)
+                            #print(link_element)
+                            #print(date_publication)
+                            #print(auteur_name)
+                            #print(p)
+                            #print(has_figure)
+                            #print(Sous_Actualite)
+                            #print(date_exportation)
+                            #print(categorie_text)
+                            #print(order)
+
 
                 if sous_div_princ_live:
                    article_live=sous_div_princ_live.find('article')#,{'class':lambda g:g and(g.startswith(''))})
@@ -643,16 +710,27 @@ def Find_Article(article_section_order_1,driver,Sous_Actualite,order):
                                  else:
                                     date_publication=date_publication_article(date_pub)
                                  
-
+                            #print('date pub    ',date_publication)
                             #fonction_date_exportation().strftime('%d-%m-%YT%H:%M:%S')
                             date_publication=convertir_date_format_x(date_publication)
                             #print('le lien est ',link_element)
                             #print('date poublication est :',date_publication)
                             #print('*******'*23)
                             #date_exportation=get_exportation_date()
-                            print('*************************   date_exportation  : ',date_exportation)
+                            #print('*************************   date_exportation  : ',date_exportation)
                             creer_article(title_accueil, title, link_element, date_publication, auteur_name, p, has_figure, Sous_Actualite, date_exportation, categorie_text, order)
-                            
+                            #print(title_accueil)
+                            #print(title)
+                            #print(link_element)
+                            #print(date_publication)
+                            #print(auteur_name)
+                            #print(p)
+                            #print(has_figure)
+                            #print(Sous_Actualite)
+                            #print(date_exportation)
+                            #print(categorie_text)
+                            #print(order)
+
                             
                             
                    
@@ -721,14 +799,26 @@ def Find_Article(article_section_order_1,driver,Sous_Actualite,order):
                             #print('link_element  : ',link_element)
                             #print('date_publication :',date_publication)
 
-                            print('%%%%%%%%%%%%%  date_exportation  : ',date_exportation)
+                            #print('%%%%%%%%%%%%%  date_exportation  : ',date_exportation)
                             #print('***'*20)
-                            date_publication=convertir_date_format_x(date_publication)
+                            #print('date pub    ',date_publication)
+                            #date_publication=convertir_date_format_x(date_publication)
                             #print('le lien est ',link_element)
                             #print('date poublication est :',date_publication)
                             #print('*******'*23)
                             creer_article(title_accueil, title, link_element, date_publication, auteur_name, p, has_figure, Sous_Actualite, date_exportation, categorie_text, order)
-                            
+                            #print(title_accueil)
+                            #print(title)
+                            #print(link_element)
+                            #print(date_publication)
+                            #print(auteur_name)
+                           # print(p)
+                            #print(has_figure)
+                            #print(Sous_Actualite)
+                            #print(date_exportation)
+                            #print(categorie_text)
+                            #print(order)
+
 
 
 ########################################################### fonction principale #####################################################"
@@ -749,6 +839,7 @@ def findAllArticles(url):
     div_princ=html.find('div',{'class':lambda c:c and (c.startswith('fig-page'))})
     if div_princ:
      sous_div_princ=div_princ.find('div',{'class':lambda c:c and(c.startswith('fig-main-wrapper'))})
+     
      if sous_div_princ:    
       sous_div2=sous_div_princ.find('div',{'class':lambda f:f and(f.startswith('fig-main-col'))}) 
       article_aside_left=sous_div_princ.find('aside',{'class':lambda n:n and(n.startswith('fig-left'))})
@@ -757,41 +848,62 @@ def findAllArticles(url):
        
        if sous_div3:
         article_section_order_1=sous_div3.find('article',{'class':lambda x: x and (x.startswith('fig-ranking-profile-container'))})# or x.startswith('fig-ensemble')or x.startswith('fig-ensemble__first-article'))})
-        article_section_order_2=sous_div3.find('section',{'class':lambda x : x.startswith('fig-')})
+        article_section_order_1_2=sous_div3.find('section',{'class':lambda n:n and n.startswith('fig-ensemble fig-ensemble')})
+        article_section_order_2=sous_div3.find_all('section',{'class':lambda x : x.startswith('fig-')})
         article_section_order_2_2=sous_div3.find('article',{'class':lambda x : x.startswith('fig-')})                                                                        
-        
-        #div_article_left=article_aside.find_all('div',class_="fig-list-articles")
-        
 
         ####################""
-        if article_section_order_1:
+
+        if article_section_order_1 or article_section_order_1_2:
            order='1'
            Sous_Actualite='Non'
+           if article_section_order_1:
+            Find_Article(article_section_order_1,driver,Sous_Actualite,order)
+           if article_section_order_1_2:
+              first_article=article_section_order_1_2.find('article',{'class':lambda h:h and h.startswith('fig-ensemble__first')})
+              ul_articles=article_section_order_1_2.find('ul',{'class':lambda h:h and h.startswith('fig-ensemble__list')})
+              if first_article:
+                Find_Article(first_article,driver,Sous_Actualite,order)
+              if ul_articles:
+                 list_sous_article=ul_articles.find_all('li',{'class':lambda h:h and h.startswith('fig-ensemble__item')})
+                 for x in list_sous_article:
+                    Sous_Actualite='Oui'
+                    Find_Article(x,driver,Sous_Actualite,order)
         
-           Find_Article(article_section_order_1,driver,Sous_Actualite,order)
+
         if article_section_order_2:
-           article_order_2=article_section_order_2.find('article',{'class':lambda x: x and (x.startswith('fig'))})
+           article_order_2=article_section_order_2[1].find('article',{'class':lambda x: x and (x.startswith('fig'))})
+           ul_articles=article_section_order_2[1].find('ul',{'class':lambda x: x and (x.startswith('fig'))})
            if article_order_2:
              order='2'
              Sous_Actualite='Non'
-            
              Find_Article(article_order_2,driver,Sous_Actualite,order)
+           if ul_articles:
+                 list_sous_article=ul_articles.find_all('li',{'class':lambda h:h and h.startswith('fig-ensemble__item')})
+                 for x in list_sous_article:
+                    Sous_Actualite='Oui'
+                    Find_Article(x,driver,Sous_Actualite,order)
         if article_section_order_2_2:
            order='2'
            Sous_Actualite='Non'
-          
            Find_Article(article_section_order_2_2,driver,Sous_Actualite,order)
+
+
+           
         if article_aside_left:
            div_articles_left=article_aside_left.find_all('div',{'class':lambda h:h and (h.startswith('fig-list-articles'))})
            for x in div_articles_left:
-            order='3'
-            Sous_Actualite='Non'
-            
-            Find_Article(x,driver,Sous_Actualite,order)
+            article_in_div=x.find('article',{'class':lambda j:j and j.startswith('fig-ranking')})
+            if article_in_div:
+                order='3'
+                Sous_Actualite='Non'
+                Find_Article(article_in_div,driver,Sous_Actualite,order)
             
 def fonction_Lefigaro(d):
     global scraping_active
-    print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  hi   LEFIGARO  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+    print('')
+    print('%%%%%%%%%%%%%%%%%%%%%                 LEFIGARO                     %%%%%%%%%%%%%%%%%%%%%%%%%')
+    print('')
     
     if scraping_active==False:
         scraping_active=True
@@ -799,7 +911,9 @@ def fonction_Lefigaro(d):
     while scraping_active:
      try:
         date_exportation=get_exportation_date()
-        print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  la date dexportation est :',date_exportation)
+        print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%            la date dexportation est :',date_exportation, '                     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+
+        print('')
         print('***'*30)
         print('')
         print(" Le processus de scraping du site Le Figaro a démarré à l itération numéro :",i)
@@ -832,7 +946,7 @@ def fonction_Arrete_Script():
 
 
 
-def start_scraping(d):
+def start_scraping_lefigaro(d):
     
     global scraping_active
     scraping_active = True

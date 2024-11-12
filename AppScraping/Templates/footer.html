@@ -1,6 +1,4 @@
 <style>
-    
-    
     .footer-section {
         padding: 20px 0;
         background-color: #c6f4f4; /* Couleur de fond du footer */
@@ -20,35 +18,49 @@
         margin: 0; /* Supprimer la marge par défaut des paragraphes */
     }
 
+    /* Fixer le footer en bas */
     .footer {
-        width: 100%; /* S'assure que le footer utilise toute la largeur disponible */
-        margin-top: 80px; /* Ajoute un espace au-dessus du footer, si nécessaire */
-        margin-bottom: 20px; /* Espace entre le footer et le bas de la page */
+        width: 100%; /* Prend toute la largeur */
+        position: fixed; /* Fixe le footer en bas de l'écran */
+        bottom: 0; /* Place le footer en bas */
+        left: 0;
+        margin: 0;
+        z-index: 1000;
     }
 
+    /* Ajout d'espace pour éviter le recouvrement par le footer */
+    .content {
+        padding-bottom: 100px; /* Espace en bas de la page pour la pagination, etc. */
+    }
 </style>
-<footer class="footer">
-    <!-- Le footer s'étend maintenant sur toute la largeur de la page -->
-    <div class="footer-section d-flex justify-content-around align-items-center">
-        <div class="footer-item">
-            <i class="fas fa-map-marker-alt"></i>
-            <p>Résidence Ahlam 2, Imm B, RDC, N°1. Av. prince My Abdellah – Marrakech</p>
-        </div>
-        
-        <div class="footer-item">
-            <i class="fas fa-envelope"></i>
-            <p>Email : contact@terrain360.eu</p>
-        </div>
-        
-        <div class="footer-item">
-            <i class="fas fa-phone"></i>
-            <p>+212 (0) 524 433 843</p>
-        </div>
-    </div>
-</footer>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<body>
+    <!-- Contenu principal avec padding en bas -->
+    <div class="content">
+        <!-- Place ton contenu ici, y compris la pagination -->
+    </div>
+
+    <footer class="footer">
+        <!-- Le footer s'étend maintenant sur toute la largeur de la page -->
+        <div class="footer-section d-flex justify-content-around align-items-center">
+            <div class="footer-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <p>Résidence Ahlam 2, Imm B, RDC, N°1. Av. prince My Abdellah – Marrakech</p>
+            </div>
+            
+            <div class="footer-item">
+                <i class="fas fa-envelope"></i>
+                <p>Email : contact@terrain360.eu</p>
+            </div>
+            
+            <div class="footer-item">
+                <i class="fas fa-phone"></i>
+                <p>+212 (0) 524 433 843</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
-</html>

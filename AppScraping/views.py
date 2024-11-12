@@ -505,8 +505,8 @@ def find_articles(request):
             from AppScraping.Scriptes.Liberation_Scraping import fonction_liberation
             fonction_liberation(int(duree_value))
         elif selected_value_global == "option3":
-            from AppScraping.Scriptes.Lefigaro_Scraping import start_scraping
-            start_scraping(int(duree_value))
+            from AppScraping.Scriptes.Lefigaro_Scraping import start_scraping_lefigaro
+            start_scraping_lefigaro(int(duree_value))
         elif selected_value_global=="option0":
             #from AppScraping.Scriptes.Lemonde_Scraping import  start_all_Scraping
             from AppScraping.Scriptes.all_sites import start_all_scraping
@@ -719,7 +719,7 @@ def Statistiques_mot_cle(request):
     else:
         total_articles_count = articles.distinct().count()
     # Pagination setup
-    paginator = Paginator(articles.distinct(), 3)  # Limite à 3 articles par page
+    paginator = Paginator(articles.distinct(), 1)  # Limite à 3 articles par page
     page_number = request.GET.get('page')  # Obtient le numéro de la page actuelle
     articles = paginator.get_page(page_number)  # Applique la pagination directement à la variable 'articles'
     for article in articles:

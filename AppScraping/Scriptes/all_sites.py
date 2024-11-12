@@ -56,7 +56,7 @@ def start_all_scraping(duree_value):
     # Importer les fonctions de scraping de chaque site
     from AppScraping.Scriptes.Lemonde_Scraping import Lemonde_Find_All_Article
     from AppScraping.Scriptes.Liberation_Scraping import fonction_liberation
-    from AppScraping.Scriptes.Lefigaro_Scraping import start_scraping
+    from AppScraping.Scriptes.Lefigaro_Scraping import start_scraping_lefigaro
 
     # Démarre le scraping pour chaque site dans un thread
     threads.append(threading.Thread(target=Lemonde_Find_All_Article, args=(int(duree_value),)))
@@ -65,7 +65,7 @@ def start_all_scraping(duree_value):
     threads.append(threading.Thread(target=fonction_liberation, args=(int(duree_value),)))
     threads[-1].start()
 
-    threads.append(threading.Thread(target=start_scraping, args=(int(duree_value),)))
+    threads.append(threading.Thread(target=start_scraping_lefigaro, args=(int(duree_value),)))
     threads[-1].start()
 
 def stop_all_scraping():

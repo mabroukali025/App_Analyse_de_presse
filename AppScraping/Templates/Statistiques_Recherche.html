@@ -215,67 +215,71 @@
                 </table>
             </div>
 
-            <!-- Tableau des articles 
-            <fieldset class="row g-9 border p-20">-->
-            <div class="row px-3 g-9 p-20">
+            <!-- Tableau des articles -->
+            <div class="row px-0 g-0 p-20">
                 <h3>Articles :</h3>
                 <div class="table custom-table-striped">
-                    <table class="table table-hover table-info text-dark px-3">
-                        <thead class="thead-secondary text-dark h7">
-                            <tr>
-                                <th class="font-weight-bold" style="width: 3%;">Id</th>
-                                <th class="font-weight-bold" style="width: 15%;">Titre Page Accueil</th>
-                                <th class="font-weight-bold" style="width: 15%;">Titre</th>
-                                <th class="font-weight-bold" style="width: 20%;">Lien</th>
-                                <th class="font-weight-bold" style="width: 15%;">Date Publication</th>
-                                <th class="font-weight-bold" style="width: 10%;">Auteur</th>
-                                <th class="font-weight-bold" style="width: 26%;">Description</th>
-                                <th class="font-weight-bold" style="width: 3%;">Statut Image</th>
-                                <th class="font-weight-bold" style="width: 3%;">Actualité</th>
-                                <th class="font-weight-bold" style="width: 8%;">Date Exportation</th>
-                                <th class="font-weight-bold" style="width: 8%;">Catégorie</th>
-                                <th class="font-weight-bold" style="width: 7%;">Ordre d'Actualité</th>
-                                <th class="font-weight-bold" style="width: 10%;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for article in articles_Statistiques_mot_cle %}
-                            <tr>
-                                <td>{{ article.id }}</td>
-                                <td class="text-wrap">{{ article.titre_page_accueil|safe }}</td>
-                                <td class="text-wrap">{{ article.titre|safe }}</td>
-                                <td class="text-wrap">
-                                    <a href="{{ article.lien }}">{{ article.lien }}</a>
-                                </td>
-                                <td class="text-wrap">{{ article.date_publication }}</td>
-                                <td class="text-wrap">{{ article.nom_auteur|safe }}</td>
-                                <td class="text-wrap">{{ article.description_article|safe }}</td>
-                                <td>{{ article.statut_image }}</td>
-                                <td>{{ article.actualite }}</td>
-                                <td>{{ article.date_exportation }}</td>
-                                <td>{{ article.categorie }}</td>
-                                <td>{{ article.ordre_actualite }}</td>
-                                <td>
-                                    <!-- Utilisation de div pour forcer l'affichage en bloc avec un espace entre chaque bouton -->
-                                    <div class="mb-2">
-                                        <!-- Bouton "Cycle Vie" -->
-                                        <a href="{% url 'compter_doublons_articles' article.id %}" class="btn btn-primary">Cycle Vie</a>
-                                    </div>
-                                    <div>
-                                        <!-- Bouton "Télécharger" -->
-                                        <a href="{% url 'telecharger_article_unique_excel' article.id %}" class="btn btn-success">Télécharger</a>
-                                    </div>
-                                </td>
-                                      
-                                
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="13"><h4> Aucun Article Trouvé.</h4> </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                    <!-- Conteneur avec une barre de défilement horizontale -->
+                    <div style="overflow-x: auto; width: 100%;"> <!-- 100% pour adapter à la largeur de l'écran -->
+                        <table class="table table-hover table-info text-dark px-4">
+                            <thead class="thead-secondary text-dark h6">
+                                <tr>
+                                    <th class="col-1">Id</th>
+                                    <th class="col-2">Titre Page Accueil</th>
+                                    <th class="col-2">Titre</th>
+                                    <th class="col-2">Lien</th>
+                                    <th class="col-2">Date Publication</th>
+                                    <th class="col-1">Auteur</th>
+                                    <th >Description</th>
+                                    <th class="col-1">Statut Image</th>
+                                    <th class="col-1">Actualité</th>
+                                    <th class="col-2">Date Exportation</th>
+                                    <th class="col-2">Catégorie</th>
+                                    <th class="col-2">Ordre d'Actualité</th>
+                                    <th class="col-2">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for article in articles_Statistiques_mot_cle %}
+                                <tr>
+                                    <td><p> {{ article.id }}</p></td>
+                                    <td><p> {{ article.titre_page_accueil|safe }}</p></td>
+                                    <td><p> {{ article.titre|safe }}</p></td>
+                                    <td><p><a href="{{ article.lien }}">{{ article.lien }}</a></p></td>
+                                    <td><p> {{ article.date_publication }}</p></td>
+                                    <td><p>{{ article.nom_auteur|safe }}</p></td>
+                                    <td style="white-space: normal; word-wrap: break-word;"><p>{{ article.description_article|safe }}</p></td>
+                                    <td><p> {{ article.statut_image }}</p></td>
+                                    <td><p> {{ article.actualite }}</p></td>
+                                    <td><p> {{ article.date_exportation }}</p></td>
+                                    <td><p> {{ article.categorie }}</p></td>
+                                    <td><p> {{ article.ordre_actualite }}</p></td>
+                                    <td>
+                                        <div class="actions mt-3">
+                                            <div class="mb-2">
+                                                <a href="{% url 'compter_doublons_articles' article.id %}" class="btn btn-primary">Cycle Vie</a>
+                                            </div>
+                                            <div>
+                                                <a href="{% url 'telecharger_article_unique_excel' article.id %}" class="btn btn-success">Télécharger</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="13"><h4>Aucun Article Trouvé.</h4></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            
+            
+            
+
 
 <!-- Pagination Controls -->
 <div class="d-flex justify-content-center">
