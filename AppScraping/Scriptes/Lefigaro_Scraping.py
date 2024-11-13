@@ -21,6 +21,10 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import WebDriverException, InvalidSessionIdException
 from datetime import datetime, timedelta
 import locale
+from datetime import datetime
+import pytz
+
+
 url = 'https://www.lefigaro.fr/'
 
 input_csv_file = "LefigaroVF.csv"
@@ -28,12 +32,19 @@ output_file="Lefigaro.xlsx"
 output_excel_file = "LefigaroSansDoub.xlsx"
 #date_exportation_f = datetime.datetime.today().strftime("%d %B %Y , %H:%M:%S") 
 
+title_accueil='Non Trouvee'
+title='Non Trouvee'
+link_element='Non Trouvee'
+date_publication=None
+auteur_name='Non Trouvee'
+p='Non Trouvee'
+has_figure='Non'
+categorie_text='Non Trouvee'
+duree='Non Trouvee'
 
 
 
 
-from datetime import datetime
-import pytz
 
 def get_exportation_date():
     # Obtenir la date et l'heure actuelles en France (Europe/Paris) et les formater
@@ -287,10 +298,11 @@ def convertir_format_date(chaine: str) -> str:
 def extraire_nombre_heures(chaine: str) -> int:
     # Extraction des heures à partir de la chaîne, par exemple "il y a 4 heures"
     mots = chaine.split()
-    for i, mot in enumerate(mots):
-        if mot.isdigit():
-            if i + 1 < len(mots) and mots[i + 1] in ["heure", "heures"]:
-                return int(mot)
+    if mots is not None:
+        for i, mot in enumerate(mots):
+            if mot.isdigit():
+                if i + 1 < len(mots) and mots[i + 1] in ["heure", "heures"]:
+                    return int(mot)
     return 0
 
 # Fonction pour extraire les minutes de la chaîne
@@ -467,23 +479,25 @@ def convertir_date_format_x(date_input):
     if isinstance(date_input, datetime):
         return date_input.strftime('%Y-%m-%dT%H:%M:%S')
     
-    # Vérifier si la chaîne est dans le format 'YYYY-MM-DDTHH:MM:SS'
-    if len(date_input) == 19 and date_input[4] == '-' and date_input[7] == '-' and date_input[10] == 'T':
-        return date_input  # Retourner la date telle quelle
+    if date_input is not None:
+        # Vérifier si la chaîne est dans le format 'YYYY-MM-DDTHH:MM:SS'
+        if len(date_input) == 19 and date_input[4] == '-' and date_input[7] == '-' and date_input[10] == 'T':
+            return date_input  # Retourner la date telle quelle
 
-    # Vérifier si la chaîne est dans le format 'DD-MM-YYYYTHH:MM:SS'
-    try:
-        # Séparer la date et l'heure
-        date_part, time_part = date_input.split('T')
-        jour, mois, annee = date_part.split('-')
-        
-        # Réorganiser au format 'YYYY-MM-DD'
-        date_convertie = f"{annee}-{mois}-{jour}T{time_part}"
-        return date_convertie
-    except ValueError:
-        print("Format de date invalide. Assurez-vous qu'il est au format 'DD-MM-YYYYTHH:MM:SS' ou 'YYYY-MM-DDTHH:MM:SS'.")
-        return None
-
+        # Vérifier si la chaîne est dans le format 'DD-MM-YYYYTHH:MM:SS'
+        try:
+            # Séparer la date et l'heure
+            date_part, time_part = date_input.split('T')
+            jour, mois, annee = date_part.split('-')
+            
+            # Réorganiser au format 'YYYY-MM-DD'
+            date_convertie = f"{annee}-{mois}-{jour}T{time_part}"
+            return date_convertie
+        except ValueError:
+            print("Format de date invalide. Assurez-vous qu'il est au format 'DD-MM-YYYYTHH:MM:SS' ou 'YYYY-MM-DDTHH:MM:SS'.")
+            return None
+    else:
+       return None
 
 
 
@@ -524,15 +538,15 @@ def date_publication_article(chaine: str) -> str:
 ##################################################################""  Fonction findArticle   ##########################################
 def Find_Article(article_section_order_1,driver,Sous_Actualite,order):
       date_exportation=get_exportation_date()
-      title_accueil='Non Trouvee'
-      title='Non Trouvee'
-      link_element='Non Trouvee'
-      date_publication=None
-      auteur_name='Non Trouvee'
-      p='Non Trouvee'
-      has_figure='Non'
-      categorie_text='Non Trouvee'
-      duree='Non Trouvee'
+      global title_accueil
+      global title
+      global link_element
+      global date_publication
+      global auteur_name
+      global p
+      global has_figure
+      global categorie_text
+      
     
       #article_1=article_section_order_1.find('article',{'class':lambda b:b and(b.startswith('fig-'))})
       if article_section_order_1:
@@ -632,6 +646,8 @@ def Find_Article(article_section_order_1,driver,Sous_Actualite,order):
                             #print('*******'*23)
                             #date_exportation=get_exportation_date()
                             #print('************  date_exportation  : ',date_exportation)
+                            if date_exportation is None:
+                               date_publication=get_exportation_date()
                             creer_article(title_accueil, title, link_element, date_publication, auteur_name, p, has_figure, Sous_Actualite, date_exportation, categorie_text, order)
                             #print(title_accueil)
                             #print(title)
@@ -718,6 +734,8 @@ def Find_Article(article_section_order_1,driver,Sous_Actualite,order):
                             #print('*******'*23)
                             #date_exportation=get_exportation_date()
                             #print('*************************   date_exportation  : ',date_exportation)
+                            if date_exportation is None:
+                               date_publication=get_exportation_date()
                             creer_article(title_accueil, title, link_element, date_publication, auteur_name, p, has_figure, Sous_Actualite, date_exportation, categorie_text, order)
                             #print(title_accueil)
                             #print(title)
@@ -806,6 +824,8 @@ def Find_Article(article_section_order_1,driver,Sous_Actualite,order):
                             #print('le lien est ',link_element)
                             #print('date poublication est :',date_publication)
                             #print('*******'*23)
+                            if date_exportation is None:
+                               date_publication=get_exportation_date()
                             creer_article(title_accueil, title, link_element, date_publication, auteur_name, p, has_figure, Sous_Actualite, date_exportation, categorie_text, order)
                             #print(title_accueil)
                             #print(title)
@@ -931,7 +951,7 @@ def fonction_Lefigaro(d):
          # Appeler la fonction pour trouver tous les articles
         time.sleep(d)  # Attendre 60 secondes avant de recommencer (ou ajuster selon vos besoins)
      except Exception as e:
-        print(f"Une erreur s'est produite : {e}")
+        print(f"Une erreur s'est produite 1 : {e}")
         break 
   
 def fonction_Arrete_Script():
