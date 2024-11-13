@@ -145,7 +145,7 @@ def creer_article(titre_page_accueil, titre, lien, date_text, auteur_name, parag
     #if article.date_exportation.tzinfo is None:
         #article.date_exportation = timezone.make_aware(article.date_exportation, timezone.get_current_timezone())
     article.save()
-    print(' ****************************************************       Save with success          ***********************************')
+    print('\033[94m**************************************************** Save with success in LeMonde ***********************************\033[0m')
 
     return article  
     

@@ -111,7 +111,7 @@ def creer_article(titre_page_accueil, titre, lien, date_text, auteur_name, parag
         ordre_actualite=order,
     )
     article.save()
-    print(' ****************************************************       Save with success          ***********************************')
+    print('\033[92m' + '**************************************************** Save with success in Liberation ***********************************' + '\033[0m')
 
     return article
 

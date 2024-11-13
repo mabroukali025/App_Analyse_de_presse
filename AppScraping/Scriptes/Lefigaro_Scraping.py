@@ -130,7 +130,7 @@ def creer_article(titre_page_accueil, titre, lien, date_text, auteur_name, parag
         ordre_actualite=order,
     )
     article.save()
-    print(' ****************************************************       Save with success          ***********************************')
+    print('\033[93m**************************************************** Save with success in LeFigaro ***********************************\033[0m')
 
     return article
 
@@ -749,7 +749,7 @@ def Find_Article(article_section_order_1,driver,Sous_Actualite,order):
                             #print(categorie_text)
                             #print(order)
 
-                            
+                            c
                             
                    
                       
