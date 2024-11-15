@@ -9,80 +9,120 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
     <style>
+        /* Global Styles */
         body {
             margin: 0;
-            padding: 0;
-        
-    
+            padding: 20px;
         }
+    
         body, html {
             margin: 0;
             padding: 0;
             height: 100%;
             width: 100%;
-           
-            
         }
+    
         .page-container {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
-
+    
         main.content {
             flex: 1;
             padding: 0;
             position: relative;
         }
-
+    
         .form-container {
             margin: 0;
             padding: 0;
         }
-
+    
         .btn-info {
             margin: 0;
         }
-
+    
+        /* Table Styles */
         .custom-table-striped {
             font-size: 12px;
-        }
-
-        .custom-table-striped tbody tr:nth-of-type(odd) {
-            background-color: #f2f2f2;
-        }
-
-        .custom-table-striped tbody tr:nth-of-type(even) {
-            background-color: #e9e9e9;
-        }
-
-        .custom-table-striped th, .custom-table-striped td {
-            vertical-align: middle;
-            text-align: center;
-            padding: 8px;
-        }
-        .custom-table-statistics thead th {
-    background-color: #1d7ede; /* Couleur de fond pour l'en-tête */
-    color: white;              /* Couleur du texte dans l'en-tête */
-    text-align: left;        /* Centrer le texte (facultatif) */
-    padding: 10px;             /* Ajustement de l'espacement (facultatif) */
-}
-        .custom-table-striped .text-wrap {
-            max-width: 100px;
-            word-wrap: break-word;
-            white-space: normal;
-        }
-
-        .custom-table-striped {
             min-width: 100px;
         }
-
-        
-
+    
+        .custom-table-striped tbody tr:nth-of-type(odd) {
+            background-color: #f2f2f2; /* Fond des lignes impaires */
+        }
+    
+        .custom-table-striped tbody tr:nth-of-type(even) {
+            background-color: #e9e9e9; /* Fond des lignes paires */
+        }
+    
+        .custom-table-striped th, 
+        .custom-table-striped td {
+            vertical-align: middle; /* Centrer verticalement */
+            text-align: left; /* Alignement du texte */
+            padding: 8px; /* Espacement interne */
+            word-wrap: break-word; /* Gérer les mots longs */
+            white-space: normal; /* Retour à la ligne automatique */
+        }
+    
+        .custom-table-striped th {
+            background-color: #48b5e8; /* Fond de l'en-tête */
+            color: white; /* Texte blanc */
+            text-align: center; /* Texte centré */
+            padding: 10px; /* Espacement pour l'en-tête */
+        }
+    
+        .table-hover tbody tr:hover {
+            background-color: #d1ecf1; /* Couleur de survol */
+        }
+    
+        .table {
+            width: 100%;
+            /* Respecte les largeurs définies dans le HTML */
+            /* S'assure que le tableau occupe toute la largeur */
+        }
+    
+        .custom-table-striped .text-wrap {
+            max-width: 100%; /* Largeur maximale pour le texte */
+            word-wrap: break-word; /* Coupe les mots longs */
+            white-space: normal; /* Retour à la ligne automatique */
+        }
+    
+        /* Description Text Styles */
+        .description-text {
+            display: -webkit-box;
+             /* Limite l'affichage à 3 lignes */
+            -webkit-box-orient: vertical;
+            overflow: hidden; /* Cache le texte supplémentaire */
+            text-overflow: ellipsis; /* Ajoute "..." si le texte dépasse */
+            white-space: normal; /* Permet le retour à la ligne */
+            word-wrap: break-word; /* Coupe les mots longs */
+             /* S'assure que le texte occupe toute la largeur de la cellule */
+        }
+    
+        /* Form Group */
         .form-group {
             margin-bottom: 1rem;
         }
+    
+        .custom-table-statistics thead th {
+            background-color: #8f8ff3; /* Couleur de fond pour l'en-tête */
+            color: white; /* Couleur du texte dans l'en-tête */
+            text-align: left; /* Alignement du texte */
+            padding: 10px; /* Ajustement de l'espacement */
+        }
+
+        .table-container-x {
+    overflow-x: auto;  
+   
+    /* Active le défilement horizontal */
+             /* S'assure que le conteneur occupe toute la largeur */
+}
+
+
     </style>
+    
 </head>
 <body>
     <header>
@@ -105,7 +145,7 @@
                 <form method="get" action="{% url 'Statistiques_mot_cle' %}">
                     <div class="form-row col-md-12">
                         <div class="form-group col-md-2">
-                            <label for="combobox_select_site">Sélectionner le Site :</label>
+                            <label for="combobox_select_site">Selectionner le Site :</label>
                             <div class="input-group input-group-sm mb-3">
                                 <select id="combobox_select_site" name="combobox_select_site" class="form-control">
                                     <option value=" ">Tous Sites</option>
@@ -127,11 +167,11 @@
                             </div>
                         </div>
                         <div class="form-group col-md-2">
-                            <label for="search_categories">Catégorie :</label>
+                            <label for="search_categories">Categorie :</label>
                             <div class="input-group input-group-sm mb-3">
                                 <input list="search_categorie" name="search_categorie" class="form-control">
                                 <datalist id="search_categorie">
-                                    <option value="">Aucune catégorie</option>
+                                    <option value="">Aucune categorie</option>
                                     {% for cat in categories %}
                                     <option>{{ cat }}</option>
                                     {% endfor %}
@@ -139,7 +179,7 @@
                             </div>
                         </div>
                         <div class="form-group col-md-2">
-                            <label for="search_mot_cle">Mot Clé :</label>
+                            <label for="search_mot_cle">Mot Cle :</label>
                             <div class="input-group input-group-sm mb-3">
                                 <input type="text" id="search_mot_cle" name="search_mot_cle" class="form-control" value="{{ request.GET.search_mot_cle }}">
                             </div>
@@ -159,7 +199,7 @@
                     </div>
                     <div class="form-row col-md-12" id="date_range_search" style="display: none;">
                         <div class="form-group col-md-3">
-                            <label for="search_date_debut">Date Début :</label>
+                            <label for="search_date_debut">Date Debut :</label>
                             <div class="input-group input-group-sm mb-3">
                                 <input type="datetime-local" id="search_date_debut" name="search_date_debut" class="form-control" value="{{ request.GET.search_date_debut }}">
                             </div>
@@ -176,7 +216,7 @@
             </fieldset>
             <br/>
             <div class="mt-8">
-                <h5>Tableau Statistiques Recherche :</h5>
+                <h5>Statistiques Recherche :</h5>
                 <table class="table custom-table-statistics"> <!-- No changes here, keeping default Bootstrap style -->
                     <thead>
                         <tr>
@@ -221,66 +261,69 @@
             </div>
 
             <!-- Tableau des articles -->
-            <div class="row px-0 g-0 p-20">
-                <h3>Articles :</h3>
-                <div class="table custom-table-striped">
-                    <!-- Conteneur avec une barre de défilement horizontale -->
-                    <div style="overflow-x: auto; width: 100%;"> <!-- 100% pour adapter à la largeur de l'écran -->
-                        <table class="table table-hover table-info text-dark px-4">
-                            <thead class="thead-secondary text-dark h6">
-                                <tr>
-                                    <th class="col-1">Id</th>
-                                    <th class="col-2">Titre Page Accueil</th>
-                                    <th class="col-2">Titre</th>
-                                    <th class="col-2">Lien</th>
-                                    <th class="col-2">Date Publication</th>
-                                    <th class="col-1">Auteur</th>
-                                    <th >Description</th>
-                                    <th class="col-1">Statut Image</th>
-                                    <th class="col-1">Actualité</th>
-                                    <th class="col-2">Date Exportation</th>
-                                    <th class="col-2">Catégorie</th>
-                                    <th class="col-2">Ordre d'Actualité</th>
-                                    <th class="col-2">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for article in articles_Statistiques_mot_cle %}
-                                <tr>
-                                    <td><p> {{ article.id }}</p></td>
-                                    <td><p> {{ article.titre_page_accueil|safe }}</p></td>
-                                    <td><p> {{ article.titre|safe }}</p></td>
-                                    <td><p><a href="{{ article.lien }}">{{ article.lien }}</a></p></td>
-                                    <td><p> {{ article.date_publication }}</p></td>
-                                    <td><p>{{ article.nom_auteur|safe }}</p></td>
-                                    <td style="white-space: normal; word-wrap: break-word;"><p>{{ article.description_article|safe }}</p></td>
-                                    <td><p> {{ article.statut_image }}</p></td>
-                                    <td><p> {{ article.actualite }}</p></td>
-                                    <td><p> {{ article.date_exportation }}</p></td>
-                                    <td><p> {{ article.categorie }}</p></td>
-                                    <td><p> {{ article.ordre_actualite }}</p></td>
-                                    <td>
-                                        <div class="actions mt-3">
-                                            <div class="mb-2">
-                                                <a href="{% url 'compter_doublons_articles' article.id %}" class="btn btn-primary">Cycle Vie</a>
-                                            </div>
-                                            <div>
-                                                <a href="{% url 'telecharger_article_unique_excel' article.id %}" class="btn btn-success">Télécharger</a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="13"><h4>Aucun Article Trouvé.</h4></td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            
+           <!-- Tableau des articles -->
+<div class="row px-0 g-0 p-20">
+    <h3>Articles :</h3>
+    <div class="table custom-table-striped">
+        <!-- Conteneur avec une barre de défilement horizontale -->
+        <div class="table-container-x" style="overflow-x: auto;width: 1200px;"> <!-- 100% pour adapter à la largeur de l'écran -->
+            <table class="table table-hover table-info text-dark">
+                <thead class="thead-secondary text-dark h6">
+                    <tr>
+                        <th style="width: 0.2%;">Id</th>
+                        <th style="width: 100px;">Titre Page Accueil</th>
+                        <th style="width: 10%;">Titre</th>
+                        <th style="width: 5%;">Lien</th>
+                        <th style="width: 4%;">Date Publication</th>
+                        <th style="width: 3%;">Auteur</th>
+                        <th style="width: 20%;">Description</th>
+                        <th style="width: 2%;">Statut Image</th>
+                        <th style="width: 3%;">Actualité</th>
+                        <th style="width: 3%;">Date Exportation</th>
+                        <th style="width: 3%;">Catégorie</th>
+                        <th style="width: 3%;">Ordre d'Actualité</th>
+                        <th style="width: 5%;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for article in articles_Statistiques_mot_cle %}
+                    <tr>
+                        <td><p>{{ article.id }}</p></td>
+                        <td><p>{{ article.titre_page_accueil|safe }}</p></td>
+                        <td><p>{{ article.titre|safe }}</p></td>
+                        <td><p><a href="{{ article.lien }}">{{ article.lien }}</a></p></td>
+                        <td><p>{{ article.date_publication }}</p></td>
+                        <td><p>{{ article.nom_auteur|safe }}</p></td>
+                        <td>
+                            <p>{{ article.description_article|safe }}</p>
+                        </td>
+                        <td><p>{{ article.statut_image }}</p></td>
+                        <td><p>{{ article.actualite }}</p></td>
+                        <td><p>{{ article.date_exportation }}</p></td>
+                        <td><p>{{ article.categorie }}</p></td>
+                        <td><p>{{ article.ordre_actualite }}</p></td>
+                        <td>
+                            <div class="actions mt-3">
+                                <div class="mb-2">
+                                    <a href="{% url 'compter_doublons_articles' article.id %}" class="btn btn-primary">Cycle Vie</a>
+                                </div>
+                                <div>
+                                    <a href="{% url 'telecharger_article_unique_excel' article.id %}" class="btn btn-success">Télécharger</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="13"><h4>Aucun Article Trouvé.</h4></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
             
             
             

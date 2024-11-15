@@ -117,13 +117,10 @@ class WebDriverSingleton:
 
 
 
-
-
-
 ########################################################################
 
 def creer_article(titre_page_accueil, titre, lien, date_text, auteur_name, paragraphe, has_image, Actualite, Date_Exportation, categorie, order):
-    from django.utils import timezone
+    #from django.utils import timezone
     article = Article(
         titre_page_accueil=titre_page_accueil,
         titre=titre,
@@ -145,8 +142,9 @@ def creer_article(titre_page_accueil, titre, lien, date_text, auteur_name, parag
     #if article.date_exportation.tzinfo is None:
         #article.date_exportation = timezone.make_aware(article.date_exportation, timezone.get_current_timezone())
     article.save()
+    print(' ')
     print('\033[94m**************************************************** Save with success in LeMonde ***********************************\033[0m')
-
+    print(' ')
     return article  
     
 #################################################################################
@@ -167,7 +165,7 @@ mois_mapping = {
 }
 
 def date_publier_le(chaine):
- print(' la date de publication est commasser par le :',chaine)
+ #print(' la date de publication est commasser par le :',chaine)
  if chaine and chaine.startswith('Publié le '):
     x=len("Publié le ")
     chaine=chaine[x:]
@@ -179,8 +177,8 @@ def date_publier_le(chaine):
     
     # Trouver la partie heure
     heure_partie = chaine.split('à')[1].strip()
-    print('partie date ',date_partie)
-    print('partie heur ',heure_partie)
+    #print('partie date ',date_partie)
+    #print('partie heur ',heure_partie)
     # Remplacer les mois français par leurs équivalents anglais
     for mois_fr, mois_en in mois_mapping.items():
         if mois_fr in date_partie:
@@ -191,17 +189,21 @@ def date_publier_le(chaine):
    
     
     # Combiner la date et l'heure
-    date_heure_str = date_partie.strftime('%Y-%m-%d') + ' ' + heure_partie.replace('h', ':') + ':00'
-    print('date heur str est : ',date_heure_str)
-    # Convertir en objet datetime
-    try:
-        # Assumer que la chaîne fournie est en heure locale (Europe/Paris)
-        date_publication_obj = datetime.strptime(date_heure_str, '%Y-%m-%dT%H:%M:%S')
-        date_publication_obj = tz.localize(date_publication_obj)  # Localiser en Europe/Paris
-        return date_publication_obj.strftime('%Y-%m-%dT%H:%M:%S')
-    except ValueError as e:
-        print(f"Erreur de conversion pour la chaîne : {date_heure_str}. Détails : {e}")
-        return None
+    if not isinstance(date_partie,str):
+        date_heure_str = date_partie.strftime('%Y-%m-%d') + ' ' + heure_partie.replace('h', ':') + ':00'
+        print('date heur str est : ',date_heure_str)
+        # Convertir en objet datetime
+        try:
+            if not isinstance(date_heure_str,str):
+                # Assumer que la chaîne fournie est en heure locale (Europe/Paris)
+                date_publication_obj = datetime.strptime(date_heure_str, '%Y-%m-%dT%H:%M:%S')
+                date_publication_obj = tz.localize(date_publication_obj)  # Localiser en Europe/Paris
+                return date_publication_obj.strftime('%Y-%m-%dT%H:%M:%S')
+        except ValueError as e:
+            print(f"Erreur de conversion pour la chaîne : {date_heure_str}. Détails : {e}")
+            return None
+    else:
+        return  None
 
 
 ######################################################""
@@ -862,8 +864,9 @@ import time
 
 def Lemonde_Find_All_Article(d):
     global scraping_active
-    print('%%%%%%%%%%%%%%%%%%%%%%%%%                                       hi   LEMONDE                            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
-    
+    print('')
+    print('***************************************    Scripte LEMONDE         ***********************************')
+    print('')
     if scraping_active==False:
         scraping_active=True
     i = 1
@@ -876,7 +879,9 @@ def Lemonde_Find_All_Article(d):
             # Appeler la fonction pour trouver tous les articles
             # Utilisation
             date_exportation_article = obtenir_date_exportation()
-            print('la date exportation est  : ',date_exportation_article )
+            print('')
+            print('             la date exportation est  : ',date_exportation_article )
+            print('')
             findAllArticles(url)  # Assurez-vous que 'url' est défini quelque part
 
             print('***' * 30)

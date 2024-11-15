@@ -127,11 +127,12 @@ def creer_article(titre_page_accueil, titre, lien, date_text, auteur_name, parag
         actualite=Actualite,
         date_exportation=Date_Exportation,
         categorie=categorie,
-        ordre_actualite=order,
+        ordre_actualite=order,   
     )
     article.save()
+    print('')
     print('\033[93m**************************************************** Save with success in LeFigaro ***********************************\033[0m')
-
+    print('')
     return article
 
 ################################################# convert string to date #############################
@@ -479,7 +480,7 @@ def convertir_date_format_x(date_input):
     if isinstance(date_input, datetime):
         return date_input.strftime('%Y-%m-%dT%H:%M:%S')
     
-    if date_input is not None:
+    if not isinstance(date_input,str):
         # Vérifier si la chaîne est dans le format 'YYYY-MM-DDTHH:MM:SS'
         if len(date_input) == 19 and date_input[4] == '-' and date_input[7] == '-' and date_input[10] == 'T':
             return date_input  # Retourner la date telle quelle
@@ -648,6 +649,8 @@ def Find_Article(article_section_order_1,driver,Sous_Actualite,order):
                             #print('************  date_exportation  : ',date_exportation)
                             if date_exportation is None:
                                date_publication=get_exportation_date()
+                            if date_publication is None:
+                               date_publication=get_exportation_date()
                             creer_article(title_accueil, title, link_element, date_publication, auteur_name, p, has_figure, Sous_Actualite, date_exportation, categorie_text, order)
                             #print(title_accueil)
                             #print(title)
@@ -736,6 +739,8 @@ def Find_Article(article_section_order_1,driver,Sous_Actualite,order):
                             #print('*************************   date_exportation  : ',date_exportation)
                             if date_exportation is None:
                                date_publication=get_exportation_date()
+                            if date_publication is None:
+                               date_publication=get_exportation_date()
                             creer_article(title_accueil, title, link_element, date_publication, auteur_name, p, has_figure, Sous_Actualite, date_exportation, categorie_text, order)
                             #print(title_accueil)
                             #print(title)
@@ -749,7 +754,7 @@ def Find_Article(article_section_order_1,driver,Sous_Actualite,order):
                             #print(categorie_text)
                             #print(order)
 
-                            c
+                            
                             
                    
                       
@@ -826,6 +831,9 @@ def Find_Article(article_section_order_1,driver,Sous_Actualite,order):
                             #print('*******'*23)
                             if date_exportation is None:
                                date_publication=get_exportation_date()
+                            if date_publication is None:
+                               date_publication=get_exportation_date()
+
                             creer_article(title_accueil, title, link_element, date_publication, auteur_name, p, has_figure, Sous_Actualite, date_exportation, categorie_text, order)
                             #print(title_accueil)
                             #print(title)
@@ -931,7 +939,8 @@ def fonction_Lefigaro(d):
     while scraping_active:
      try:
         date_exportation=get_exportation_date()
-        print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%            la date dexportation est :',date_exportation, '                     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+        print('')
+        print('   ****        la date dexportation est :',date_exportation, '                    *********************')
 
         print('')
         print('***'*30)

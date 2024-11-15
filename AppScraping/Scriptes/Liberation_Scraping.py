@@ -111,8 +111,9 @@ def creer_article(titre_page_accueil, titre, lien, date_text, auteur_name, parag
         ordre_actualite=order,
     )
     article.save()
+    print('')
     print('\033[92m' + '**************************************************** Save with success in Liberation ***********************************' + '\033[0m')
-
+    print('')
     return article
 
 ##################################################### I,itialisations des variables ##################################################
@@ -439,11 +440,11 @@ def find_Article(art, actualite, order_Actualite, driver):
         chaine_sans_debut=fonction_Supprime_au_debut(date_pub)
         Date_Exportation=obtenir_date_exportation()
         #save_in_file(title_Acceuil2, title, link, chaine_sans_debut, auteur_, paragraphe, has_image, actualite, Date_Exportation, categorie, order_Actualite)
-        print('************************************************************  la date dexportation est :',Date_Exportation)        
+        #print('************************************************************  la date dexportation est :',Date_Exportation)        
         
         creer_article(title_Acceuil2, title, link, chaine_sans_debut, auteur_, paragraphe, has_image, actualite, Date_Exportation, categorie, order_Actualite)
-        if creer_article:
-                               print('save with succ')
+        
+                              
     else:
         return None
 
@@ -492,12 +493,14 @@ def findAllArticles(url):
         
 ###################
 def fonction_liberation(d):
-    print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  hi   LIBERATION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+    print('')
+    print('  ********************************              LIBERATION            ******************')
+    print('')
     global scraping_active
     if scraping_active==False:
         scraping_active=True
     i = 1
-    print(' ***************    scraping_active   ****************',scraping_active)
+    #print(' ***************    scraping_active   ****************',scraping_active)
     while scraping_active:
      try:
         print('***'*30)

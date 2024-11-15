@@ -719,7 +719,7 @@ def Statistiques_mot_cle(request):
     else:
         total_articles_count = articles.distinct().count()
     # Pagination setup
-    paginator = Paginator(articles.distinct(), 1)  # Limite à 3 articles par page
+    paginator = Paginator(articles.distinct(), 5)  # Limite à 3 articles par page
     page_number = request.GET.get('page')  # Obtient le numéro de la page actuelle
     articles = paginator.get_page(page_number)  # Applique la pagination directement à la variable 'articles'
     for article in articles:
