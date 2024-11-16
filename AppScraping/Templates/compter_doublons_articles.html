@@ -41,17 +41,16 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="cycleVieModalLabel">Cycle de Vie Article</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <a href="{% url 'Statistiques_Recherche' %}" class="btn btn-primary">Retour</a>
                 </div>
                 <div class="modal-body">
                     <div id="charts-container"></div>
+                    <div class="modal-footer">
+                        <button id="downloadChart" class="btn btn-success">Telecharger</button>
+                    </div>
+                    
                 </div>
-                <div class="modal-footer">
-                    <button id="downloadChart" class="btn btn-success">Telecharger</button>
-                    <a href="{% url 'Statistiques_Recherche' %}" class="btn btn-primary">Retour</a>
-                </div>
+                
             </div>
         </div>
     </div>
@@ -166,31 +165,44 @@
             function downloadCurrentChart() {
     const canvas = document.querySelector('#charts-container canvas');
     if (canvas) {
-        const title = canvas.previousElementSibling.innerText; // Obtenir le titre de l'article
+        // Stocker le titre dans une variable
+        const title = canvas.previousElementSibling.innerText.trim(); // Récupérer et nettoyer le titre
 
-        // Définir des dimensions personnalisées pour l'image téléchargée
-        const desiredWidth = 1100; // Largeur de l'image
-        const desiredHeight = 500; // Hauteur de l'image
-        const titleHeight = 50;   // Hauteur pour inclure le titre
+        // Définir les dimensions de l'image
+        const desiredWidth = 1000; // Largeur de l'image
+        const desiredHeight = 400; // Hauteur du graphique
+        const titleHeight = 50;   // Hauteur initiale pour le titre
+        const lineHeight = 25;    // Espacement entre les lignes du titre
+
+        // Diviser le titre en plusieurs lignes si nécessaire
+        const maxTitleWidth = desiredWidth - 40; // Réduire légèrement pour les marges
+        const tempCanvasForText = document.createElement('canvas').getContext('2d');
+        tempCanvasForText.font = 'bold 20px Arial';
+        const titleLines = wrapText(title, maxTitleWidth, tempCanvasForText);
+
+        // Calculer la hauteur totale nécessaire pour le titre
+        const totalTitleHeight = titleLines.length * lineHeight;
 
         // Créer un canvas temporaire
         const tempCanvas = document.createElement('canvas');
         const tempCtx = tempCanvas.getContext('2d');
         tempCanvas.width = desiredWidth;
-        tempCanvas.height = desiredHeight + titleHeight; // Inclure l'espace pour le titre
+        tempCanvas.height = desiredHeight + totalTitleHeight; // Ajuster pour inclure tout le titre
 
         // Dessiner le fond blanc
         tempCtx.fillStyle = 'white';
         tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
 
-        // Dessiner le graphique redimensionné
-        tempCtx.drawImage(canvas, 0, titleHeight, desiredWidth, desiredHeight);
-
-        // Ajouter le titre au-dessus du graphique
+        // Ajouter les lignes du titre
         tempCtx.fillStyle = 'black';
         tempCtx.font = 'bold 20px Arial';
         tempCtx.textAlign = 'center';
-        tempCtx.fillText(title, tempCanvas.width / 2, 30); // Placer le titre au centre
+        titleLines.forEach((line, index) => {
+            tempCtx.fillText(line, tempCanvas.width / 2, 30 + index * lineHeight);
+        });
+
+        // Dessiner le graphique redimensionné
+        tempCtx.drawImage(canvas, 0, totalTitleHeight, desiredWidth, desiredHeight);
 
         // Préparer le téléchargement de l'image
         const imgName = "graphique_article.png";
@@ -205,6 +217,27 @@
     }
 }
 
+// Fonction pour diviser le texte en lignes adaptées à la largeur maximale
+function wrapText(text, maxWidth, ctx) {
+    const words = text.split(' ');
+    let lines = [];
+    let currentLine = '';
+
+    words.forEach(word => {
+        const testLine = currentLine + (currentLine ? ' ' : '') + word;
+        const testWidth = ctx.measureText(testLine).width;
+        if (testWidth > maxWidth) {
+            lines.push(currentLine);
+            currentLine = word;
+        } else {
+            currentLine = testLine;
+        }
+    });
+
+    if (currentLine) lines.push(currentLine);
+    return lines;
+}
+
 // Ajouter un gestionnaire d'événement pour le bouton de téléchargement
 document.getElementById('downloadChart').onclick = downloadCurrentChart;
 
@@ -214,6 +247,7 @@ if (dataString) {
     const graphsData = JSON.parse(dataString);
     afficherCycleDeVie(graphsData);
 }
+
         });
     </script>
 </body>
