@@ -1,11 +1,16 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    {% include 'navbar.html' %}
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{% static 'T.png' %}" type="image/x-icon">
     <title>Gestion des Utilisateurs</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    {% include 'navbar.html' %}
 </head>
 <body>
     <div class="container mt-5">

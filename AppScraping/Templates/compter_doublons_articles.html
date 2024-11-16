@@ -164,50 +164,56 @@
 
             // Fonction pour télécharger le graphique actuel en PNG
             function downloadCurrentChart() {
-                const canvas = document.querySelector('#charts-container canvas');
-                if (canvas) {
-                    const title = canvas.previousElementSibling.innerText; // Obtenir le titre de l'article
-                    const imgData = canvas.toDataURL("image/png");
+    const canvas = document.querySelector('#charts-container canvas');
+    if (canvas) {
+        const title = canvas.previousElementSibling.innerText; // Obtenir le titre de l'article
 
-                    const tempCanvas = document.createElement('canvas');
-                    const tempCtx = tempCanvas.getContext('2d');
-                    tempCanvas.width = canvas.width;
-                    tempCanvas.height = canvas.height + 50; // Espace pour le titre
+        // Définir des dimensions personnalisées pour l'image téléchargée
+        const desiredWidth = 1100; // Largeur de l'image
+        const desiredHeight = 500; // Hauteur de l'image
+        const titleHeight = 50;   // Hauteur pour inclure le titre
 
-                    // Dessiner le fond blanc
-                    tempCtx.fillStyle = 'white';
-                    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+        // Créer un canvas temporaire
+        const tempCanvas = document.createElement('canvas');
+        const tempCtx = tempCanvas.getContext('2d');
+        tempCanvas.width = desiredWidth;
+        tempCanvas.height = desiredHeight + titleHeight; // Inclure l'espace pour le titre
 
-                    // Dessiner le graphique
-                    tempCtx.drawImage(canvas, 0,60); // Décaler pour faire de la place pour le titre
+        // Dessiner le fond blanc
+        tempCtx.fillStyle = 'white';
+        tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
 
-                    // Dessiner le titre
-                    tempCtx.fillStyle = 'black';
-                    tempCtx.font = 'bold 20px Arial';
-                    tempCtx.textAlign = 'center';
-                    tempCtx.fillText(title, tempCanvas.width / 2, 30); // Placer le titre au-dessus du graphique
+        // Dessiner le graphique redimensionné
+        tempCtx.drawImage(canvas, 0, titleHeight, desiredWidth, desiredHeight);
 
-                    const imgName = "graphique_article.png";
-                    const link = document.createElement('a');
-                    link.href = tempCanvas.toDataURL("image/png");
-                    link.download = imgName;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                } else {
-                    console.log("Aucun graphique à télécharger.");
-                }
-            }
+        // Ajouter le titre au-dessus du graphique
+        tempCtx.fillStyle = 'black';
+        tempCtx.font = 'bold 20px Arial';
+        tempCtx.textAlign = 'center';
+        tempCtx.fillText(title, tempCanvas.width / 2, 30); // Placer le titre au centre
 
-            // Ajoutez un gestionnaire d'événements pour le bouton de téléchargement
-            document.getElementById('downloadChart').onclick = downloadCurrentChart;
+        // Préparer le téléchargement de l'image
+        const imgName = "graphique_article.png";
+        const link = document.createElement('a');
+        link.href = tempCanvas.toDataURL("image/png");
+        link.download = imgName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    } else {
+        console.log("Aucun graphique à télécharger.");
+    }
+}
 
-            // Vérifiez si des données sont passées à partir de la page de statistiques
-            const dataString = '{{ graphs_data|escapejs }}';
-            if (dataString) {
-                const graphsData = JSON.parse(dataString);
-                afficherCycleDeVie(graphsData);
-            }
+// Ajouter un gestionnaire d'événement pour le bouton de téléchargement
+document.getElementById('downloadChart').onclick = downloadCurrentChart;
+
+// Charger les données depuis le backend (Django)
+const dataString = '{{ graphs_data|escapejs }}';
+if (dataString) {
+    const graphsData = JSON.parse(dataString);
+    afficherCycleDeVie(graphsData);
+}
         });
     </script>
 </body>
