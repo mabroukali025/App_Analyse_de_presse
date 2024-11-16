@@ -837,7 +837,11 @@ def generate_chart_for_site(site_name, start_date=None):
     
     data = Article.objects.filter(**filter_args).values_list('categorie', flat=True)
     
-    # Déterminer les préfixes communs
+    # Si aucune donnée n'est trouvée, retour du message d'erreur
+    if not data:
+        return None, None, "Pas de données pour ce site à partir de cette date."
+    
+    # Compter les occurrences des catégories
     category_counts = defaultdict(int)
     all_categories = set(data)
     prefix_map = {}
@@ -864,21 +868,54 @@ def generate_chart_for_site(site_name, start_date=None):
 
     # Création du graphique en barres
     bar_fig = go.Figure(data=[go.Bar(x=categories, y=values, marker_color=colors)])
-    bar_fig.update_layout(title=f'Statistiques pour {site_name} (Barres)',
-                          xaxis_title='Catégories',
-                          yaxis_title='Nombre d\'Articles',
-                          showlegend=False)  # Ne pas afficher la légende externe
+    bar_fig.update_layout(title=f'Statistiques pour {site_name} (Barres)', xaxis_title='Catégories', yaxis_title='Nombre d\'Articles', showlegend=False)
 
     # Création du graphique circulaire
-    pie_fig = go.Figure(data=[go.Pie(labels=categories, values=values, textinfo='label+percent', hole=0.3, marker_colors=colors)])
-    pie_fig.update_layout(title=f'Statistiques pour {site_name} (Circulaire)',
-                          showlegend=False)  # Ne pas afficher la légende externe
-
-    # Convertir les graphiques en HTML
-    bar_plot_html = pio.to_html(bar_fig, full_html=False)
-    pie_plot_html = pio.to_html(pie_fig, full_html=False)
+        # Création du graphique circulaire
+    pie_fig = go.Figure(data=[go.Pie(
+        labels=categories,
+        values=values,
+        textinfo='label+percent',  # Affiche les noms des catégories ET les pourcentages
+        textposition='inside',    # Positionne le texte à l'intérieur des sections
+        hole=0.3,                 # Graphique circulaire creusé
+        marker_colors=colors
+    )])
+    pie_fig.update_layout(
+        title=f'Statistiques pour {site_name} (Circulaire)',
+        showlegend=False, 
+        height=500,  # Augmenter la taille du graphique
+        width=500,   # Ajuster la largeur
+        margin=dict(t=50, b=50, l=50, r=50)  # Ajouter des marges pour éviter les coupures
+    )
+     # Configuration pour désactiver les fonctionnalités interactives sauf le téléchargement
+    config = {
+        'scrollZoom': False,       # Désactive le zoom via le scroll
+        'displayModeBar': True,    # Affiche la barre d'outils
+        'displaylogo': False,      # Désactive le logo Plotly
+        'modeBarButtonsToRemove': [  # Retirer les boutons interactifs sauf le téléchargement
+            'zoom2d',
+            'pan2d',
+            'select2d',
+            'lasso2d',
+            'zoomIn2d',
+            'zoomOut2d',
+            'autoScale2d',
+            'resetScale2d',
+            'hoverClosestCartesian',
+            'hoverCompareCartesian'
+        ],
+        'toImageButtonOptions': {
+            'format': 'png',  # Téléchargement au format PNG
+            'filename': f'{site_name}_statistiques',
+            'height': 500,
+            'width': 700
+        }
+    }
     
-    return bar_plot_html, pie_plot_html
+    bar_plot_html = pio.to_html(bar_fig, full_html=False,config=config)
+    pie_plot_html = pio.to_html(pie_fig, full_html=False,config=config)
+    
+    return bar_plot_html, pie_plot_html, None  # Return None for the error message
 
 def statistics_site(request):
     site = request.GET.get('site', '')
@@ -894,23 +931,27 @@ def statistics_site(request):
     sites = ['lefigaro', 'lemonde', 'libération']
     bar_plots = {}
     pie_plots = {}
+    error_message = None
     
     if site and site in sites:
-        bar_plot, pie_plot = generate_chart_for_site(site, start_date)
-        bar_plots[site] = bar_plot
-        pie_plots[site] = pie_plot
+        bar_plot, pie_plot, error_message = generate_chart_for_site(site, start_date)
+        if error_message is None:
+            bar_plots[site] = bar_plot
+            pie_plots[site] = pie_plot
     elif site == 'all':
         for site in sites:
-            bar_plot, pie_plot = generate_chart_for_site(site, start_date)
-            bar_plots[site] = bar_plot
-            pie_plots[site] = pie_plot
+            bar_plot, pie_plot, error_message = generate_chart_for_site(site, start_date)
+            if error_message is None:
+                bar_plots[site] = bar_plot
+                pie_plots[site] = pie_plot
     else:
         for site in sites:
-            bar_plot, pie_plot = generate_chart_for_site(site, start_date)
-            bar_plots[site] = bar_plot
-            pie_plots[site] = pie_plot
+            bar_plot, pie_plot, error_message = generate_chart_for_site(site, start_date)
+            if error_message is None:
+                bar_plots[site] = bar_plot
+                pie_plots[site] = pie_plot
     
-    return render(request, 'statistiques.html', {'bar_plots': bar_plots, 'pie_plots': pie_plots})
+    return render(request, 'statistiques.html', {'bar_plots': bar_plots, 'pie_plots': pie_plots, 'error_message': error_message})
 
 #######################################################################
 from django.shortcuts import render, get_object_or_404

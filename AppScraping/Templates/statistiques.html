@@ -52,9 +52,16 @@
             width: 100%;
         }
 
-        .graph-container {
-            margin-top: 20px;
-        }
+        .graph-container-2 {
+                margin-top: 20px;
+                position: relative;
+                display: flex; /* Utilisation de flexbox */
+                flex-direction: column; /* Aligne les éléments en colonne (les uns au-dessus des autres) */
+                justify-content: center; /* Centre verticalement */
+                align-items: center; /* Centre horizontalement */
+                min-height: 100vh; /* Assure que le conteneur occupe toute la hauteur de la page */
+            }
+
 
         #spinner-container {
             display: none;
@@ -84,6 +91,14 @@
 
         .mb-4 {
             margin-bottom: 15px; /* Ajuste l'espacement entre les graphiques */
+        }
+
+        .error-message {
+            color: red;
+            font-size: 18px;
+            text-align: center;
+            font-weight: bold;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -116,37 +131,47 @@
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary btn-custom">Afficher Statistiques</button>
+                    <div>
+                        <br>
+                        <br>
+                    </div>
                 </form>
-            </fieldset>
-
+            
+           
             <div class="graph-container">
-                {% for site, plot in bar_plots.items %}
-                    <div class="mb-4">
-                        <h3>Statistiques en Barres pour {{ site }}</h3>
-                        <div class="card">
-                            <div class="card-body">
-                                {{ plot|safe }}
+                {% if error_message %}
+                    <div class="error-message">
+                        <p>{{ error_message }}</p>
+                    </div>
+                {% else %}
+                    {% for site, plot in bar_plots.items %}
+                        <div class="mb-4">
+                            <h3>Statistiques en Barres pour {{ site }}</h3>
+                            <div class="card">
+                                <div class="card-body">
+                                    {{ plot|safe }}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                {% endfor %}
-                
-                {% for site, plot in pie_plots.items %}
-                    <div class="mb-4">
-                        <h3>Statistiques Circulaires pour {{ site }}</h3>
-                        <div class="card">
-                            <div class="card-body">
-                                {{ plot|safe }}
+                    {% endfor %}
+                    
+                    {% for site, plot in pie_plots.items %}
+                        <div class="mb-4">
+                            <h3>Statistiques Circulaires pour {{ site }}</h3>
+                            <div class="graph-container-2">
+                                    <div class="card-body">
+                                        {{ plot|safe }}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                {% endfor %}
+                    {% endfor %}
+                   
+                {% endif %}
             </div>
+        </fieldset>
         </div>
     </main>
 
-   
-    
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
