@@ -119,6 +119,24 @@
    
     /* Active le défilement horizontal */
              /* S'assure que le conteneur occupe toute la largeur */
+
+
+
+             #error-message {
+    background-color: #f8d7da;  /* Couleur rouge clair */
+    color: #721c24;  /* Texte en rouge foncé */
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #f5c6cb;  /* Bordure rose pâle */
+    margin-bottom: 20px;
+    font-size: 16px;
+    display: none;  /* Par défaut, caché */
+}
+
+#error-message strong {
+    font-weight: bold;
+}
+
 }
 
 
@@ -143,6 +161,8 @@
             <!-- Formulaire de recherche -->
             <fieldset class="row g-9 border p-20">
                 <legend class="w-auto px-10"><h3>Recherche :</h3></legend>
+                
+                
                 <form method="get" action="{% url 'Statistiques_mot_cle' %}">
                     <div class="form-row col-md-12">
                         <div class="form-group col-md-2">
@@ -211,6 +231,12 @@
                                 <input type="datetime-local" id="search_date_fin" name="search_date_fin" class="form-control" value="{{ request.GET.search_date_fin }}">
                             </div>
                         </div>
+                    </div>
+                    <div id="error-message" class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
+                        <strong>Erreur !</strong> La date de début doit être inférieure ou égale à la date de fin.
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
                     <button type="submit" class="btn btn-primary">Rechercher</button>
                 </form>  
@@ -376,18 +402,39 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('#search_between_dates').change(function() {
-                if ($(this).is(':checked')) {
-                    $('#date_range_search').show();
-                } else {
-                    $('#date_range_search').hide();
-                }
-            });
+    // Afficher ou masquer la plage de dates en fonction de la case à cocher
+    $('#search_between_dates').change(function() {
+        if ($(this).is(':checked')) {
+            $('#date_range_search').show();
+        } else {
+            $('#date_range_search').hide();
+        }
+    });
 
-            // Activer ou désactiver les champs de date en fonction de la sélection au chargement de la page
-            $('#search_between_dates').trigger('change');
-        });
+    // Activer ou désactiver les champs de date au chargement de la page
+    $('#search_between_dates').trigger('change');
+
+    // Ajouter une validation avant l'envoi du formulaire
+    $('form').submit(function(e) {
+        var startDate = $('#search_date_debut').val();  // Récupérer la valeur de la date début
+        var endDate = $('#search_date_fin').val();  // Récupérer la valeur de la date fin
+
+        // Vérifier si la case "Entre deux dates" est cochée et que les dates sont valides
+        if ($('#search_between_dates').is(':checked')) {
+            if (startDate && endDate && startDate > endDate) {
+                e.preventDefault();  // Empêcher l'envoi du formulaire
+
+                // Afficher le message d'erreur dans le conteneur
+                $('#error-message').show();  // Afficher le message d'erreur
+            } else {
+                $('#error-message').hide();  // Masquer le message d'erreur si la validation est réussie
+            }
+        }
+    });
+});
+
     </script>
+    
        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
