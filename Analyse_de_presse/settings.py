@@ -25,8 +25,15 @@ SECRET_KEY = 'django-insecure-1gj%kxxxyk7^e$t@h@-=^an3u9gn1)f*8*)^c(rs4*!l1c=d4n
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+ALLOWED_HOSTS = [
+    'alimabrouk.pythonanywhere.com',
+    'www.alimabrouk.pythonanywhere.com',
+    '127.0.0.1',
+    'localhost'
+]
 
-ALLOWED_HOSTS = []
+
+
 
 
 # Application definition
@@ -136,13 +143,21 @@ USE_I18N = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 #STATIC_URL = 'static/'
+import os
+
+# URL utilisée pour accéder aux fichiers statiques
 STATIC_URL = '/static/'
+
+# Définir les répertoires contenant les fichiers statiques (CSS, JS, images, etc.)
+# Si vous utilisez le chemin absolu sous Windows, c'est ce format
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),  # Chemin vers vos fichiers statiques (CSS, JS, etc.)
+    r'C:\Analyse_de_presse\AppScraping\static',  # Utilisation du chemin absolu pour Windows
 ]
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
+
+# Répertoire où les fichiers statiques collectés seront stockés pour la production
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

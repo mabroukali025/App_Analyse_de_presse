@@ -1,0 +1,308 @@
+/*@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+/*
+*{
+    margin: 0px;
+    padding: 0px;
+    text-decoration: none;
+    list-style: none;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: italic;
+  }
+body{
+  font-family:'Courier New', Courier, monospace;
+  
+}
+.content {
+  width: 1260px;
+  height: 400px;
+  padding-left: 0%;
+  padding-right: 0%;
+  margin-right: 0%;
+  background-color: rgb(236, 199, 199);
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/*
+
+.content {
+        padding: 80px;
+        
+        width: 87%;
+        height: 100%;
+      }
+
+
+.content {
+        width: 1260px;
+        height: 400px;
+        padding-left: 0%;
+        padding-right: 0%;
+        margin-right: 0%;
+        background-color: rgb(236, 199, 199);
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      }
+      
+       Form styles 
+      form {
+        font-size: 20px;
+      }
+      
+      .form-container {
+        width: 95%;
+        margin: 0;
+        padding: 20px;
+        margin-left: 10px;
+        border: 1px solid #4c4a4a;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+      }
+      
+      .form-container .form-group {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+      
+      .form-container .form-group label {
+        margin-right: 10px;
+        font-weight: bold;
+      }
+      
+      .form-container .form-group select,
+      .form-container .form-group input {
+        padding: 5px 20px;
+        margin: 0 20px 0;
+        border: 1px solid #191919;
+        border-radius: 3px;
+        width: 100px;
+      }
+      
+      .form-container .form-group .btn {
+        margin-left: 20px;
+      }
+      
+      
+      
+    
+      #terminal-container {
+        max-height: 200px;
+        overflow-y: auto;
+        font-family: monospace;
+      }
+      
+  
+    
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+      }
+     
+       
+        .form-container .form-group input,
+        .form-container .form-group select {
+          padding: 10px;                      
+          border: 1px solid #ccc;             
+          border-radius: 5px;                 
+          font-size: 16px;                   
+          box-sizing: border-box;             
+          transition: border-color 0.3s ease; 
+          width: 200px;                        
+        }
+        .form-container .form-group select {
+          appearance: none;                   
+          background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="M2 7l10 10L22 7"/></svg>'); /* Ajoute une flèche personnalisée 
+          background-repeat: no-repeat;       
+          background-position: right 10px center;
+          padding-right: 10px;                
+        }
+        
+        /* Styles pour les options du combo box 
+        .form-container .form-group select option {
+          padding: 10px;                     
+        }
+        
+     
+        .form-container .form-group input:focus,
+        .form-container .form-group select:focus {
+          border-color: #007bff;              
+          box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
+        }
+        
+      
+        .form-container .form-group input:disabled,
+        .form-container .form-group select:disabled {
+          background-color: #e9ecef;         
+          cursor: not-allowed;                
+        }
+
+
+
+     
+      
+
+form {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+form h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #070707;
+}
+
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  background-color: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  font-family: 'Courier New', Courier, monospace;
+  
+}
+.table thead th {
+  background-color: #dfd7d7;
+  color: #333;
+  font-weight: bold;
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.table tbody td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+.table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination a {
+  color: #007bff;
+  padding: 8px 16px;
+  text-decoration: none;
+  border: 1px solid #ddd;
+  margin: 0 4px;
+  border-radius: 4px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination a.active {
+  background-color: #007bff;
+  color: white;
+  border: 1px solid #007bff;
+}
+
+.pagination a:hover:not(.active) {
+  background-color: #ddd;
+}
+
+
+@media screen and (max-width: 768px) {
+  .table thead, .table tbody, .table th, .table td, .table tr {
+    display: block;
+  }
+
+  .table thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+
+  .table tr {
+    margin-bottom: 10px;
+  }
+
+  .table td {
+    border: none;
+    position: relative;
+    padding-left: 50%;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .table td:before {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    content: attr(data-label);
+    transform: translateY(-50%);
+    font-weight: bold;
+  }
+}
+ .multiselect-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .multiselect-dropdown {
+            display: none;
+            position: absolute;
+            background-color: white;
+            border: 1px solid #ccc;
+            z-index: 1000;
+            width: 200px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .multiselect-dropdown label {
+            display: block;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .multiselect-dropdown label:hover {
+            background-color: #f1f1f1;
+        }
+
+        .multiselect-dropdown input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+        .hidden-option {
+            display: none;
+        }
+
+        .multiselect-button {
+            width: 200px;
+            height: 30px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 5px;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .multiselect-button:after {
+            content: '\25BC';
+            float: right;
+            margin-top: 7px;
+            margin-right: 5px;
+        }
+
+        .multiselect-button.active:after {
+            content: '\25B2';
+        }
