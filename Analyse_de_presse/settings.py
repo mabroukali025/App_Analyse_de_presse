@@ -18,14 +18,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
+# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/24440366
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-1gj%kxxxyk7^e$t@h@-=^an3u9gn1)f*8*)^c(rs4*!l1c=d4n'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALLOWED_HOSTS = ['.vercel.app']
+ALLOWED_HOSTS = ['*']
 
 
 
@@ -69,7 +69,7 @@ ROOT_URLCONF = 'Analyse_de_presse.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'App_Analyse_presse', 'Template')],
+        'DIRS': [os.path.join(BASE_DIR, 'App_Analyse_presse', 'template')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
