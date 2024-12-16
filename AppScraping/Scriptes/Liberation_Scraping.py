@@ -131,6 +131,8 @@ order=""
 #########################################################################  la fonction DE supprime au de but de chaine   ############"
 def fonction_Supprime_au_debut(chaine):
     date_exportation_obj=obtenir_date_exportation()
+    if '1er' in chaine:
+        chaine=chaine.replace('1er','1')
     if chaine.startswith("publié aujourd'hui à"):
         x=len("publié aujourd'hui à")
         chaine_sans_debut=chaine[x+1:]

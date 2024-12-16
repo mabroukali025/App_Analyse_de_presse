@@ -68,6 +68,9 @@ urlpatterns = [
     path('telecharger-excel/', views.telecharger_articles_excel, name='telecharger_excel'),
     path('telecharger-article/<int:article_id>/', views.telecharger_article_unique_excel, name='telecharger_article_unique_excel'),
 
+    path('plot/', views.plot_motcle_counts, name='plot_motcle_counts'),
+
+
 
     
     

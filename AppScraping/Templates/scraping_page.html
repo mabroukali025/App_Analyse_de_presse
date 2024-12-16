@@ -12,13 +12,102 @@
 </head>
 <header>
     {% include 'navbar.html' %}
+    <style>
+
+.bubble0 {
+        position: absolute;
+        bottom: 0;
+        left: 75%;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(30deg, #4eb1d9, #80d2f1);
+        animation: flying 10s infinite ease-in;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .bubble10 {
+        position: absolute;
+        bottom: 0;
+        left: 40%;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(30deg, #4eb1d9, #80d2f1);
+        animation: flying 6s infinite ease-in;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .bubble11 {
+        position: absolute;
+        bottom: 0;
+        left: 10%;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(30deg, #4eb1d9, #80d2f1);
+        animation: flying 8s infinite ease-in;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .bubble-button {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #ffffff, #4eb1d9, #1c77ab);
+    border: none;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 
+        0 10px 15px rgba(0, 0, 0, 0.5), /* Ombre externe pour l'effet flottant */
+        inset -10px -10px 20px rgba(255, 255, 255, 0.6), /* Lumière interne */
+        inset 10px 10px 20px rgba(0, 0, 0, 0.3); /* Ombre interne */
+    cursor: pointer;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    
+}
+
+.bubble-button:hover {
+    transform: scale(1.1); /* Agrandissement lors du survol */
+    box-shadow: 
+        0 12px 20px rgba(0, 0, 0, 0.6),
+        inset -12px -12px 25px rgba(255, 255, 255, 0.7),
+        inset 12px 12px 25px rgba(0, 0, 0, 0.4);
+}
+
+.bubble-button:active {
+    transform: scale(0.95); /* Réduction lors du clic */
+    box-shadow: 
+        0 8px 12px rgba(0, 0, 0, 0.4),
+        inset -8px -8px 15px rgba(255, 255, 255, 0.5),
+        inset 8px 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+
+   
+    </style>
 </header>
+
 <body>
+    
     <main class="content container mt-5">
+
         <div class="row">
+            
             <div class="col-12">
+                
                 <!-- Formulaire pour démarrer le scraping -->
-                <form id="start-scraping-form" method="post" action="{% url 'find_articles' %}" class="form-container p-4 border rounded">
+                <form id="start-scraping-form" method="post" action="{% url 'find_articles' %}" class="form-container p-4 border rounded " style="background-color: #ffffff; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                    
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="combobox" class="col-form-label">Choisissez un site :</label>
@@ -48,7 +137,90 @@
                 </form>
             </div>
         </div>
+        <div>    
+                <div>
+                    <div class="bubble2">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        
+                    </div>
+                    <div>
+                        <div class="bubble2">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span> 
+                        </div>
+                    </div>
+                    <div class="bubble2">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span> 
+                    </div>
+                    
+                </div>
+                <div>
+                    <div class="bubble0">
+                        <button class="bubble-button">Lefigaro</button>
+                    </div>
+                    <div class="bubble10">
+                        <button class="bubble-button">Lemonde</button>
+                    </div>
+                    <div class="bubble11">
+                        <button class="bubble-button">Libération</button>
+                    </div>
+                </div>
+                <div>
+                    <div class="bubble3">
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <div class="bubble3">
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+                <div>
+                    <div class="bubble4">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <div class="bubble4">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+                <div>
+                    <div class="bubble5">
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <div class="bubble5">
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+                <div>
+                    <div class="bubble6">
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <div class="bubble6">
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            
+        </div>
     </main>
+    
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -138,7 +310,11 @@
     <div>
     
     </div>
+
+
+    
 </body>
 
 {% include 'footer.html' %}
+
 </html>

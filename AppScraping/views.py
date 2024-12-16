@@ -631,7 +631,13 @@ def Statistiques_mot_cle(request):
 
     # Filtrer les articles en fonction des critères de recherche
     if search_site:
-        articles = articles.filter(lien__icontains=search_site)
+        if search_site != 'Tous les sites':  # Correction de l'opérateur de comparaison
+            articles = articles.filter(lien__icontains=search_site)  # Filtrage des articles selon le lien
+        else:
+            # Si 'Tous les sites' est sélectionné, ne filtre pas les articles
+            # Enlever la ligne article=article, car elle n'a pas de sens ici
+            pass
+    
     if search_order:
         articles = articles.filter(ordre_actualite=search_order)
     try:
@@ -657,20 +663,140 @@ def Statistiques_mot_cle(request):
     mot_cle_count_auteur = 0
     mot_cle_count_titre_page_accueil = 0
 
+    mot_cle_count_titre_liberation = 0
+    mot_cle_count_description_liberation = 0
+    mot_cle_count_auteur_liberation = 0
+    mot_cle_count_titre_page_accueil_liberation = 0
+    total_articles_count_liberation = 0
+
+    mot_cle_count_titre_lemonde = 0
+    mot_cle_count_description_lemonde = 0
+    mot_cle_count_auteur_lemonde = 0
+    mot_cle_count_titre_page_accueil_lemonde = 0
+    total_articles_count_lemonde=0
+
+    mot_cle_count_titre_lefigaro = 0
+    mot_cle_count_description_lefigaro = 0
+    mot_cle_count_auteur_lefigaro = 0
+    mot_cle_count_titre_page_accueil_lefigaro = 0
+    total_articles_count_lefigaro=0
+
+    mot_cle_count_titre_liberation_p1= 0
+    mot_cle_count_description_liberation_p1= 0
+    mot_cle_count_auteur_liberation_p1= 0
+    mot_cle_count_titre_page_accueil_liberation_p1= 0
+    total_articles_count_liberation_p1= 0
+
+    mot_cle_count_titre_liberation_p2= 0
+    mot_cle_count_description_liberation_p2 = 0
+    mot_cle_count_auteur_liberation_p2= 0
+    mot_cle_count_titre_page_accueil_liberation_p2= 0
+    total_articles_count_liberation_p2= 0
+
+    mot_cle_count_titre_lemonde_p1= 0
+    mot_cle_count_description_lemonde_p1= 0 
+    mot_cle_count_auteur_lemonde_p1= 0
+    mot_cle_count_titre_page_accueil_lemonde_p1= 0
+    total_articles_count_lemonde_p1= 0
+
+    mot_cle_count_titre_lemonde_p2= 0
+    mot_cle_count_description_lemonde_p2 = 0
+    mot_cle_count_auteur_lemonde_p2= 0
+    mot_cle_count_titre_page_accueil_lemonde_p2= 0
+    total_articles_count_lemonde_p2 = 0
+
+    mot_cle_count_titre_lefigaro_p2=0
+    mot_cle_count_description_lefigaro_p2=0
+    mot_cle_count_auteur_lefigaro_p2=0
+    mot_cle_count_titre_page_accueil_lefigaro_p2=0
+    total_articles_count_lefigaro_p2=0
+
+    mot_cle_count_titre_lefigaro_p1=0
+    mot_cle_count_description_lefigaro_p1=0
+    mot_cle_count_auteur_lefigaro_p1=0
+    mot_cle_count_titre_page_accueil_lefigaro_p1=0
+    total_articles_count_lefigaro_p1=0
+
+
+
+
     if search_mot_cle:
         if index_mot == -1:
-            mot_cle_in_titre = articles.filter(titre__icontains=search_mot_cle)
-            mot_cle_in_description = articles.filter(description_article__icontains=search_mot_cle)
-            mot_cle_in_auteur = articles.filter(nom_auteur__icontains=search_mot_cle)
-            mot_cle_in_titre_page_accueil = articles.filter(titre_page_accueil__icontains=search_mot_cle)
+            if search_site=='Tous les sites':
+                filtered_articles_liberation = articles.filter(lien__icontains="www.liberation.fr")#,ordre_actualite__icontains=search_order)
+                filtered_articles_lemonde = articles.filter(lien__icontains="www.lemonde.fr")
+                filtered_articles_lefigaro = articles.filter(lien__icontains="www.lefigaro.fr")
+                
+                if filtered_articles_liberation:
+                        mot_cle_in_titre = filtered_articles_liberation.filter(titre__icontains=search_mot_cle)
+                        mot_cle_in_description = filtered_articles_liberation.filter(description_article__icontains=search_mot_cle)
+                        mot_cle_in_auteur = filtered_articles_liberation.filter(nom_auteur__icontains=search_mot_cle)
+                        mot_cle_in_titre_page_accueil = filtered_articles_liberation.filter(titre_page_accueil__icontains=search_mot_cle)
 
-            mot_cle_count_titre = mot_cle_in_titre.count()
-            mot_cle_count_description = mot_cle_in_description.count()
-            mot_cle_count_auteur = mot_cle_in_auteur.count()
-            mot_cle_count_titre_page_accueil = mot_cle_in_titre_page_accueil.count()
+                        mot_cle_count_titre_liberation = mot_cle_in_titre.count()
+                        mot_cle_count_description_liberation = mot_cle_in_description.count()
+                        mot_cle_count_auteur_liberation = mot_cle_in_auteur.count()
+                        mot_cle_count_titre_page_accueil_liberation = mot_cle_in_titre_page_accueil.count
+                       
 
-            articles = mot_cle_in_titre | mot_cle_in_description | mot_cle_in_auteur | mot_cle_in_titre_page_accueil
-            total_articles_count = articles.distinct().count()
+                        articles_liberation = mot_cle_in_titre | mot_cle_in_description | mot_cle_in_auteur | mot_cle_in_titre_page_accueil
+                        total_articles_count_liberation = articles_liberation.distinct().count()
+
+                if filtered_articles_lemonde:
+                        mot_cle_in_titre = filtered_articles_lemonde.filter(titre__icontains=search_mot_cle)
+                        mot_cle_in_description = filtered_articles_lemonde.filter(description_article__icontains=search_mot_cle)
+                        mot_cle_in_auteur = filtered_articles_lemonde.filter(nom_auteur__icontains=search_mot_cle)
+                        mot_cle_in_titre_page_accueil = filtered_articles_lemonde.filter(titre_page_accueil__icontains=search_mot_cle)
+
+                        mot_cle_count_titre_lemonde = mot_cle_in_titre.count()
+                        mot_cle_count_description_lemonde = mot_cle_in_description.count()
+                        mot_cle_count_auteur_lemonde = mot_cle_in_auteur.count()
+                        mot_cle_count_titre_page_accueil_lemonde = mot_cle_in_titre_page_accueil.count
+                       
+                        articles_liberation = mot_cle_in_titre | mot_cle_in_description | mot_cle_in_auteur | mot_cle_in_titre_page_accueil
+                        total_articles_count_lemonde = articles_liberation.distinct().count()
+
+                if filtered_articles_lefigaro:
+                        mot_cle_in_titre = filtered_articles_lefigaro.filter(titre__icontains=search_mot_cle)
+                        mot_cle_in_description = filtered_articles_lefigaro.filter(description_article__icontains=search_mot_cle)
+                        mot_cle_in_auteur = filtered_articles_lefigaro.filter(nom_auteur__icontains=search_mot_cle)
+                        mot_cle_in_titre_page_accueil = filtered_articles_lefigaro.filter(titre_page_accueil__icontains=search_mot_cle)
+
+                        mot_cle_count_titre_lefigaro = mot_cle_in_titre.count()
+                        mot_cle_count_description_lefigaro = mot_cle_in_description.count()
+                        mot_cle_count_auteur_lefigaro = mot_cle_in_auteur.count()
+                        mot_cle_count_titre_page_accueil_lefigaro = mot_cle_in_titre_page_accueil.count
+                       
+                        articles_liberation = mot_cle_in_titre | mot_cle_in_description | mot_cle_in_auteur | mot_cle_in_titre_page_accueil
+                        total_articles_count_lefigaro = articles_liberation.distinct().count()
+
+
+              
+                mot_cle_in_titre = articles.filter(titre__icontains=search_mot_cle)
+                mot_cle_in_description = articles.filter(description_article__icontains=search_mot_cle)
+                mot_cle_in_auteur = articles.filter(nom_auteur__icontains=search_mot_cle)
+                mot_cle_in_titre_page_accueil = articles.filter(titre_page_accueil__icontains=search_mot_cle)
+                mot_cle_count_titre = mot_cle_in_titre.count()
+                mot_cle_count_description = mot_cle_in_description.count()
+                mot_cle_count_auteur = mot_cle_in_auteur.count()
+                mot_cle_count_titre_page_accueil = mot_cle_in_titre_page_accueil.count()
+                articles = mot_cle_in_titre | mot_cle_in_description | mot_cle_in_auteur | mot_cle_in_titre_page_accueil
+                total_articles_count = articles.distinct().count()
+
+            else:
+
+                mot_cle_in_titre = articles.filter(titre__icontains=search_mot_cle)
+                mot_cle_in_description = articles.filter(description_article__icontains=search_mot_cle)
+                mot_cle_in_auteur = articles.filter(nom_auteur__icontains=search_mot_cle)
+                mot_cle_in_titre_page_accueil = articles.filter(titre_page_accueil__icontains=search_mot_cle)
+
+                mot_cle_count_titre = mot_cle_in_titre.count()
+                mot_cle_count_description = mot_cle_in_description.count()
+                mot_cle_count_auteur = mot_cle_in_auteur.count()
+                mot_cle_count_titre_page_accueil = mot_cle_in_titre_page_accueil.count()
+
+                articles = mot_cle_in_titre | mot_cle_in_description | mot_cle_in_auteur | mot_cle_in_titre_page_accueil
+                total_articles_count = articles.distinct().count()
 
             
 
@@ -679,34 +805,136 @@ def Statistiques_mot_cle(request):
         else:
             # Recherche avec deux parties de mot-clé
             if partie1_mot:
-                mot_cle_1_in_titre = articles.filter(titre__icontains=partie1_mot)
-                mot_cle_1_in_description = articles.filter(description_article__icontains=partie1_mot)
-                mot_cle_1_in_auteur = articles.filter(nom_auteur__icontains=partie1_mot)
-                mot_cle_1_in_titre_page_accueil = articles.filter(titre_page_accueil__icontains=partie1_mot)
+                
+                    filt_art_liber_partie1 = articles.filter(lien__icontains="www.liberation.fr")
+                    filt_art_lemon_partie1 = articles.filter(lien__icontains="www.lemonde.fr")
+                    filt_art_lefig_partie1 = articles.filter(lien__icontains="www.lefigaro.fr")
 
-                mot_cle_1_count_titre = mot_cle_1_in_titre.count()
-                mot_cle_1_count_description = mot_cle_1_in_description.count()
-                mot_cle_1_count_auteur = mot_cle_1_in_auteur.count()
-                mot_cle_1_count_titre_page_accueil = mot_cle_1_in_titre_page_accueil.count()
+                    if filt_art_liber_partie1: 
+                            mot_cle_in_titre = filt_art_liber_partie1.filter(titre__icontains=partie1_mot)
+                            mot_cle_in_description = filt_art_liber_partie1.filter(description_article__icontains=partie1_mot)
+                            mot_cle_in_auteur = filt_art_liber_partie1.filter(nom_auteur__icontains=partie1_mot)
+                            mot_cle_in_titre_page_accueil = filt_art_liber_partie1.filter(titre_page_accueil__icontains=partie1_mot)
 
-                articles_1 = mot_cle_1_in_titre | mot_cle_1_in_description | mot_cle_1_in_auteur | mot_cle_1_in_titre_page_accueil
-                total_articles_count_1 = articles_1.distinct().count()
+                            mot_cle_count_titre_liberation_p1 = mot_cle_in_titre.count()
+                            mot_cle_count_description_liberation_p1 = mot_cle_in_description.count()
+                            mot_cle_count_auteur_liberation_p1 = mot_cle_in_auteur.count()
+                            mot_cle_count_titre_page_accueil_liberation_p1 = mot_cle_in_titre_page_accueil.count
+
+
+                            articles_liberation = mot_cle_in_titre | mot_cle_in_description | mot_cle_in_auteur | mot_cle_in_titre_page_accueil
+                            total_articles_count_liberation_p1 = articles_liberation.distinct().count()
+                    
+                    if filt_art_lemon_partie1:
+                            mot_cle_in_titre = filt_art_lemon_partie1.filter(titre__icontains=partie1_mot)
+                            mot_cle_in_description = filt_art_lemon_partie1.filter(description_article__icontains=partie1_mot)
+                            mot_cle_in_auteur = filt_art_lemon_partie1.filter(nom_auteur__icontains=partie1_mot)
+                            mot_cle_in_titre_page_accueil = filt_art_lemon_partie1.filter(titre_page_accueil__icontains=partie1_mot)
+
+                            mot_cle_count_titre_lemonde_p1 = mot_cle_in_titre.count()
+                            mot_cle_count_description_lemonde_p1 = mot_cle_in_description.count()
+                            mot_cle_count_auteur_lemonde_p1 = mot_cle_in_auteur.count()
+                            mot_cle_count_titre_page_accueil_lemonde_p1 = mot_cle_in_titre_page_accueil.count
+
+
+                            articles_liberation = mot_cle_in_titre | mot_cle_in_description | mot_cle_in_auteur | mot_cle_in_titre_page_accueil
+                            total_articles_count_lemonde_p1 = articles_liberation.distinct().count()
+                    if filt_art_lefig_partie1:
+                            mot_cle_in_titre = filt_art_lefig_partie1.filter(titre__icontains=partie1_mot)
+                            mot_cle_in_description = filt_art_lefig_partie1.filter(description_article__icontains=partie1_mot)
+                            mot_cle_in_auteur = filt_art_lefig_partie1.filter(nom_auteur__icontains=partie1_mot)
+                            mot_cle_in_titre_page_accueil = filt_art_lefig_partie1.filter(titre_page_accueil__icontains=partie1_mot)
+
+                            mot_cle_count_titre_lefigaro_p1 = mot_cle_in_titre.count()
+                            mot_cle_count_description_lefigaro_p1 = mot_cle_in_description.count()
+                            mot_cle_count_auteur_lefigaro_p1 = mot_cle_in_auteur.count()
+                            mot_cle_count_titre_page_accueil_lefigaro_p1 = mot_cle_in_titre_page_accueil.count
+                        
+                            articles_liberation = mot_cle_in_titre | mot_cle_in_description | mot_cle_in_auteur | mot_cle_in_titre_page_accueil
+                            total_articles_count_lefigaro_p1 = articles_liberation.distinct().count()
+
+
+
+                    mot_cle_1_in_titre = articles.filter(titre__icontains=partie1_mot)
+                    mot_cle_1_in_description = articles.filter(description_article__icontains=partie1_mot)
+                    mot_cle_1_in_auteur = articles.filter(nom_auteur__icontains=partie1_mot)
+                    mot_cle_1_in_titre_page_accueil = articles.filter(titre_page_accueil__icontains=partie1_mot)
+
+                    mot_cle_1_count_titre = mot_cle_1_in_titre.count()
+                    mot_cle_1_count_description = mot_cle_1_in_description.count()
+                    mot_cle_1_count_auteur = mot_cle_1_in_auteur.count()
+                    mot_cle_1_count_titre_page_accueil = mot_cle_1_in_titre_page_accueil.count()
+
+                    articles_1 = mot_cle_1_in_titre | mot_cle_1_in_description | mot_cle_1_in_auteur | mot_cle_1_in_titre_page_accueil
+                    total_articles_count_1 = articles_1.distinct().count()
             else:
                 total_articles_count_1 = 0
 
             if partie2_mot:
-                mot_cle_2_in_titre = articles.filter(titre__icontains=partie2_mot)
-                mot_cle_2_in_description = articles.filter(description_article__icontains=partie2_mot)
-                mot_cle_2_in_auteur = articles.filter(nom_auteur__icontains=partie2_mot)
-                mot_cle_2_in_titre_page_accueil = articles.filter(titre_page_accueil__icontains=partie2_mot)
+                
+                    filt_art_liber_partie2 = articles.filter(lien__icontains="www.liberation.fr")
+                    filt_art_lemon_partie2 = articles.filter(lien__icontains="www.lemonde.fr")
+                    filt_art_lefig_partie2 = articles.filter(lien__icontains="www.lefigaro.fr")
 
-                mot_cle_2_count_titre = mot_cle_2_in_titre.count()
-                mot_cle_2_count_description = mot_cle_2_in_description.count()
-                mot_cle_2_count_auteur = mot_cle_2_in_auteur.count()
-                mot_cle_2_count_titre_page_accueil = mot_cle_2_in_titre_page_accueil.count()
+                    if filt_art_liber_partie2: 
+                            mot_cle_in_titre = filt_art_liber_partie2.filter(titre__icontains=partie2_mot)
+                            mot_cle_in_description = filt_art_liber_partie2.filter(description_article__icontains=partie2_mot)
+                            mot_cle_in_auteur = filt_art_liber_partie2.filter(nom_auteur__icontains=partie2_mot)
+                            mot_cle_in_titre_page_accueil = filt_art_liber_partie2.filter(titre_page_accueil__icontains=partie2_mot)
 
-                articles_2 = mot_cle_2_in_titre | mot_cle_2_in_description | mot_cle_2_in_auteur | mot_cle_2_in_titre_page_accueil
-                total_articles_count_2 = articles_2.distinct().count()
+                            mot_cle_count_titre_liberation_p2 = mot_cle_in_titre.count()
+                            mot_cle_count_description_liberation_p2 = mot_cle_in_description.count()
+                            mot_cle_count_auteur_liberation_p2 = mot_cle_in_auteur.count()
+                            mot_cle_count_titre_page_accueil_liberation_p2 = mot_cle_in_titre_page_accueil.count
+
+                            articles_liberation = mot_cle_in_titre | mot_cle_in_description | mot_cle_in_auteur | mot_cle_in_titre_page_accueil
+                            total_articles_count_liberation_p2 = articles_liberation.distinct().count()
+
+                    if filt_art_lemon_partie2:
+                            mot_cle_in_titre = filt_art_lemon_partie2.filter(titre__icontains=partie2_mot)
+                            mot_cle_in_description = filt_art_lemon_partie2.filter(description_article__icontains=partie2_mot)
+                            mot_cle_in_auteur = filt_art_lemon_partie2.filter(nom_auteur__icontains=partie2_mot)
+                            mot_cle_in_titre_page_accueil = filt_art_lemon_partie2.filter(titre_page_accueil__icontains=partie2_mot)
+
+                            mot_cle_count_titre_lemonde_p2 = mot_cle_in_titre.count()
+                            mot_cle_count_description_lemonde_p2 = mot_cle_in_description.count()
+                            mot_cle_count_auteur_lemonde_p2 = mot_cle_in_auteur.count()
+                            mot_cle_count_titre_page_accueil_lemonde_p2 = mot_cle_in_titre_page_accueil.count
+
+
+                            articles_liberation = mot_cle_in_titre | mot_cle_in_description | mot_cle_in_auteur | mot_cle_in_titre_page_accueil
+                            total_articles_count_lemonde_p2 = articles_liberation.distinct().count()
+                    if filt_art_lefig_partie2 :
+                        mot_cle_in_titre = filt_art_lefig_partie2.filter(titre__icontains=partie2_mot)
+                        mot_cle_in_description = filt_art_lefig_partie2.filter(description_article__icontains=partie2_mot)
+                        mot_cle_in_auteur = filt_art_lefig_partie2.filter(nom_auteur__icontains=partie2_mot)
+                        mot_cle_in_titre_page_accueil = filt_art_lefig_partie2.filter(titre_page_accueil__icontains=partie2_mot)
+
+                        mot_cle_count_titre_lefigaro_p2 = mot_cle_in_titre.count()
+                        mot_cle_count_description_lefigaro_p2 = mot_cle_in_description.count()
+                        mot_cle_count_auteur_lefigaro_p2 = mot_cle_in_auteur.count()
+                        mot_cle_count_titre_page_accueil_lefigaro_p2 = mot_cle_in_titre_page_accueil.count
+                       
+                        articles_liberation = mot_cle_in_titre | mot_cle_in_description | mot_cle_in_auteur | mot_cle_in_titre_page_accueil
+                        total_articles_count_lefigaro_p2 = articles_liberation.distinct().count()
+
+
+
+
+
+
+                    mot_cle_2_in_titre = articles.filter(titre__icontains=partie2_mot)
+                    mot_cle_2_in_description = articles.filter(description_article__icontains=partie2_mot)
+                    mot_cle_2_in_auteur = articles.filter(nom_auteur__icontains=partie2_mot)
+                    mot_cle_2_in_titre_page_accueil = articles.filter(titre_page_accueil__icontains=partie2_mot)
+
+                    mot_cle_2_count_titre = mot_cle_2_in_titre.count()
+                    mot_cle_2_count_description = mot_cle_2_in_description.count()
+                    mot_cle_2_count_auteur = mot_cle_2_in_auteur.count()
+                    mot_cle_2_count_titre_page_accueil = mot_cle_2_in_titre_page_accueil.count()
+
+                    articles_2 = mot_cle_2_in_titre | mot_cle_2_in_description | mot_cle_2_in_auteur | mot_cle_2_in_titre_page_accueil
+                    total_articles_count_2 = articles_2.distinct().count()
             else:
                 total_articles_count_2 = 0
 
@@ -748,6 +976,77 @@ def Statistiques_mot_cle(request):
         'mot_cle_count_description': mot_cle_count_description,
         'mot_cle_count_auteur': mot_cle_count_auteur,
         'mot_cle_count_titre_page_accueil': mot_cle_count_titre_page_accueil,
+        'partie2_mot':partie2_mot,
+        'partie1_mot':partie1_mot,
+        
+
+        'mot_cle_count_titre_liberation':mot_cle_count_titre_liberation,
+        'mot_cle_count_description_liberation': mot_cle_count_description_liberation,
+        'mot_cle_count_auteur_liberation':mot_cle_count_auteur_liberation,
+        'mot_cle_count_titre_page_accueil_liberation':mot_cle_count_titre_page_accueil_liberation,
+        'total_articles_count_liberation':total_articles_count_liberation,
+
+        'mot_cle_count_titre_lemonde':mot_cle_count_titre_lemonde,
+        'mot_cle_count_description_lemonde':mot_cle_count_description_lemonde,
+        'mot_cle_count_auteur_lemonde':mot_cle_count_auteur_lemonde,
+        'mot_cle_count_titre_page_accueil_lemonde':mot_cle_count_titre_page_accueil_lemonde,
+        'total_articles_count_lemonde':total_articles_count_lemonde,
+
+
+        'mot_cle_count_titre_lefigaro':mot_cle_count_titre_lefigaro,
+        'mot_cle_count_description_lefigaro':mot_cle_count_description_lefigaro,
+        'mot_cle_count_auteur_lefigaro':mot_cle_count_auteur_lefigaro,
+        'mot_cle_count_titre_page_accueil_lefigaro':mot_cle_count_titre_page_accueil_lefigaro,
+        'total_articles_count_lefigaro':total_articles_count_lefigaro,
+
+        'mot_cle_count_titre_liberation_p1':mot_cle_count_titre_liberation_p1,
+        'mot_cle_count_description_liberation_p1':mot_cle_count_description_liberation_p1,
+        'mot_cle_count_auteur_liberation_p1':mot_cle_count_auteur_liberation_p1,
+        'mot_cle_count_titre_page_accueil_liberation_p1':mot_cle_count_titre_page_accueil_liberation_p1,
+        'total_articles_count_liberation_p1':total_articles_count_liberation_p1,
+         
+        'mot_cle_count_titre_lemonde_p1':mot_cle_count_titre_lemonde_p1,
+        'mot_cle_count_description_lemonde_p1':mot_cle_count_description_lemonde_p1,
+        'mot_cle_count_auteur_lemonde_p1':mot_cle_count_auteur_lemonde_p1,
+        'mot_cle_count_titre_page_accueil_lemonde_p1':mot_cle_count_titre_page_accueil_lemonde_p1,
+        'total_articles_count_lemonde_p1':total_articles_count_lemonde_p1,
+        
+
+        'mot_cle_count_titre_lefigaro_p1':mot_cle_count_titre_lefigaro_p1,
+        'mot_cle_count_description_lefigaro_p1':mot_cle_count_description_lefigaro_p1,
+        'mot_cle_count_auteur_lefigaro_p1':mot_cle_count_auteur_lefigaro_p1,
+        'mot_cle_count_titre_page_accueil_lefigaro_p1':mot_cle_count_titre_page_accueil_lefigaro_p1,
+        'total_articles_count_lefigaro_p1':total_articles_count_lefigaro_p1,
+
+
+
+        'mot_cle_count_titre_liberation_p2':mot_cle_count_titre_liberation_p2,
+        'mot_cle_count_description_liberation_p2':mot_cle_count_description_liberation_p2,
+        'mot_cle_count_auteur_liberation_p2':mot_cle_count_auteur_liberation_p2,
+        'mot_cle_count_titre_page_accueil_liberation_p2':mot_cle_count_titre_page_accueil_liberation_p2,
+        'total_articles_count_liberation_p2':total_articles_count_liberation_p2,
+        
+        'mot_cle_count_titre_lemonde_p2':mot_cle_count_titre_lemonde_p2,
+        'mot_cle_count_description_lemonde_p2':mot_cle_count_description_lemonde_p2,
+        'mot_cle_count_auteur_lemonde_p2':mot_cle_count_auteur_lemonde_p2,
+        'mot_cle_count_titre_page_accueil_lemonde_p2':mot_cle_count_titre_page_accueil_lemonde_p2,
+        'total_articles_count_lemonde_p2':total_articles_count_lemonde_p2,
+        
+        'mot_cle_count_titre_lefigaro_p2':mot_cle_count_titre_lefigaro_p2,
+        'mot_cle_count_description_lefigaro_p2':mot_cle_count_description_lefigaro_p2,
+        'mot_cle_count_auteur_lefigaro_p2':mot_cle_count_auteur_lefigaro_p2,
+        'mot_cle_count_titre_page_accueil_lefigaro_p2':mot_cle_count_titre_page_accueil_lefigaro_p2,
+        'total_articles_count_lefigaro_p2':total_articles_count_lefigaro_p2,
+
+
+
+        'search_site':search_site,
+        'search_order':search_order,
+        'search_date_debut':search_date_debut,
+        'search_date_fin':search_date_fin,
+        'search_categorie':search_categorie,
+        'search_date':search_date,
+        'search_mot_cle':search_mot_cle,
         
     }
 
@@ -765,7 +1064,28 @@ def Statistiques_mot_cle(request):
             'total_articles_count_2': total_articles_count_2,
             'partie1_mot': partie1_mot,
             'partie2_mot': partie2_mot,
-            
+            'search_site':search_site,
+
+            'mot_cle_count_titre_liberation':mot_cle_count_titre_liberation,
+            'mot_cle_count_description_liberation': mot_cle_count_description_liberation,
+            'mot_cle_count_auteur_liberation':mot_cle_count_auteur_liberation,
+            'mot_cle_count_titre_page_accueil_liberation':mot_cle_count_titre_page_accueil_liberation,
+            'total_articles_count_liberation':total_articles_count_liberation,
+
+            'mot_cle_count_titre_lemonde':mot_cle_count_titre_lemonde,
+            'mot_cle_count_description_lemonde':mot_cle_count_description_lemonde,
+            'mot_cle_count_auteur_lemonde':mot_cle_count_auteur_lemonde,
+            'mot_cle_count_titre_page_accueil_lemonde':mot_cle_count_titre_page_accueil_lemonde,
+            'total_articles_count_lemonde':total_articles_count_lemonde,
+
+            'mot_cle_count_titre_lefigaro':mot_cle_count_titre_lefigaro,
+            'mot_cle_count_description_lefigaro':mot_cle_count_description_lefigaro,
+            'mot_cle_count_auteur_lefigaro':mot_cle_count_auteur_lefigaro,
+            'mot_cle_count_titre_page_accueil_lefigaro':mot_cle_count_titre_page_accueil_lefigaro,
+            'total_articles_count_lefigaro':total_articles_count_lefigaro,
+            'search_date_debut':search_date_debut,
+            'search_date_fin':search_date_fin,
+           'search_date':search_date,
         })
 
     # Ajouter les paramètres de recherche au contexte si fournis
@@ -1400,3 +1720,108 @@ def telecharger_article_unique_excel(request, article_id):
     df.to_excel(response, index=False, engine='openpyxl')
 
     return response
+
+
+# le graphe des mots cles
+
+
+
+def count_keyword_in_articles_for_orders(mot_cle, site, order):
+    
+   
+    articles = Article.objects.filter(ordre_actualite=order).filter(lien__icontains=site)#.filter(date_publication__gte=search_date_form)
+    count = 0
+    for article in articles:
+        # Vérifie si le mot-clé est présent dans un des champs de l'article
+        if (mot_cle.lower() in article.titre.lower() or
+            mot_cle.lower() in article.description_article.lower() or
+            mot_cle.lower() in article.nom_auteur.lower() or
+            mot_cle.lower() in article.titre_page_accueil.lower()):
+            count += 1  # Incrémente le compteur si le mot-clé est trouvé
+
+    return count
+
+def count_motcle_par_deux_date(mot_cle, site,order,end_date,start_date) :
+    
+    articles = Article.objects.filter(ordre_actualite=order).filter(lien__icontains=site).filter(date_publication__range=(end_date,start_date))
+    count = 0
+    for article in articles:
+        # Vérifie si le mot-clé est présent dans un des champs de l'article
+        if (mot_cle.lower() in article.titre.lower() or
+            mot_cle.lower() in article.description_article.lower() or
+            mot_cle.lower() in article.nom_auteur.lower() or
+            mot_cle.lower() in article.titre_page_accueil.lower()):
+            count += 1  # Incrémente le compteur si le mot-clé est trouvé
+
+    return count
+
+def count_motcle_par_date(mot_cle, site,order,_date) :
+    
+    articles = Article.objects.filter(ordre_actualite=order).filter(lien__icontains=site).filter(date_publication__gte=_date)
+    count = 0
+    for article in articles:
+        # Vérifie si le mot-clé est présent dans un des champs de l'article
+        if (mot_cle.lower() in article.titre.lower() or
+            mot_cle.lower() in article.description_article.lower() or
+            mot_cle.lower() in article.nom_auteur.lower() or
+            mot_cle.lower() in article.titre_page_accueil.lower()):
+            count += 1  # Incrémente le compteur si le mot-clé est trouvé
+
+    return count
+
+
+from django.shortcuts import render
+from django.http import JsonResponse
+import json
+
+def plot_motcle_counts(request):
+                
+    site = request.GET.get('site', '')
+    motcle = request.GET.get('motcle', '')
+    _date = request.GET.get('date_1', None)
+    start_date = request.GET.get('date_debut', None)
+    end_date = request.GET.get('date_fin', None)
+
+    # Gérer les valeurs "null" et vides
+    _date = None if _date in [None, '', 'null'] else _date
+    start_date = None if start_date in [None, '', 'null'] else start_date
+    end_date = None if end_date in [None, '', 'null'] else end_date
+   
+    try:
+        # Logique pour récupérer les données
+        if start_date and end_date and site and motcle and not _date:
+            # Compter les articles avec date
+            count_order1 = count_motcle_par_deux_date(motcle, site, 1,start_date,end_date)
+            count_order2 = count_motcle_par_deux_date(motcle, site, 2,start_date,end_date)
+            count_order3 = count_motcle_par_deux_date(motcle, site, 3,start_date,end_date)
+        elif _date and site and motcle and not start_date and not end_date:
+            count_order1=count_motcle_par_date(motcle, site,1,_date)
+            count_order2=count_motcle_par_date(motcle, site,2,_date)
+            count_order3=count_motcle_par_date(motcle, site,3,_date)
+            
+        else:
+            # Compter les articles sans date
+            count_order1 = count_keyword_in_articles_for_orders(motcle, site, 1)
+            count_order2 = count_keyword_in_articles_for_orders(motcle, site, 2)
+            count_order3 = count_keyword_in_articles_for_orders(motcle, site, 3)
+
+        chart_data = {
+            'motcle': motcle,
+            'site': site,
+            'count_order1': count_order1,
+            'count_order2': count_order2,
+            'count_order3': count_order3,
+        }
+
+        # Si la requête est AJAX, retourner les données JSON
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse(chart_data)
+
+        # Sinon, rendre le template HTML
+        return render(request, 'Statistiques_Recherche.html', {'chart_data': json.dumps(chart_data)})
+
+    except Exception as e:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'error': str(e)}, status=500)
+        else:
+            return render(request, 'error.html', {'error': str(e)})

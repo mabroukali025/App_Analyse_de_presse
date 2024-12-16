@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphique du Mot-Clé</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Réduire la taille du graphe */
+        #articlesChart {
+            width: 50% !important;  /* Réduit la taille du graphique */
+            height: 300px !important; /* Réduit la hauteur */
+        }
+
+        .date-container {
+            margin-bottom: 20px; /* Espacement entre le champ de date et le graphique */
+        }
+    </style>
+</head>
+<body>
+    <h1>Graphique pour le mot-clé "{{ motcle }}" sur le site "{{ site }}"</h1>
+    
+    <!-- Champ de sélection de la date -->
+    <div class="date-container">
+        <label for="dateInput">date début:</label>
+        <input type="date" id="dateInputStart">
+        <label for="dateInput">date fin :</label>
+        <input type="date" id="dateInputEnd">
+        <button id="updateGraph">Mettre à jour le graphique</button>
+    </div>
+
+    <canvas id="articlesChart"></canvas>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sitex = urlParams.get('site');
+            const motclex = urlParams.get('motcle');
+    
+            console.log("site: ", sitex);
+            console.log("motcle: ", motclex);
+    
+            if (!sitex || !motclex) {
+                alert("Le paramètre 'site' ou 'motcle' est manquant dans l'URL.");
+            } else {
+                console.log("Les paramètres ont été récupérés avec succès !");
+            }
+        });
+    </script>
+<script>
+    console.log("Le script fonctionne !");
+</script>
+
+    
+    <script>
+        // Charger les données dynamiques depuis Django (le JSON est déjà sérialisé)
+        let chartData = JSON.parse('{{ chart_data|escapejs }}');
+
+        // Fonction pour mettre à jour les données du graphique
+        function updateChart(chart, newData) {
+            chart.data.datasets[0].data = newData;
+            chart.update();
+        }
+
+        // Initialisation des données pour le graphique
+        const data = {
+            labels: ['Order 1', 'Order 2', 'Order 3'], // Les ordres
+            datasets: [{
+                label: `Nombre d'articles pour "${chartData.motcle}"`,
+                data: [chartData.count_order1, chartData.count_order2, chartData.count_order3],
+                backgroundColor: ['#ff6347', '#4caf50', '#ff9800'], // Nouvelles couleurs des barres
+                borderColor: ['#ff6347', '#4caf50', '#ff9800'], // Couleurs des bordures
+                borderWidth: 2,
+                barThickness: 30 // Réduit la largeur des barres
+            }]
+        };
+
+        const config = {
+            type: 'bar',
+            data: data,
+            options: {
+                responsive: true, // Rendre le graphique responsive
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        enabled: true, // Active l'affichage des tooltips
+                        mode: 'nearest', // Affiche le tooltip le plus proche du curseur
+                        intersect: false, // Affiche le tooltip même si la souris ne touche pas directement la barre
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return `Nombre d'articles: ${tooltipItem.raw}`; // Affiche la valeur de la barre
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        const ctx = document.getElementById('articlesChart').getContext('2d');
+        const myChart = new Chart(ctx, config);
+        const urlParams = new URLSearchParams(window.location.search);
+        const sitex = urlParams.get('site');
+        const motclex = urlParams.get('motcle');
+
+        // Gestionnaire d'événement pour mettre à jour le graphique selon la date sélectionnée
+        document.getElementById('updateGraph').addEventListener('click', function() {
+    const selectedDate = document.getElementById('dateInputStart').value;
+    // Extraire les paramètres 'site' et 'motcle' de l'URL
+    
+
+    if (selectedDate) {
+        // Faire une requête AJAX pour récupérer les nouvelles données
+        fetch(`/plot/?site=${encodeURIComponent('{{ sitex }}')}&motcle=${encodeURIComponent('{{ motclex }}')}&date=${selectedDate}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest' // Indique qu'il s'agit d'une requête AJAX
+            }
+        })
+        .then(response => response.json())
+        .then(newChartData => {
+            // Mettre à jour le graphique avec les nouvelles données
+            updateChart(myChart, [
+                newChartData.count_order1,
+                newChartData.count_order2,
+                newChartData.count_order3
+            ]);
+        })
+        .catch(error => {
+            console.error('Erreur lors de la récupération des données:', error);
+        });
+    } else {
+        alert('Veuillez sélectionner une date.');
+    }
+});
+
+    </script>
+</body>
+</html>

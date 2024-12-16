@@ -8,6 +8,8 @@ class Article(models.Model):
     Modèle pour représenter un article
     """
     id = models.AutoField(primary_key=True)
+    #id = models.IntegerField(null=True, blank=True)
+    
     titre_page_accueil = models.CharField(max_length=255, default='Titre par défaut')
     titre = models.CharField(max_length=255, default='Titre par défaut')
     lien = models.CharField(max_length=500, default='https://exemple.com')

@@ -310,10 +310,11 @@ def extraire_nombre_heures(chaine: str) -> int:
 def extraire_nombre_minutes(chaine: str) -> int:
     # Extraction des minutes à partir de la chaîne, par exemple "il y a 30 minutes"
     mots = chaine.split()
-    for i, mot in enumerate(mots):
-        if mot.isdigit():
-            if i + 1 < len(mots) and mots[i + 1] in ["minute", "minutes"]:
-                return int(mot)
+    if mots is not None:
+        for i, mot in enumerate(mots):
+            if mot.isdigit():
+                if i + 1 < len(mots) and mots[i + 1] in ["minute", "minutes"]:
+                    return int(mot)
     return 0
 
 # Fonction pour extraire la durée totale en secondes
@@ -446,17 +447,20 @@ def extraire_date_heure(chaine):
     for regex in regex_patterns:
         match = re.search(regex, chaine)
         if match:
-            if regex == regex_patterns[2]:  # Format 'YYYY mois DD à HHhMM'
+            #if regex == regex_patterns[2]:  # Format 'YYYY mois DD à HHhMM'
+            if regex:
                 annee = match.group(1)
                 mois = mois_fr_to_num.get(match.group(2), '01')
                 jour = match.group(3).zfill(2)
                 heure = match.group(4).zfill(2) + ':' + match.group(5)
-            else:  # Pour les autres formats
+              # Pour les autres formats
                 jour = match.group(1).zfill(2)
                 mois = mois_fr_to_num.get(match.group(2), '01')
                 annee = match.group(3)
                 heure = match.group(4).zfill(2) + ':' + match.group(5)
-
+            else:
+                date_formatee=get_exportation_date()
+               
             resultat = {
                 'année': annee,
                 'mois': mois,
@@ -469,6 +473,9 @@ def extraire_date_heure(chaine):
             date_formatee = date_formatee.replace('\xa0', '').strip()
             #print('date forme est ',date_formatee)
             return date_formatee
+        else:
+           date_formatee=get_exportation_date()
+           return date_formatee
     
     print(f"Format non reconnu pour la chaîne : {chaine}")
     return None
@@ -479,8 +486,8 @@ def convertir_date_format_x(date_input):
     # Si l'entrée est déjà un objet datetime, le convertir en chaîne au format souhaité
     if isinstance(date_input, datetime):
         return date_input.strftime('%Y-%m-%dT%H:%M:%S')
-    
-    if not isinstance(date_input,str):
+    if date_input is not None:
+      if not isinstance(date_input,str):
         # Vérifier si la chaîne est dans le format 'YYYY-MM-DDTHH:MM:SS'
         if len(date_input) == 19 and date_input[4] == '-' and date_input[7] == '-' and date_input[10] == 'T':
             return date_input  # Retourner la date telle quelle

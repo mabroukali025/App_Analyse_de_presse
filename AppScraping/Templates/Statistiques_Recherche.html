@@ -1,4 +1,5 @@
 {% load static %}
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -138,6 +139,10 @@
 }
 
 }
+#motcleChart{
+            width: 80% !important;  /* Réduit la taille du graphique */
+            height: 300px !important; /* Réduit la hauteur */
+        }
 
 
     </style>
@@ -169,7 +174,7 @@
                             <label for="combobox_select_site">Selectionner le Site :</label>
                             <div class="input-group input-group-sm mb-3">
                                 <select id="combobox_select_site" name="combobox_select_site" class="form-control">
-                                    <option value=" ">Tous Sites</option>
+                                    <option value="Tous les sites">Tous les sites</option>
                                     <option value="www.Lemonde.fr">www.Lemonde.fr</option>
                                     <option value="www.Liberation.fr">www.Liberation.fr</option>
                                     <option value="www.Lefigaro.fr">www.Lefigaro.fr</option>
@@ -248,44 +253,613 @@
                     <thead>
                         <tr>
                             <th>Mot-clé</th>
+                            <th>Source</th>
                             <th>Nbr Total Articles</th>
                             <th>Nbr Titre d'accueil</th>
                             <th>Nbr Titre</th>
                             <th>Nbr Auteur</th>
                             <th>Nbr Description</th>
+                            <th style="width: 5%;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% if index_mot == -1 %}
+                            {% if search_site == 'Tous les sites' %}
+                                            {% if   search_mot_cle != '' %}
+                   
+                                                <tr>
+                                                    <td>{{ search_mot_cle }}</td>
+                                                    <td>www.Lemonde.fr</td>
+                                                    <td>{{ total_articles_count_lemonde|intcomma }}</td>
+                                                    <td>{{ mot_cle_count_titre_page_accueil_lemonde|intcomma  }}</td>
+                                                    <td>{{ mot_cle_count_titre_lemonde|intcomma  }}</td>
+                                                    <td>{{ mot_cle_count_auteur_lemonde|intcomma  }}</td>
+                                                    <td>{{ mot_cle_count_description_lemonde|intcomma  }}</td>
+                                                    <td>
+                                                        <div class="actions mt-1">
+                                                            <div class="mb-2">
+                                                                <button class="btn btn-primary fetch-chart-data"
+                                                                        data-site="{{ 'www.Lemonde.fr'|escapejs }}"
+                                                                        data-motcle="{{ search_mot_cle|escapejs }}"
+                                                                        >
+                                                                    Graphe
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </td>   
+                                                    
+                                                </tr>
+                                                <tr>
+                                                    <td>{{ search_mot_cle }}</td>
+                                                    <td>www.Liberation.fr</td>
+                                                    <td>{{ total_articles_count_liberation|intcomma  }}</td>
+                                                    <td>{{ mot_cle_count_titre_page_accueil_liberation|intcomma  }}</td>
+                                                    <td>{{ mot_cle_count_titre_liberation|intcomma  }}</td>
+                                                    <td>{{ mot_cle_count_auteur_liberation|intcomma  }}</td>
+                                                    <td>{{ mot_cle_count_description_liberation|intcomma  }}</td>
+                                                    <td>
+                                                        <div class="actions mt-1">
+                                                            <div class="mb-2">
+                                                                <button class="btn btn-primary fetch-chart-data"
+                                                                        data-site="{{ 'www.Liberation.fr'|escapejs }}"
+                                                                        data-motcle="{{ search_mot_cle|escapejs }}"
+                                                                        >
+                                                                    Graphe
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>{{ search_mot_cle }}</td>
+                                                    <td>www.Lefigaro.fr</td>
+                                                    <td>{{ total_articles_count_lefigaro|intcomma }}</td>
+                                                    <td>{{ mot_cle_count_titre_page_accueil_lefigaro|intcomma  }}</td>
+                                                    <td>{{ mot_cle_count_titre_lefigaro|intcomma  }}</td>
+                                                    <td>{{ mot_cle_count_auteur_lefigaro|intcomma  }}</td>
+                                                    <td>{{ mot_cle_count_description_lefigaro|intcomma  }}</td>
+                                                    <td>
+                                                        <div class="actions mt-1">
+                                                            <div class="mb-2">
+                                                                <button class="btn btn-primary fetch-chart-data"
+                                                                        data-site="{{ 'www.Lefigaro.fr'|escapejs }}"
+                                                                        data-motcle="{{ search_mot_cle|escapejs }}"
+                                                                        >
+                                                                    Graphe
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr style="background-color: #87e3f1;">
+                                                    <td>{{ search_mot_cle }}</td>
+                                                    <td>{{ search_site }}</td>
+                                                    <td>{{ total_articles_count|intcomma }}</td>
+                                                    <td>{{ mot_cle_count_titre_page_accueil|intcomma  }}</td>
+                                                    <td>{{ mot_cle_count_titre|intcomma  }}</td>
+                                                    <td>{{ mot_cle_count_auteur|intcomma }}</td>
+                                                    <td>{{ mot_cle_count_description|intcomma  }}</td>
+                                                    <td>
+                                                        <div class="actions mt-1">
+                                                            <div class="mb-2">
+                                                                <button class="btn btn-primary fetch-chart-data"
+                                                                        data-site="{{ search_site|escapejs }}"
+                                                                        data-motcle="{{ search_mot_cle|escapejs }}"
+                                                                        >
+                                                                    Graphe
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            {% else %}
+                                                <tr style="background-color: #cde9ed;">
+                                                    <td>{{ search_mot_cle }}</td>
+                                                    <td>{{ search_site}}</td>
+                                                    <td>{{ total_articles_count|intcomma}}</td>
+                                                    <td>{{ mot_cle_count_titre_page_accueil|intcomma }}</td>
+                                                    <td>{{ mot_cle_count_titre |intcomma}}</td>
+                                                    <td>{{ mot_cle_count_auteur |intcomma}}</td>
+                                                    <td>{{ mot_cle_count_description|intcomma }}</td>
+                                                    <td>
+                                                        <div class="actions mt-1">
+                                                            <div class="mb-2">
+                                                                <button class="btn btn-primary fetch-chart-data"
+                                                                        data-site="{{ search_site|escapejs }}"
+                                                                        data-motcle="{{ search_mot_cle|escapejs }}"
+                                                                        >
+                                                                    Graphe
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            {% endif %}
+                            {% else %}
                             <tr>
                                 <td>{{ search_mot_cle }}</td>
-                                <td>{{ total_articles_count}}</td>
-                                <td>{{ mot_cle_count_titre_page_accueil }}</td>
-                                <td>{{ mot_cle_count_titre }}</td>
-                                <td>{{ mot_cle_count_auteur }}</td>
-                                <td>{{ mot_cle_count_description }}</td>
+                                <td>{{ search_site }}</td>
+                                <td>{{ total_articles_count|intcomma}}</td>
+                                <td>{{ mot_cle_count_titre_page_accueil|intcomma }}</td>
+                                <td>{{ mot_cle_count_titre|intcomma }}</td>
+                                <td>{{ mot_cle_count_auteur |intcomma}}</td>
+                                <td>{{ mot_cle_count_description|intcomma }}</td>
+                                <td>
+                                    <div class="actions mt-1">
+                                        <div class="mb-2">
+                                            <button class="btn btn-primary fetch-chart-data"
+                                                    data-site="{{ search_site|escapejs }}"
+                                                    data-motcle="{{ search_mot_cle|escapejs }}"
+                                                    >
+                                                Graphe
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
                             </tr>
+                            {% endif %} 
                         {% else %}
-                            <tr>
-                                <td>{{ partie1_mot }}</td>
-                                <td>{{ total_articles_count_1 }}</td>
-                                <td>{{ mot_cle_1_count_titre_page_accueil }}</td>
-                                <td>{{ mot_cle_1_count_titre }}</td>
-                                <td>{{ mot_cle_1_count_auteur }}</td>
-                                <td>{{ mot_cle_1_count_description }}</td>
-                            </tr>
-                            <tr>
-                                <td>{{ partie2_mot }}</td>
-                                <td>{{ total_articles_count_2 }}</td>
-                                <td>{{ mot_cle_2_count_titre_page_accueil }}</td>
-                                <td>{{ mot_cle_2_count_titre }}</td>
-                                <td>{{ mot_cle_2_count_auteur }}</td>
-                                <td>{{ mot_cle_2_count_description }}</td>
-                            </tr>
+                            {% if partie2_mot|lower != partie1_mot|lower %}
+                                {% if search_site == 'Tous les sites' %}
+                                   
+                                        <tr>
+                                            <td>{{ partie1_mot }}</td>
+                                            <td>www.Liberation.fr</td>
+                                            <td>{{ total_articles_count_liberation_p1|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_titre_page_accueil_liberation_p1|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_titre_liberation_p1|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_auteur_liberation_p1|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_description_liberation_p1|intcomma  }}</td>
+                                            <td>
+                                                <div class="actions mt-1">
+                                                    <div class="mb-2">
+                                                        <button class="btn btn-primary fetch-chart-data"
+                                                                data-site="{{ 'www.Liberation.fr'|escapejs }}"
+                                                                data-motcle="{{ partie1_mot|escapejs }}"
+                                                                >
+                                                            Graphe
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>{{ partie1_mot }}</td>
+                                            <td>www.Lemonde.fr</td>
+                                            <td>{{ total_articles_count_lemonde_p1|intcomma }}</td>
+                                            <td>{{ mot_cle_count_titre_page_accueil_lemonde_p1|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_titre_lemonde_p1|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_auteur_lemonde_p1|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_description_lemonde_p1|intcomma  }}</td>
+                                            <td>
+                                                <div class="actions mt-1">
+                                                    <div class="mb-2">
+                                                        <button class="btn btn-primary fetch-chart-data"
+                                                                data-site="{{ 'www.Lemonde.fr'|escapejs }}"
+                                                                data-motcle="{{ partie1_mot|escapejs }}"
+                                                                >
+                                                            Graphe
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>{{ partie1_mot  }}</td>
+                                            <td>www.Lefigaro.fr</td>
+                                            <td>{{ total_articles_count_lefigaro_p1|intcomma }}</td>
+                                            <td>{{ mot_cle_count_titre_page_accueil_lefigaro_p1|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_titre_lefigaro_p1|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_auteur_lefigaro_p1|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_description_lefigaro_p1|intcomma  }}</td>
+                                            <td>
+                                                <div class="actions mt-1">
+                                                    <div class="mb-2">
+                                                        <button class="btn btn-primary fetch-chart-data"
+                                                                data-site="{{ 'www.Lefigaro.fr'|escapejs }}"
+                                                                data-motcle="{{ partie1_mot|escapejs }}"
+                                                                >
+                                                            Graphe
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr style="background-color: #e5e8c2;">
+                                            <td>{{ partie1_mot }}</td>
+                                            <td>{{ search_site}}</td>
+                                            <td>{{ total_articles_count_1|intcomma }}</td>
+                                            <td>{{ mot_cle_1_count_titre_page_accueil |intcomma}}</td>
+                                            <td>{{ mot_cle_1_count_titre |intcomma}}</td>
+                                            <td>{{ mot_cle_1_count_auteur |intcomma}}</td>
+                                            <td>{{ mot_cle_1_count_description |intcomma}}</td>
+                                            <td>
+                                                <div class="actions mt-1">
+                                                    <div class="mb-2">
+                                                        <button class="btn btn-primary fetch-chart-data"
+                                                                data-site="{{ search_site|escapejs }}"
+                                                                data-motcle="{{ partie1_mot|escapejs }}"
+                                                                >
+                                                            Graphe
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>{{ partie2_mot }}</td>
+                                            <td>www.Liberation.fr</td>
+                                            <td>{{ total_articles_count_liberation_p2|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_titre_page_accueil_liberation_p2|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_titre_liberation_p2|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_auteur_liberation_p2|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_description_liberation_p2|intcomma  }}</td>
+                                            <td>
+                                                <div class="actions mt-1">
+                                                    <div class="mb-2">
+                                                        <button class="btn btn-primary fetch-chart-data"
+                                                                data-site="{{ 'www.Liberation.fr'|escapejs }}"
+                                                                data-motcle="{{ partie2_mot|escapejs }}"
+                                                                >
+                                                            Graphe
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>{{ partie2_mot }}</td>
+                                            <td>www.Lemonde.fr</td>
+                                            <td>{{ total_articles_count_lemonde_p2|intcomma }}</td>
+                                            <td>{{ mot_cle_count_titre_page_accueil_lemonde_p2|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_titre_lemonde_p2|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_auteur_lemonde_p2|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_description_lemonde_p2|intcomma  }}</td>
+                                            <td>
+                                                <div class="mb-2">
+                                                    <button class="btn btn-primary fetch-chart-data"
+                                                            data-site="{{ 'www.Lemonde.fr'|escapejs }}"
+                                                            data-motcle="{{ partie2_mot|escapejs }}"
+                                                            >
+                                                        Graphe
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>{{ partie2_mot  }}</td>
+                                            <td>www.Lefigaro.fr</td>
+                                            <td>{{ total_articles_count_lefigaro_p2|intcomma }}</td>
+                                            <td>{{ mot_cle_count_titre_page_accueil_lefigaro_p2|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_titre_lefigaro_p2|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_auteur_lefigaro_p2|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_description_lefigaro_p2|intcomma  }}</td>
+                                            <td>
+                                                <div class="actions mt-1">
+                                                    <div class="mb-2">
+                                                        <button class="btn btn-primary fetch-chart-data"
+                                                                data-site="{{ 'www.Lefigaro.fr'|escapejs }}"
+                                                                data-motcle="{{ partie2_mot|escapejs }}"
+                                                                >
+                                                            Graphe
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr style="background-color: #f5c6cb;">
+                                            <td>{{ partie2_mot }}</td>
+                                            <td>{{ search_site}}</td>
+                                            <td>{{ total_articles_count_2|intcomma }}</td>
+                                            <td>{{ mot_cle_2_count_titre_page_accueil|intcomma }}</td>
+                                            <td>{{ mot_cle_2_count_titre |intcomma}}</td>
+                                            <td>{{ mot_cle_2_count_auteur|intcomma }}</td>
+                                            <td>{{ mot_cle_2_count_description|intcomma }}</td>
+                                            <td>
+                                                <div class="actions mt-1">
+                                                    <div class="mb-2">
+                                                        <button class="btn btn-primary fetch-chart-data"
+                                                                data-site="{{ search_site|escapejs }}"
+                                                                data-motcle="{{ partie2_mot|escapejs }}"
+                                                                >
+                                                            Graphe
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    
+                                {% elif search_site == 'www.Liberation.fr' %}
+                                        <tr>
+                                            <td>{{ partie1_mot }}</td>
+                                            <td>www.Liberation.fr</td>
+                                            <td>{{ total_articles_count_liberation_p1|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_titre_page_accueil_liberation_p1|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_titre_liberation_p1|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_auteur_liberation_p1|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_description_liberation_p1|intcomma  }}</td>
+                                            <td>
+                                                <div class="actions mt-1">
+                                                    <div class="mb-2">
+                                                        <button class="btn btn-primary fetch-chart-data"
+                                                                data-site="{{ 'www.Liberation.fr'|escapejs }}"
+                                                                data-motcle="{{ partie1_mot|escapejs }}"
+                                                                >
+                                                            Graphe
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                   
+                                        <tr>
+                                            <td>{{ partie2_mot }}</td>
+                                            <td>www.Liberation.fr</td>
+                                            <td>{{ total_articles_count_liberation_p2|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_titre_page_accueil_liberation_p2|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_titre_liberation_p2|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_auteur_liberation_p2|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_description_liberation_p2|intcomma  }}</td>
+                                            <td>
+                                                <div class="mb-2">
+                                                    <button class="btn btn-primary fetch-chart-data"
+                                                            data-site="{{ 'www.Liberation.fr'|escapejs }}"
+                                                            data-motcle="{{ partie2_mot|escapejs }}"
+                                                            >
+                                                        Graphe
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                {% elif search_site == 'www.Lemonde.fr' %}
+                                        <tr>
+                                            <td>{{ partie1_mot }}</td>
+                                            <td>www.Lemonde.fr</td>
+                                            <td>{{ total_articles_count_lemonde_p1|intcomma }}</td>
+                                            <td>{{ mot_cle_count_titre_page_accueil_lemonde_p1|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_titre_lemonde_p1|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_auteur_lemonde_p1|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_description_lemonde_p1|intcomma  }}</td>
+                                            <td>
+                                                <div class="mb-2">
+                                                    <button class="btn btn-primary fetch-chart-data"
+                                                            data-site="{{ 'www.Lemonde.fr'|escapejs }}"
+                                                            data-motcle="{{ partie1_mot|escapejs }}"
+                                                            >
+                                                        Graphe
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>{{ partie2_mot }}</td>
+                                            <td>www.Lemonde.fr</td>
+                                            <td>{{ total_articles_count_lemonde_p2|intcomma }}</td>
+                                            <td>{{ mot_cle_count_titre_page_accueil_lemonde_p2|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_titre_lemonde_p2|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_auteur_lemonde_p2|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_description_lemonde_p2|intcomma  }}</td>
+                                            <td>
+                                                <div class="mb-2">
+                                                    <button class="btn btn-primary fetch-chart-data"
+                                                            data-site="{{ 'www.Lemonde.fr'|escapejs }}"
+                                                            data-motcle="{{ partie2_mot|escapejs }}"
+                                                            >
+                                                        Graphe
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                {% elif search_site == 'www.Lefigaro.fr' %}
+                                        <tr>
+                                            <td>{{ partie1_mot  }}</td>
+                                            <td>www.Lefigaro.fr</td>
+                                            <td>{{ total_articles_count_lefigaro_p1|intcomma }}</td>
+                                            <td>{{ mot_cle_count_titre_page_accueil_lefigaro_p1|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_titre_lefigaro_p1|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_auteur_lefigaro_p1|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_description_lefigaro_p1|intcomma  }}</td>
+                                            <td>
+                                                <div class="mb-2">
+                                                    <button class="btn btn-primary fetch-chart-data"
+                                                            data-site="{{ 'www.LeFigaro.fr'|escapejs }}"
+                                                            data-motcle="{{ partie1_mot|escapejs }}"
+                                                            >
+                                                        Graphe
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>{{ partie2_mot  }}</td>
+                                            <td>www.Lefigaro.fr</td>
+                                            <td>{{ total_articles_count_lefigaro_p2|intcomma }}</td>
+                                            <td>{{ mot_cle_count_titre_page_accueil_lefigaro_p2|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_titre_lefigaro_p2|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_auteur_lefigaro_p2|intcomma  }}</td>
+                                            <td>{{ mot_cle_count_description_lefigaro_p2|intcomma  }}</td>
+                                            <td>
+                                                <div class="mb-2">
+                                                    <button class="btn btn-primary fetch-chart-data"
+                                                            data-site="{{ 'www.LeFigaro.fr'|escapejs }}"
+                                                            data-motcle="{{ partie2_mot|escapejs }}"
+                                                            >
+                                                        Graphe
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                
+                                {% endif %}
+                            {% else %}
+                                {% if search_site == 'Tous les sites' %}
+                                   
+                                    <tr>
+                                        <td>{{ partie1_mot }}</td>
+                                        <td>www.Liberation.fr</td>
+                                        <td>{{ total_articles_count_liberation_p1|intcomma  }}</td>
+                                        <td>{{ mot_cle_count_titre_page_accueil_liberation_p1|intcomma  }}</td>
+                                        <td>{{ mot_cle_count_titre_liberation_p1|intcomma  }}</td>
+                                        <td>{{ mot_cle_count_auteur_liberation_p1|intcomma  }}</td>
+                                        <td>{{ mot_cle_count_description_liberation_p1|intcomma  }}</td>
+                                        <td>
+                                            <div class="mb-2">
+                                                <button class="btn btn-primary fetch-chart-data"
+                                                        data-site="{{ 'www.Liberation.fr'|escapejs }}"
+                                                        data-motcle="{{ partie1_mot|escapejs }}"
+                                                        >
+                                                    Graphe
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>{{ partie1_mot }}</td>
+                                        <td>www.Lemonde.fr</td>
+                                        <td>{{ total_articles_count_lemonde_p1|intcomma }}</td>
+                                        <td>{{ mot_cle_count_titre_page_accueil_lemonde_p1|intcomma  }}</td>
+                                        <td>{{ mot_cle_count_titre_lemonde_p1|intcomma  }}</td>
+                                        <td>{{ mot_cle_count_auteur_lemonde_p1|intcomma  }}</td>
+                                        <td>{{ mot_cle_count_description_lemonde_p1|intcomma  }}</td>
+                                        <td>
+                                            <div class="mb-2">
+                                                <button class="btn btn-primary fetch-chart-data"
+                                                        data-site="{{ 'www.Lemonde.fr'|escapejs }}"
+                                                        data-motcle="{{ partie1_mot|escapejs }}"
+                                                        >
+                                                    Graphe
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>{{ partie1_mot  }}</td>
+                                        <td>www.Lefigaro.fr</td>
+                                        <td>{{ total_articles_count_lefigaro_p1|intcomma }}</td>
+                                        <td>{{ mot_cle_count_titre_page_accueil_lefigaro_p1|intcomma  }}</td>
+                                        <td>{{ mot_cle_count_titre_lefigaro_p1|intcomma  }}</td>
+                                        <td>{{ mot_cle_count_auteur_lefigaro_p1|intcomma  }}</td>
+                                        <td>{{ mot_cle_count_description_lefigaro_p1|intcomma  }}</td>
+                                        <td>
+                                            <div class="mb-2">
+                                                <button class="btn btn-primary fetch-chart-data"
+                                                        data-site="{{ 'www.Lefigaro.fr'|escapejs }}"
+                                                        data-motcle="{{ partie1_mot|escapejs }}"
+                                                        >
+                                                    Graphe
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr style="background-color: #e5e8c2;">
+                                        <td>{{ partie1_mot }}</td>
+                                        <td>{{ search_site}}</td>
+                                        <td>{{ total_articles_count_1|intcomma }}</td>
+                                        <td>{{ mot_cle_1_count_titre_page_accueil |intcomma}}</td>
+                                        <td>{{ mot_cle_1_count_titre |intcomma}}</td>
+                                        <td>{{ mot_cle_1_count_auteur |intcomma}}</td>
+                                        <td>{{ mot_cle_1_count_description |intcomma}}</td>
+                                        <td>
+                                            <div class="mb-2">
+                                                <button class="btn btn-primary fetch-chart-data"
+                                                        data-site="{{ search_site|escapejs }}"
+                                                        data-motcle="{{ partie1_mot|escapejs }}"
+                                                        >
+                                                    Graphe
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr> 
+                                {% elif search_site == 'www.Liberation.fr' %}
+                                            <tr>
+                                                <td>{{ partie1_mot }}</td>
+                                                <td>www.Liberation.fr</td>
+                                                <td>{{ total_articles_count_liberation_p1|intcomma  }}</td>
+                                                <td>{{ mot_cle_count_titre_page_accueil_liberation_p1|intcomma  }}</td>
+                                                <td>{{ mot_cle_count_titre_liberation_p1|intcomma  }}</td>
+                                                <td>{{ mot_cle_count_auteur_liberation_p1|intcomma  }}</td>
+                                                <td>{{ mot_cle_count_description_liberation_p1|intcomma  }}</td>
+                                                <td>
+                                                    <div class="mb-2">
+                                                        <button class="btn btn-primary fetch-chart-data"
+                                                                data-site="{{ 'www.Liberation.fr'|escapejs }}"
+                                                                data-motcle="{{ partie1_mot|escapejs }}"
+                                                                >
+                                                            Graphe
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                               
+                                    
+                                {% elif search_site == 'www.Lemonde.fr' %}
+                                            <tr>
+                                                <td>{{ partie1_mot }}</td>
+                                                <td>www.Lemonde.fr</td>
+                                                <td>{{ total_articles_count_lemonde_p1|intcomma }}</td>
+                                                <td>{{ mot_cle_count_titre_page_accueil_lemonde_p1|intcomma  }}</td>
+                                                <td>{{ mot_cle_count_titre_lemonde_p1|intcomma  }}</td>
+                                                <td>{{ mot_cle_count_auteur_lemonde_p1|intcomma  }}</td>
+                                                <td>{{ mot_cle_count_description_lemonde_p1|intcomma  }}</td>
+                                                <td>
+                                                    <div class="mb-2">
+                                                        <button class="btn btn-primary fetch-chart-data"
+                                                                data-site="{{ 'www.Lemonde.fr'|escapejs }}"
+                                                                data-motcle="{{ partie1_mot|escapejs }}"
+                                                                >
+                                                            Graphe
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                    
+                                {% elif search_site == 'www.Lefigaro.fr' %}
+                                    <tr>
+                                        <td>{{ partie1_mot  }}</td>
+                                        <td>www.Lefigaro.fr</td>
+                                        <td>{{ total_articles_count_lefigaro_p1|intcomma }}</td>
+                                        <td>{{ mot_cle_count_titre_page_accueil_lefigaro_p1|intcomma  }}</td>
+                                        <td>{{ mot_cle_count_titre_lefigaro_p1|intcomma  }}</td>
+                                        <td>{{ mot_cle_count_auteur_lefigaro_p1|intcomma  }}</td>
+                                        <td>{{ mot_cle_count_description_lefigaro_p1|intcomma  }}</td>
+                                        <td>
+                                            <div class="mb-2">
+                                                <button class="btn btn-primary fetch-chart-data"
+                                                        data-site="{{ 'www.Lefigaro.fr'|escapejs }}"
+                                                        data-motcle="{{ partie1_mot|escapejs }}"
+                                                        >
+                                                    Graphe
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                                                  
+                                {% endif %}
+                            {% endif %}
                         {% endif %}
                     </tbody>
                 </table>
             </div>
+
+<!--   graphe -->
+<div class="mt-8">
+    <h5>Graphique de Statistiques :</h5>
+    <div id="chart-container" style="width: 100% !important; height: 350px !important;">
+        <canvas id="motcleChart"></canvas>
+    </div>
+    
+    <br>
+</div>
+
+
+
+
+
+   
+
+
+    
+    
 
             <!-- Tableau des articles -->
            <!-- Tableau des articles -->
@@ -400,39 +974,188 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
-        $(document).ready(function() {
-    // Afficher ou masquer la plage de dates en fonction de la case à cocher
-    $('#search_between_dates').change(function() {
-        if ($(this).is(':checked')) {
-            $('#date_range_search').show();
-        } else {
-            $('#date_range_search').hide();
+        var motcleChart = null;
+    
+        function fetchChartData(site, motcle, date_1, date_debut, date_fin) {
+            fetch(`{% url 'plot_motcle_counts' %}?site=${site}&motcle=${motcle}&date_1=${date_1}&date_debut=${date_debut}&date_fin=${date_fin}`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                var canvas = document.getElementById('motcleChart');
+                var ctx = canvas.getContext('2d');
+    
+                // Définir la taille du canvas
+                canvas.width = window.innerWidth;
+                canvas.height = 600;
+    
+                if (motcleChart !== null) {
+                    motcleChart.destroy();
+                }
+    
+                // Créer le graphique avec un seul groupe
+                motcleChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        // Utilisation de date_1 passé par Django
+                        labels: [`Apartir du ${date_1}`], // Affiche "Apartir du {{ date_1 }}"
+                        datasets: [
+                            {
+                                label: 'Ordre 1',
+                                data: [data.count_order1],
+                                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1,
+                                borderColor: 'rgba(0,0,0,1)',
+                                barThickness: 20 
+                            },
+                            {
+                                label: 'Ordre 2',
+                                data: [data.count_order2],
+                                backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1,
+                                borderColor: 'rgba(0,0,0,1)',
+                                barThickness: 20 
+                            },
+                            {
+                                label: 'Ordre 3',
+                                data: [data.count_order3],
+                                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                                borderColor: 'rgba(255, 99, 132, 1)',
+                                borderWidth: 1,
+                                borderColor: 'rgba(0,0,0,1)',
+                                barThickness: 20 
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        indexAxis: 'x', // Les barres s'alignent horizontalement
+                        scales: {
+                            x: {
+                                categoryPercentage: 1.0,
+                                barPercentage: 0.5 // Réduit la largeur des barres
+                            },
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    font: {
+                                        size: 16,
+                                        weight: 'bold'
+                                    },
+                                    color: 'rgba(0, 0, 0, 0.7)'
+                                },
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.1)',
+                                    lineWidth: 2
+                                }
+                            }
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: `Graphe des ordres d'actualité pour le mot-clé "${data.motcle}" sur le site "${data.site}"`,
+                                font: {
+                                    size: 22,
+                                    weight: 'bold'
+                                },
+                                color: 'rgba(0, 0, 0, 0.9)'
+                            },
+                            legend: {
+                                display: true,
+                                position: 'bottom' // Positionne la légende sous le graphe
+                            },
+                            tooltip: {
+                                enabled: true,
+                                mode: 'index', // Affiche les tooltips pour toutes les barres survolées
+                                intersect: false, // Les tooltips s'affichent même si on ne survole pas directement une barre
+                                callbacks: {
+                                    label: function(tooltipItem) {
+                                        var label = tooltipItem.dataset.label || '';
+                                        var value = tooltipItem.raw || 0;
+                                        return `${label}: ${value} articles`;
+                                    },
+                                    title: function(tooltipItem) {
+                                        return `Date: ${tooltipItem[0].label}`; // Affiche la date de la donnée (optionnel)
+                                    }
+                                }
+                            }
+                        },
+                        elements: {
+                            bar: {
+                                borderRadius: 5,
+                                barThickness: 30 // Réduit la largeur des barres à 30
+                            }
+                        }
+                    }
+                });
+    
+                // Mettre à jour le menu de légende
+                updateLegendMenu([
+                    { label: 'Ordre 1', color: 'rgba(54, 162, 235, 0.5)' },
+                    { label: 'Ordre 2', color: 'rgba(75, 192, 192, 0.5)' },
+                    { label: 'Ordre 3', color: 'rgba(255, 99, 132, 0.5)' }
+                ]);
+            })
+            .catch(error => console.error('Erreur lors de la récupération des données:', error));
         }
-    });
-
-    // Activer ou désactiver les champs de date au chargement de la page
-    $('#search_between_dates').trigger('change');
-
-    // Ajouter une validation avant l'envoi du formulaire
-    $('form').submit(function(e) {
-        var startDate = $('#search_date_debut').val();  // Récupérer la valeur de la date début
-        var endDate = $('#search_date_fin').val();  // Récupérer la valeur de la date fin
-
-        // Vérifier si la case "Entre deux dates" est cochée et que les dates sont valides
-        if ($('#search_between_dates').is(':checked')) {
-            if (startDate && endDate && startDate > endDate) {
-                e.preventDefault();  // Empêcher l'envoi du formulaire
-
-                // Afficher le message d'erreur dans le conteneur
-                $('#error-message').show();  // Afficher le message d'erreur
-            } else {
-                $('#error-message').hide();  // Masquer le message d'erreur si la validation est réussie
-            }
+    
+        function updateLegendMenu(colors) {
+            // Sélectionner le conteneur du menu déjà présent dans la structure HTML
+            var legendContainer = document.getElementById('legend-menu');
+    
+            // Effacer le contenu précédent pour éviter les doublons
+            legendContainer.innerHTML = '';
+    
+            // Ajouter des éléments de légende
+            colors.forEach(colorItem => {
+                var legendItem = document.createElement('div');
+                legendItem.style.display = 'flex';
+                legendItem.style.alignItems = 'center';
+                legendItem.style.gap = '8px';
+    
+                var colorBox = document.createElement('span');
+                colorBox.style.width = '20px';
+                colorBox.style.height = '20px';
+                colorBox.style.backgroundColor = colorItem.color;
+                colorBox.style.border = '1px solid rgba(0, 0, 0, 0.3)';
+                colorBox.style.borderRadius = '3px';
+    
+                var label = document.createElement('span');
+                label.innerText = colorItem.label;
+                label.style.fontSize = '16px';
+                label.style.color = 'rgba(0, 0, 0, 0.7)';
+                label.style.fontWeight = 'bold';
+    
+                legendItem.appendChild(colorBox);
+                legendItem.appendChild(label);
+                legendContainer.appendChild(legendItem);
+            });
         }
-    });
-});
-
+    
+        document.querySelectorAll('.fetch-chart-data').forEach(button => {
+            button.addEventListener('click', function(event) {
+                var site = event.target.getAttribute('data-site');
+                var motcle = event.target.getAttribute('data-motcle');
+                var currentUrl = window.location.href;
+                var urlObj = new URL(currentUrl);
+                var searchParams = urlObj.searchParams;
+    
+                var date_1 = searchParams.get('search_date') || '';
+                var date_debut = searchParams.get('search_date_debut') || '';
+                var date_fin = searchParams.get('search_date_fin') || '';
+    
+                fetchChartData(site, motcle, date_1, date_debut, date_fin);
+            });
+        });
     </script>
     
        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
