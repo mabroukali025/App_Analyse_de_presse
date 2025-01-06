@@ -1786,31 +1786,59 @@ def plot_motcle_counts(request):
     _date = None if _date in [None, '', 'null'] else _date
     start_date = None if start_date in [None, '', 'null'] else start_date
     end_date = None if end_date in [None, '', 'null'] else end_date
+    site_liberation='www.Liberation.fr' 
+    site_lemonde='www.Lemonde.fr'
+    site_lefigaro='www.Lefigaro.fr'
+    count_order3_liberation=0
+    count_order1_liberation=0
+    count_order2_liberation=0
+
    
     try:
         # Logique pour récupérer les données
-        if start_date and end_date and site and motcle and not _date:
-            # Compter les articles avec date
-            count_order1 = count_motcle_par_deux_date(motcle, site, 1,start_date,end_date)
-            count_order2 = count_motcle_par_deux_date(motcle, site, 2,start_date,end_date)
-            count_order3 = count_motcle_par_deux_date(motcle, site, 3,start_date,end_date)
-        elif _date and site and motcle and not start_date and not end_date:
-            count_order1=count_motcle_par_date(motcle, site,1,_date)
-            count_order2=count_motcle_par_date(motcle, site,2,_date)
-            count_order3=count_motcle_par_date(motcle, site,3,_date)
-            
+        if site!='Tous les sites':
+                if start_date and end_date and site and motcle and not _date:
+                    # Compter les articles avec date
+                    count_order1 = count_motcle_par_deux_date(motcle, site, 1,start_date,end_date)
+                    count_order2 = count_motcle_par_deux_date(motcle, site, 2,start_date,end_date)
+                    count_order3 = count_motcle_par_deux_date(motcle, site, 3,start_date,end_date)
+                elif _date and site and motcle and not start_date and not end_date:
+                    count_order1=count_motcle_par_date(motcle, site,1,_date)
+                    count_order2=count_motcle_par_date(motcle, site,2,_date)
+                    count_order3=count_motcle_par_date(motcle, site,3,_date)
+                    
+                else:
+                    # Compter les articles sans date
+                    count_order1 = count_keyword_in_articles_for_orders(motcle, site, 1)
+                    count_order2 = count_keyword_in_articles_for_orders(motcle, site, 2)
+                    count_order3 = count_keyword_in_articles_for_orders(motcle, site, 3)
         else:
-            # Compter les articles sans date
-            count_order1 = count_keyword_in_articles_for_orders(motcle, site, 1)
-            count_order2 = count_keyword_in_articles_for_orders(motcle, site, 2)
-            count_order3 = count_keyword_in_articles_for_orders(motcle, site, 3)
-
+                if start_date and end_date and site and motcle and not _date:
+                    # Compter les articles avec date
+                    
+                    count_order1_liberation = count_motcle_par_deux_date(motcle, site_liberation, 1,start_date,end_date)
+                    count_order2_liberation = count_motcle_par_deux_date(motcle, site_liberation, 2,start_date,end_date)
+                    count_order3_liberation = count_motcle_par_deux_date(motcle, site_liberation, 3,start_date,end_date)
+                elif _date and site and motcle and not start_date and not end_date:
+                    count_order1_liberation=count_motcle_par_date(motcle, site_liberation,1,_date)
+                    count_order2_liberation=count_motcle_par_date(motcle, site_liberation,2,_date)
+                    count_order3_liberation=count_motcle_par_date(motcle, site_liberation,3,_date)
+                    
+                else:
+                    # Compter les articles sans date
+                    count_order1_liberation = count_keyword_in_articles_for_orders(motcle, site_liberation, 1)
+                    count_order2_liberation = count_keyword_in_articles_for_orders(motcle, site_liberation, 2)
+                    count_order3_liberation = count_keyword_in_articles_for_orders(motcle, site_liberation, 3)
+     
         chart_data = {
             'motcle': motcle,
             'site': site,
             'count_order1': count_order1,
             'count_order2': count_order2,
             'count_order3': count_order3,
+            'count_order3_liberation':count_order3_liberation,
+            'count_order1_liberation':count_order1_liberation,
+            'count_order2_liberation':count_order2_liberation,
         }
 
         # Si la requête est AJAX, retourner les données JSON

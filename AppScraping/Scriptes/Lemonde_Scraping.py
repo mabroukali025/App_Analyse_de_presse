@@ -410,7 +410,10 @@ def fonction_find_Article(divs_in_section,driver,Sous_Actualite,order):
              categorie='Non Trouvee'
              date_text=None
              date_pub=None 
-             link=divs_in_section.find('a')
+             if divs_in_section.find('a'):
+                link=divs_in_section.find('a')
+             else:
+                 link=divs_in_section
              has_img='Non'
              if link:
               link_page=link['href']
@@ -731,7 +734,11 @@ def fonction_exportation_articles_order_1(section_order_1,driver,Sous_Actualite,
         if divs_in_section:                                                                
             fonction_find_Article(divs_in_section,driver,'Non',order)
         if div_article:
+            lien_1=div_article.find('a')
             list_ul=div_article.find('ul',{'class':lambda x:x and(x.startswith('article_'))})
+            if lien_1:
+                Sous_Actualite="Non"
+                fonction_find_Article(lien_1,driver,Sous_Actualite,order)
             if list_ul:
                 list_lis=list_ul.find_all('li',{'class':lambda g:g and g.startswith('old__article')})
                 for i in list_lis:

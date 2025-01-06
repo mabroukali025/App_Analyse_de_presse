@@ -1000,103 +1000,202 @@
                     motcleChart.destroy();
                 }
     
-                // Créer le graphique avec un seul groupe
-                motcleChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        // Utilisation de date_1 passé par Django
-                        labels: [`Apartir du ${date_1}`], // Affiche "Apartir du {{ date_1 }}"
-                        datasets: [
-                            {
-                                label: 'Ordre 1',
-                                data: [data.count_order1],
-                                backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                                borderColor: 'rgba(54, 162, 235, 1)',
-                                borderWidth: 1,
-                                borderColor: 'rgba(0,0,0,1)',
-                                barThickness: 20 
-                            },
-                            {
-                                label: 'Ordre 2',
-                                data: [data.count_order2],
-                                backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                                borderColor: 'rgba(75, 192, 192, 1)',
-                                borderWidth: 1,
-                                borderColor: 'rgba(0,0,0,1)',
-                                barThickness: 20 
-                            },
-                            {
-                                label: 'Ordre 3',
-                                data: [data.count_order3],
-                                backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                                borderColor: 'rgba(255, 99, 132, 1)',
-                                borderWidth: 1,
-                                borderColor: 'rgba(0,0,0,1)',
-                                barThickness: 20 
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        indexAxis: 'x', // Les barres s'alignent horizontalement
-                        scales: {
-                            x: {
-                                categoryPercentage: 1.0,
-                                barPercentage: 0.5 // Réduit la largeur des barres
-                            },
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    font: {
-                                        size: 16,
-                                        weight: 'bold'
-                                    },
-                                    color: 'rgba(0, 0, 0, 0.7)'
+                if (site ==='Tous les sites') {
+                    console.log(data.count_order1_liberation);
+                    motcleChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            // Utilisation de date_1 passé par Django
+                            labels: [`Apartir du ${date_1}`], // Affiche "Apartir du {{ date_1 }}"
+                            datasets: [
+                                {
+                                    label: 'Ordre 1',
+                                    data: [data.count_order1_liberation],
+                                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                                    borderColor: 'rgba(54, 162, 235, 1)',
+                                    borderWidth: 1,
+                                    borderColor: 'rgba(0,0,0,1)',
+                                    barThickness: 20
                                 },
-                                grid: {
-                                    color: 'rgba(0, 0, 0, 0.1)',
-                                    lineWidth: 2
+                                {
+                                    label: 'Ordre 2',
+                                    data: [data.count_order2_liberation],
+                                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    borderWidth: 1,
+                                    borderColor: 'rgba(0,0,0,1)',
+                                    barThickness: 20
+                                },
+                                {
+                                    label: 'Ordre 3',
+                                    data: [data.count_order3_liberation],
+                                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                    borderWidth: 1,
+                                    borderColor: 'rgba(0,0,0,1)',
+                                    barThickness: 20
                                 }
-                            }
+                            ]
                         },
-                        plugins: {
-                            title: {
-                                display: true,
-                                text: `Graphe des ordres d'actualité pour le mot-clé "${data.motcle}" sur le site "${data.site}"`,
-                                font: {
-                                    size: 22,
-                                    weight: 'bold'
+                        options: {
+                            responsive: true,
+                            indexAxis: 'x', // Les barres s'alignent horizontalement
+                            scales: {
+                                x: {
+                                    categoryPercentage: 1.0,
+                                    barPercentage: 0.5 // Réduit la largeur des barres
                                 },
-                                color: 'rgba(0, 0, 0, 0.9)'
-                            },
-                            legend: {
-                                display: true,
-                                position: 'bottom' // Positionne la légende sous le graphe
-                            },
-                            tooltip: {
-                                enabled: true,
-                                mode: 'index', // Affiche les tooltips pour toutes les barres survolées
-                                intersect: false, // Les tooltips s'affichent même si on ne survole pas directement une barre
-                                callbacks: {
-                                    label: function(tooltipItem) {
-                                        var label = tooltipItem.dataset.label || '';
-                                        var value = tooltipItem.raw || 0;
-                                        return `${label}: ${value} articles`;
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        font: {
+                                            size: 16,
+                                            weight: 'bold'
+                                        },
+                                        color: 'rgba(0, 0, 0, 0.7)'
                                     },
-                                    title: function(tooltipItem) {
-                                        return `Date: ${tooltipItem[0].label}`; // Affiche la date de la donnée (optionnel)
+                                    grid: {
+                                        color: 'rgba(0, 0, 0, 0.1)',
+                                        lineWidth: 2
                                     }
                                 }
-                            }
-                        },
-                        elements: {
-                            bar: {
-                                borderRadius: 5,
-                                barThickness: 30 // Réduit la largeur des barres à 30
+                            },
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: `Graphe des ordres d'actualité pour le mot-clé "${motcle}" sur  "${site}"`,
+                                    font: {
+                                        size: 22,
+                                        weight: 'bold'
+                                    },
+                                    color: 'rgba(0, 0, 0, 0.9)'
+                                },
+                                legend: {
+                                    display: true,
+                                    position: 'bottom' // Positionne la légende sous le graphe
+                                },
+                                tooltip: {
+                                    enabled: true,
+                                    mode: 'index', // Affiche les tooltips pour toutes les barres survolées
+                                    intersect: false, // Les tooltips s'affichent même si on ne survole pas directement une barre
+                                    callbacks: {
+                                        label: function(tooltipItem) {
+                                            var label = tooltipItem.dataset.label || '';
+                                            var value = tooltipItem.raw || 0;
+                                            return `${label}: ${value} articles`;
+                                        },
+                                        title: function(tooltipItem) {
+                                            return `Date: ${tooltipItem[0].label}`; // Affiche la date de la donnée (optionnel)
+                                        }
+                                    }
+                                }
+                            },
+                            elements: {
+                                bar: {
+                                    borderRadius: 5,
+                                    barThickness: 30 // Réduit la largeur des barres à 30
+                                }
                             }
                         }
-                    }
-                });
+                    });
+                } else {
+                    motcleChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            // Utilisation de date_1 passé par Django
+                            labels: [`Apartir du ${date_1}`], // Affiche "Apartir du {{ date_1 }}"
+                            datasets: [
+                                {
+                                    label: 'Ordre 1',
+                                    data: [data.count_order1],
+                                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                                    borderColor: 'rgba(54, 162, 235, 1)',
+                                    borderWidth: 1,
+                                    borderColor: 'rgba(0,0,0,1)',
+                                    barThickness: 20
+                                },
+                                {
+                                    label: 'Ordre 2',
+                                    data: [data.count_order2],
+                                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    borderWidth: 1,
+                                    borderColor: 'rgba(0,0,0,1)',
+                                    barThickness: 20
+                                },
+                                {
+                                    label: 'Ordre 3',
+                                    data: [data.count_order3],
+                                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                    borderWidth: 1,
+                                    borderColor: 'rgba(0,0,0,1)',
+                                    barThickness: 20
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            indexAxis: 'x', // Les barres s'alignent horizontalement
+                            scales: {
+                                x: {
+                                    categoryPercentage: 1.0,
+                                    barPercentage: 0.5 // Réduit la largeur des barres
+                                },
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        font: {
+                                            size: 16,
+                                            weight: 'bold'
+                                        },
+                                        color: 'rgba(0, 0, 0, 0.7)'
+                                    },
+                                    grid: {
+                                        color: 'rgba(0, 0, 0, 0.1)',
+                                        lineWidth: 2
+                                    }
+                                }
+                            },
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: `Graphe des ordres d'actualité pour le mot-clé "${data.motcle}" sur le site "${data.site}"`,
+                                    font: {
+                                        size: 22,
+                                        weight: 'bold'
+                                    },
+                                    color: 'rgba(0, 0, 0, 0.9)'
+                                },
+                                legend: {
+                                    display: true,
+                                    position: 'bottom' // Positionne la légende sous le graphe
+                                },
+                                tooltip: {
+                                    enabled: true,
+                                    mode: 'index', // Affiche les tooltips pour toutes les barres survolées
+                                    intersect: false, // Les tooltips s'affichent même si on ne survole pas directement une barre
+                                    callbacks: {
+                                        label: function(tooltipItem) {
+                                            var label = tooltipItem.dataset.label || '';
+                                            var value = tooltipItem.raw || 0;
+                                            return `${label}: ${value} articles`;
+                                        },
+                                        title: function(tooltipItem) {
+                                            return `Date: ${tooltipItem[0].label}`; // Affiche la date de la donnée (optionnel)
+                                        }
+                                    }
+                                }
+                            },
+                            elements: {
+                                bar: {
+                                    borderRadius: 5,
+                                    barThickness: 30 // Réduit la largeur des barres à 30
+                                }
+                            }
+                        }
+                    });
+                }
     
                 // Mettre à jour le menu de légende
                 updateLegendMenu([

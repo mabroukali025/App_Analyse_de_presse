@@ -92,7 +92,7 @@ WSGI_APPLICATION = 'Analyse_de_presse.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Analyse_presse',
+        'NAME': 'journaux',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',
