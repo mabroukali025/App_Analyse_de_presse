@@ -349,6 +349,7 @@ def find_Article(art, actualite, order_Actualite, driver):
         has_image = 'non trouvée'
         categorie = 'non trouvée'
         date_text = None
+        chaine_sans_debut=obtenir_date_exportation()
         date_pub=None
         auteur_='Non Trouvee'
         div_text = article_balise.find('div', {'class': lambda f: f and f.startswith('row text-align_left')})
@@ -438,8 +439,8 @@ def find_Article(art, actualite, order_Actualite, driver):
                                         categorie = "Catégorie non Trouvée"
         if date_pub is None:
             date_pub=obtenir_date_exportation()#Date_Exportation
-       
-        chaine_sans_debut=fonction_Supprime_au_debut(date_pub)
+        if date_pub!=obtenir_date_exportation():
+           chaine_sans_debut=fonction_Supprime_au_debut(date_pub)
         Date_Exportation=obtenir_date_exportation()
         #save_in_file(title_Acceuil2, title, link, chaine_sans_debut, auteur_, paragraphe, has_image, actualite, Date_Exportation, categorie, order_Actualite)
         #print('************************************************************  la date dexportation est :',Date_Exportation)        
@@ -466,27 +467,25 @@ def findAllArticles(url):
   body_page= html.find('body')
   
   if body_page:
-    """
     princ_div=body_page.find('div',class_="layout-section") #  div principle est le grand div dans le code source
     if princ_div:
+     
      sous_div=princ_div.find('div',{'class':lambda f:f and f.startswith('default__PrismaWrapper-s')})
      if sous_div:
-     
-      div_main=sous_div.find('main',{'class':lambda x:x and x.startswith('sc')})
+      div_main=sous_div.find('main',{'class':lambda x:x and x.startswith('sc-hZDyAQ gZJoBc')})
       if div_main: 
-        div_main_2=div_main.find('div',{'class':lambda x:x and x.startswith('sc')})#,class_="sc-epVeNg cOWDyY sc-ehmTmK dGmPpK")
+        div_main_2=div_main.find('div',{'class':lambda x:x and x.startswith('sc-heIBml hVDkvB sc-guJBdh eQfsyX')})#,class_="sc-epVeNg cOWDyY sc-ehmTmK dGmPpK")
         if div_main_2:
-          print('hhh')
-          main_in_div_2 = div_main_2.find('main', {'class': lambda g: g and g.startswith('sc-gFGZVQ jZmnsE sc-gSpBRe iyqtOG')})
-          if main_in_div_2:
-            print('hhh')                                     
-            """
-    div_1=body_page.find('div',class_=lambda h:h and h.startswith('default__FullWidth1-sc-sezp2u-1 bYNMjz'))# sc-lbOyJj kRdUvr'))#-sezp2u-1 dGhQWW sc-ehmTmK cOhApt")
-    #div_2=body_page.find('div',class_=lambda h:h and h.startswith('default__Main-sc-sezp2u-2 kxxFcP sc-lbOyJj cobDa-D'))
-    #div_3=body_page.find('div',class_=lambda h:h and h.startswith('default__FullWidth2-sc-sezp2u-4 crFABv sc-lbOyJj bMFUpk'))
-    if div_1:
-              
-             extraire_donnees_div(div_1,driver)        
+         
+          time.sleep(3)
+          main_in_div_2 = div_main_2.find('main', {'class':lambda g: g and g.startswith('sc-hZDyAQ fzMPBB sc-leQnM fYyMqV')})
+          if main_in_div_2:                                    
+            div_1=main_in_div_2.find('div',class_=lambda h:h and h.startswith('default__'))# sc-lbOyJj kRdUvr'))#-sezp2u-1 dGhQWW sc-ehmTmK cOhApt")
+            #div_2=body_page.find('div',class_=lambda h:h and h.startswith('default__Main-sc-sezp2u-2 kxxFcP sc-lbOyJj cobDa-D'))
+            #div_3=body_page.find('div',class_=lambda h:h and h.startswith('default__FullWidth2-sc-sezp2u-4 crFABv sc-lbOyJj bMFUpk'))
+            if div_1:
+                    
+                    extraire_donnees_div(div_1,driver)        
     
     #if div_2:
       # extraire_donnees_div_2(div_2,driver)
